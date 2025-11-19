@@ -5,7 +5,7 @@ namespace merxly.Domain.Entities
     public class WishlistItem : ICreatedDate
     {
         public Guid Id { get; set; }
-        public DateTimeOffset CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; }
 
         // Foreign Keys
         public Guid WishlistId { get; set; }

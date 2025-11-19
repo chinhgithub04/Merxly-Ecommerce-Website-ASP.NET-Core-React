@@ -7,8 +7,8 @@ namespace merxly.Domain.Entities
         public Guid Id { get; set; }
         public int Quantity { get; set; }
         public decimal PriceAtAdd { get; set; } // Save the price at the time of creating the shopping cart, if the price changes later, the customer will be notified.
-        public DateTimeOffset CreatedAt { get; set; }
-        public DateTimeOffset? UpdatedAt { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
 
         // Foreign Keys
         public Guid CartId { get; set; }

@@ -10,8 +10,8 @@ namespace merxly.Domain.Entities
         public string? ShortDescription { get; set; }
         public bool IsFeatured { get; set; } // A flag to mark products as Feature Product
         public bool IsActive { get; set; }
-        public DateTimeOffset CreatedAt { get; set; }
-        public DateTimeOffset? UpdatedAt { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
 
         // Foreign Keys
         public Guid CategoryId { get; set; }

@@ -8,8 +8,8 @@ namespace merxly.Domain.Entities
         public int Rating { get; set; }
         public string? Title { get; set; }
         public string? Comment { get; set; }
-        public DateTimeOffset CreatedAt { get; set; }
-        public DateTimeOffset? UpdatedAt { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
 
         // Foreign Keys
         public string UserId { get; set; }

@@ -8,7 +8,7 @@ namespace merxly.Domain.Entities
         public int Quantity { get; set; }
         public decimal UnitPrice { get; set; }
         public decimal TotalPrice { get; set; }
-        public DateTimeOffset CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; }
 
         // Foreign Keys
         public Guid OrderId { get; set; }

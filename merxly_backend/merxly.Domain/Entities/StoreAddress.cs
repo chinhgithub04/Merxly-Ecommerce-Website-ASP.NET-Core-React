@@ -10,8 +10,8 @@ namespace merxly.Domain.Entities
         public string City { get; set; }
         public string StateProvince { get; set; }
         public string PostalCode { get; set; }
-        public DateTimeOffset CreatedAt { get; set; }
-        public DateTimeOffset? UpdatedAt { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
 
         // Foreign Keys
         public Guid StoreId { get; set; }

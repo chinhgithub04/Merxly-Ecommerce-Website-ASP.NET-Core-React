@@ -8,7 +8,7 @@ namespace merxly.Domain.Entities
         public Guid Id { get; set; }
         public OrderStatus Status { get; set; }
         public string? Notes { get; set; }
-        public DateTimeOffset CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; }
 
         // Foreign Keys
         public Guid OrderId { get; set; }

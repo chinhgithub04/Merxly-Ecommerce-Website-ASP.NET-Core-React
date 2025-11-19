@@ -9,7 +9,7 @@ namespace merxly.Domain.Entities
         public string Url { get; set; }
         public int DisplayOrder { get; set; }
         public MediaType MediaType { get; set; }
-        public DateTimeOffset CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; }
 
         // Foreign Keys
         public Guid ReviewId { get; set; }

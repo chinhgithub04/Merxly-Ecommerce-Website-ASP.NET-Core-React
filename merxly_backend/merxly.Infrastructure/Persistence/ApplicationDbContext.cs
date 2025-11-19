@@ -58,7 +58,7 @@ namespace merxly.Infrastructure.Persistence
 
             foreach (var entry in createdEntries)
             {
-                entry.Entity.CreatedAt = DateTimeOffset.UtcNow;
+                entry.Entity.CreatedAt = DateTime.UtcNow;
             }
 
             var modifiedEntries = ChangeTracker.Entries<IModifiedDate>()
@@ -66,7 +66,7 @@ namespace merxly.Infrastructure.Persistence
 
             foreach (var entry in modifiedEntries)
             {
-                entry.Entity.UpdatedAt = DateTimeOffset.UtcNow;
+                entry.Entity.UpdatedAt = DateTime.UtcNow;
             }
 
             return base.SaveChangesAsync(cancellationToken);

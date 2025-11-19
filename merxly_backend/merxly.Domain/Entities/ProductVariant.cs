@@ -14,8 +14,8 @@ namespace merxly.Domain.Entities
         public decimal? Height { get; set; }
         public int StockQuantity { get; set; }
         public bool IsActive { get; set; }
-        public DateTimeOffset CreatedAt { get; set; }
-        public DateTimeOffset? UpdatedAt { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
 
         // Foreign Keys
         public Guid ProductId { get; set; }

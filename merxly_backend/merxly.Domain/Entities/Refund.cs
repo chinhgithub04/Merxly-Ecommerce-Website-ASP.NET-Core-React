@@ -11,7 +11,7 @@ namespace merxly.Domain.Entities
         public string Reason { get; set; }
         public string? Notes { get; set; }
         public RefundStatus Status { get; set; }
-        public DateTimeOffset CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; }
 
         // Foreign Keys
         public Guid PaymentId { get; set; }

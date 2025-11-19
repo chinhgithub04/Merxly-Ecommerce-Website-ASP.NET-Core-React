@@ -9,8 +9,8 @@ namespace merxly.Domain.Entities
         public string? Description { get; set; }
         public string? ImageUrl { get; set; }
         public Guid? ParentCategoryId { get; set; }
-        public DateTimeOffset CreatedAt { get; set; }
-        public DateTimeOffset? UpdatedAt { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
         public bool IsActive { get; set; }
 
         // Navigation properties
