@@ -1,6 +1,6 @@
 ﻿namespace merxly.Application.DTOs.Common
 {
-    public class ResponseDto<T>
+    public record ResponseDto<T>
     {
         public T? Data { get; init; }
         public bool IsSuccess { get; init; }
