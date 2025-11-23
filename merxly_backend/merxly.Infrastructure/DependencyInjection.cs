@@ -1,9 +1,11 @@
-﻿using FluentValidation;
+﻿using CloudinaryDotNet;
+using FluentValidation;
 using FluentValidation.AspNetCore;
 using merxly.Application.Interfaces;
 using merxly.Application.Interfaces.Repositories;
 using merxly.Application.Interfaces.Services;
 using merxly.Application.Settings;
+using merxly.Application.Validators.Auth;
 using merxly.Domain.Entities;
 using merxly.Infrastructure.Persistence;
 using merxly.Infrastructure.Persistence.Repositories;
@@ -116,10 +118,21 @@ namespace merxly.Infrastructure
 
             // Service Registration
             services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IFileStorageService, CloudinaryService>();
 
-            // FluentValidation
-            services.AddValidatorsFromAssemblyContaining<merxly.Application.Validators.Auth.RegisterDtoValidator>();
-            services.AddFluentValidationAutoValidation();
+            // Cloudinary Service
+            var cloudinarySettings = configuration.GetSection("CloudinarySettings").Get<CloudinarySettings>()
+                ?? throw new InvalidOperationException("Cloudinary settings not found in configuration.");
+
+            services.AddSingleton(x =>
+            {
+                var account = new Account(
+                    cloudinarySettings.CloudName,
+                    cloudinarySettings.ApiKey,
+                    cloudinarySettings.ApiSecret
+                );
+                return new Cloudinary(account);
+            });
 
             return services;
         }
