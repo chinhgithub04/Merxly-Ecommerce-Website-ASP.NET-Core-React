@@ -1,5 +1,7 @@
 using merxly.API.Middlewares;
 using merxly.Application;
+using merxly.Application.Settings;
+using merxly.Domain.Entities;
 using merxly.Infrastructure;
 using merxly.Infrastructure.Data;
 using Microsoft.AspNetCore.Identity;
@@ -43,7 +45,7 @@ builder.Services.AddSwaggerGen(options =>
 
 var app = builder.Build();
 
-// Seed database roles
+// Seed database roles and admin
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -51,6 +53,14 @@ using (var scope = app.Services.CreateScope())
     {
         var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
         await DbInitializer.SeedRolesAsync(roleManager);
+
+        var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+        var adminSettings = builder.Configuration.GetSection("AdminSettings").Get<AdminSettings>();
+        
+        if (adminSettings != null)
+        {
+            await DbInitializer.SeedAdminAsync(userManager, adminSettings);
+        }
     }
     catch (Exception ex)
     {
