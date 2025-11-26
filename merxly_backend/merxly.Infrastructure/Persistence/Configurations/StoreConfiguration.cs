@@ -20,16 +20,18 @@ namespace merxly.Infrastructure.Persistence.Configurations
             builder.Property(s => s.Description)
                 .HasMaxLength(2000);
 
-            builder.Property(s => s.LogoUrl)
+            builder.Property(s => s.LogoImagePublicId)
                 .HasMaxLength(500);
 
-            builder.Property(s => s.BannerUrl)
+            builder.Property(s => s.BannerImagePublicId)
                 .HasMaxLength(500);
 
             builder.Property(s => s.Email)
+                .IsRequired()
                 .HasMaxLength(256);
 
             builder.Property(s => s.PhoneNumber)
+                .IsRequired()
                 .HasMaxLength(11);
 
             builder.Property(s => s.Website)

@@ -18,6 +18,7 @@ namespace merxly.Application
 
             // Service Registrations
             services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<IStoreService, StoreService>();
 
             // AutoMapper Configuration
             services.AddAutoMapper(Assembly.GetExecutingAssembly());

@@ -7,10 +7,10 @@ namespace merxly.Domain.Entities
         public Guid Id { get; set; }
         public string StoreName { get; set; }
         public string? Description { get; set; }
-        public string? LogoUrl { get; set; }
-        public string? BannerUrl { get; set; }
-        public string? Email { get; set; }
-        public string? PhoneNumber { get; set; }
+        public string? LogoImagePublicId { get; set; }
+        public string? BannerImagePublicId { get; set; }
+        public string Email { get; set; }
+        public string PhoneNumber { get; set; }
         public string? Website { get; set; }
         public bool IsActive { get; set; }
         public bool IsVerified { get; set; }

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using merxly.Application.DTOs.Category;
 using merxly.Application.DTOs.Common;
+using merxly.Application.DTOs.Store;
 using merxly.Domain.Entities;
 
 namespace merxly.Application.Mappings
@@ -26,6 +27,12 @@ namespace merxly.Application.Mappings
             
             CreateMap<CreateCategoryDto, Category>();
             CreateMap<UpdateCategoryDto, Category>();
+
+            // Store Mappings
+            CreateMap<Store, DetailStoreDto>()
+                .ForMember(dest => dest.OwnerName, opt => opt.MapFrom(src => 
+                    $"{src.Owner.FirstName} {src.Owner.LastName}"));
+            CreateMap<CreateStoreDto, Store>();
         }
     }
 }
