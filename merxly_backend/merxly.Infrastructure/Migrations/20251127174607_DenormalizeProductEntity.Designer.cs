@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using merxly.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using merxly.Infrastructure.Persistence;
 namespace merxly.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251127174607_DenormalizeProductEntity")]
+    partial class DenormalizeProductEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -688,11 +691,6 @@ namespace merxly.Infrastructure.Migrations
                     b.Property<Guid>("StoreId")
                         .HasColumnType("char(36)");
 
-                    b.Property<int>("TotalSold")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(0);
-
                     b.Property<int>("TotalStock")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
@@ -710,8 +708,6 @@ namespace merxly.Infrastructure.Migrations
                     b.HasIndex("StoreId");
 
                     b.HasIndex("IsActive", "MinPrice");
-
-                    b.HasIndex("IsActive", "TotalSold");
 
                     b.HasIndex("CategoryId", "IsActive", "MinPrice");
 

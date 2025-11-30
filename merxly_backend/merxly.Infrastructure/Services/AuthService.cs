@@ -166,7 +166,7 @@ namespace merxly.Infrastructure.Services
                 Email = user.Email!,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
-                AvatarUrl = user.AvatarUrl,
+                AvatarPublicId = user.AvatarPublicId,
                 Roles = roles
             };
         }
@@ -179,7 +179,7 @@ namespace merxly.Infrastructure.Services
                 new Claim(ClaimTypes.Email, user.Email!),
                 new Claim(ClaimTypes.GivenName, user.FirstName),
                 new Claim(ClaimTypes.Surname, user.LastName),
-                new Claim("avatar_url", user.AvatarUrl ?? ""),
+                new Claim("avatar_public_id", user.AvatarPublicId ?? ""),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 

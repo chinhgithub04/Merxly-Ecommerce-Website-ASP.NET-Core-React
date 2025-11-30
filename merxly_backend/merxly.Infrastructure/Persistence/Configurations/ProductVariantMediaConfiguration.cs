@@ -14,7 +14,7 @@ namespace merxly.Infrastructure.Persistence.Configurations
             builder.HasKey(pvm => pvm.Id);
 
             // Properties
-            builder.Property(pvm => pvm.Url)
+            builder.Property(pvm => pvm.MediaPublicId)
                 .IsRequired()
                 .HasMaxLength(500);
 

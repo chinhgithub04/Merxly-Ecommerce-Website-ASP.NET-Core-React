@@ -19,7 +19,7 @@ namespace merxly.Infrastructure.Persistence.Configurations
                 .IsRequired()
                 .HasMaxLength(100);
 
-            builder.Property(u => u.AvatarUrl)
+            builder.Property(u => u.AvatarPublicId)
                 .HasMaxLength(500);
 
             builder.Property(u => u.CreatedAt)

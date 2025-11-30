@@ -6,7 +6,7 @@ namespace merxly.Domain.Entities
     public class ProductVariantMedia : ICreatedDate, IModifiedDate
     {
         public Guid Id { get; set; }
-        public string Url { get; set; }
+        public string MediaPublicId { get; set; }
         public MediaType MediaType { get; set; }
         public int DisplayOrder { get; set; }
         public bool IsMain { get; set; }

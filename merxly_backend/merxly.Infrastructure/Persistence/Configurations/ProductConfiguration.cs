@@ -18,19 +18,44 @@ namespace merxly.Infrastructure.Persistence.Configurations
                 .HasMaxLength(300);
 
             builder.Property(p => p.Description)
-                .IsRequired()
                 .HasMaxLength(5000);
 
-            builder.Property(p => p.ShortDescription)
-                .HasMaxLength(500);
+            builder.Property(p => p.IsStoreFeatured)
+                .IsRequired()
+                .HasDefaultValue(false);
 
-            builder.Property(p => p.IsFeatured)
+            builder.Property(p => p.IsPlatformFeatured)
                 .IsRequired()
                 .HasDefaultValue(false);
 
             builder.Property(p => p.IsActive)
                 .IsRequired()
                 .HasDefaultValue(true);
+
+            builder.Property(p => p.MinPrice)
+                .HasPrecision(18, 2);
+
+            builder.Property(p => p.MaxPrice)
+                .HasPrecision(18, 2);
+
+            builder.Property(p => p.TotalStock)
+                .IsRequired()
+                .HasDefaultValue(0);
+
+            builder.Property(p => p.MainMediaPublicId)
+                .HasMaxLength(500);
+
+            builder.Property(p => p.AverageRating)
+                .IsRequired()
+                .HasDefaultValue(0);
+
+            builder.Property(p => p.ReviewCount)
+                .IsRequired()
+                .HasDefaultValue(0);
+
+            builder.Property(p => p.TotalSold)
+                .IsRequired()
+                .HasDefaultValue(0);
 
             builder.Property(p => p.CreatedAt)
                 .IsRequired();
@@ -49,6 +74,12 @@ namespace merxly.Infrastructure.Persistence.Configurations
             // Indexes
             builder.HasIndex(p => p.Name);
             builder.HasIndex(p => p.CreatedAt);
+            builder.HasIndex(p => p.StoreId);
+
+            builder.HasIndex(p => new { p.IsActive, p.MinPrice });
+            builder.HasIndex(p => new { p.CategoryId, p.IsActive, p.MinPrice });
+            builder.HasIndex(p => new { p.IsActive, p.AverageRating, p.ReviewCount });
+            builder.HasIndex(p => new { p.IsActive, p.TotalSold });
         }
     }
 }

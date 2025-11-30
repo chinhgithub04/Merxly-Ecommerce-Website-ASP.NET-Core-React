@@ -7,7 +7,7 @@ namespace merxly.Domain.Entities
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public string? AvatarUrl { get; set; }
+        public string? AvatarPublicId { get; set; }
         public DateTime CreatedAt {  get; set; }
         public DateTime? UpdatedAt { get; set; }
         public bool IsActive { get; set; }

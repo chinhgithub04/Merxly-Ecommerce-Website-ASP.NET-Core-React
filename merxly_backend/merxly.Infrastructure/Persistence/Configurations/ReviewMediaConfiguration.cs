@@ -13,7 +13,7 @@ namespace merxly.Infrastructure.Persistence.Configurations
             builder.HasKey(ri => ri.Id);
 
             // Properties
-            builder.Property(ri => ri.Url)
+            builder.Property(ri => ri.MediaPublicId)
                 .IsRequired()
                 .HasMaxLength(500);
 

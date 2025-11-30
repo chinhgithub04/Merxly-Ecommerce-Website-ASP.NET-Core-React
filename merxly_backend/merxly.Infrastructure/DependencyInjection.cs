@@ -159,13 +159,11 @@ namespace merxly.Infrastructure
             // Service Registration
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IFileStorageService, CloudinaryService>();
+            services.AddScoped<ICloudinaryUrlService, CloudinaryUrlService>();
 
             // Cloudinary Service
             var cloudinarySettings = configuration.GetSection("CloudinarySettings").Get<CloudinarySettings>()
                 ?? throw new InvalidOperationException("Cloudinary settings not found in configuration.");
-
-            // Configure CloudinaryUrlBuilder with cloud name
-            CloudinaryUrlBuilder.Configure(cloudinarySettings.CloudName);
 
             services.AddSingleton(x =>
             {

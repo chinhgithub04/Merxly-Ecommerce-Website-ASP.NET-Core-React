@@ -1,4 +1,6 @@
 ﻿using merxly.Application.DTOs.Common;
+using merxly.Application.Interfaces;
+using merxly.Application.Interfaces.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -18,6 +20,14 @@ namespace merxly.API.Controllers
             }
 
             return userId;
+        }
+
+        protected async Task<Guid?> GetStoreIdForCurrentUserAsync(
+            IStoreRepository storeRepo,
+            CancellationToken cancellationToken = default)
+        {
+            var userId = GetUserIdFromClaims();
+            return await storeRepo.GetStoreIdByOwnerIdAsync(userId, cancellationToken);
         }
 
         protected ActionResult<ResponseDto<T>> ForbiddenResponse<T>(string message = "You don't have permission to access this resource")
