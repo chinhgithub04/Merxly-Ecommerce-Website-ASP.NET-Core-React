@@ -2,7 +2,7 @@ using merxly.Application.DTOs.Product;
 
 namespace merxly.Application.DTOs.Category
 {
-    public class DetailCategoryDto
+    public record DetailCategoryDto
     {
         public Guid Id { get; init; }
         public string Name { get; init; }

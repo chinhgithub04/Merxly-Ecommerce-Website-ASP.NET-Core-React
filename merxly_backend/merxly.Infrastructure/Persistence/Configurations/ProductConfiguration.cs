@@ -61,6 +61,11 @@ namespace merxly.Infrastructure.Persistence.Configurations
                 .IsRequired();
 
             // Relationships
+            builder.HasMany(p => p.ProductAttributes)
+                .WithOne(pa => pa.Product)
+                .HasForeignKey(pa => pa.ProductId)
+                .OnDelete(DeleteBehavior.Cascade);
+
             builder.HasMany(p => p.Variants)
                 .WithOne(v => v.Product)
                 .HasForeignKey(v => v.ProductId)

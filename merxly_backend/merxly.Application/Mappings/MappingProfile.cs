@@ -2,6 +2,8 @@
 using merxly.Application.DTOs.Category;
 using merxly.Application.DTOs.Common;
 using merxly.Application.DTOs.Product;
+using merxly.Application.DTOs.ProductAttribute;
+using merxly.Application.DTOs.ProductAttributeValue;
 using merxly.Application.DTOs.ProductVariant;
 using merxly.Application.DTOs.Store;
 using merxly.Application.Interfaces.Services;
@@ -62,6 +64,22 @@ namespace merxly.Application.Mappings
 
             // ProductVariant Mappings
             CreateMap<ProductVariant, ProductVariantDto>();
+
+            // ProductAttribute Mappings
+            CreateMap<ProductAttribute, ProductAttributeDto>();
+            //CreateMap<ProductAttribute, DetailProductAttributeDto>()
+            //    .ForMember(dest => dest.Values, opt => opt.MapFrom(src => src.ProductAttributeValues));
+            CreateMap<CreateProductAttributeDto, ProductAttribute>();
+            CreateMap<UpdateProductAttributeDto, ProductAttribute>()
+                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+
+            // ProductAttributeValue Mappings
+            CreateMap<ProductAttributeValue, ProductAttributeValueDto>()
+                .ForMember(dest => dest.ProductAttributeName, opt => opt.MapFrom(src => src.ProductAttribute.Name));
+            CreateMap<ProductAttributeValue, DetailProductAttributeValueDto>();
+            CreateMap<CreateProductAttributeValueDto, ProductAttributeValue>();
+            CreateMap<UpdateProductAttributeValueDto, ProductAttributeValue>()
+                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
         }
     }
 }

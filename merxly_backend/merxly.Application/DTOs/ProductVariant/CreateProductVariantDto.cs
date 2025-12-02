@@ -3,14 +3,12 @@ using merxly.Application.DTOs.ProductVariantMedia;
 
 namespace merxly.Application.DTOs.ProductVariant
 {
-    public record ProductVariantDto
+    public record CreateProductVariantDto
     {
-        public Guid Id { get; init; }
         public string? SKU { get; init; }
         public decimal Price { get; init; }
         public int StockQuantity { get; init; }
-        public bool IsActive { get; init; }
-        public List<ProductAttributeValueDto> ProductAttributeValues { get; init; } = new();
-        public List<ProductVariantMediaDto> ProductVariantMedia { get; init; } = new();
+        public List<CreateProductAttributeValueDto> ProductAttributeValues { get; init; } = new();
+        public List<CreateProductVariantMediaDto> ProductVariantMedia { get; init; } = new();
     }
 }

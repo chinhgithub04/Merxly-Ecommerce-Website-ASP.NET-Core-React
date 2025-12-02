@@ -18,14 +18,6 @@ namespace merxly.Infrastructure.Persistence.Configurations
                 .IsRequired()
                 .HasMaxLength(100);
 
-            builder.Property(a => a.IsActive)
-                .IsRequired()
-                .HasDefaultValue(true);
-
-            builder.Property(a => a.ProductAttributeDisplayType)
-                .IsRequired()
-                .HasConversion<int>();
-
             builder.Property(a => a.DisplayOrder)
                 .IsRequired()
                 .HasDefaultValue(0);

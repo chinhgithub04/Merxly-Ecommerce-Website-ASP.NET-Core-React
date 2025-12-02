@@ -12,6 +12,10 @@ namespace merxly.Infrastructure.Persistence.Configurations
 
             builder.HasKey(pav => pav.Id);
 
+            builder.Property(pav => pav.DisplayOrder)
+                .IsRequired()
+                .HasDefaultValue(0);
+
             // Properties
             builder.Property(pav => pav.Value)
                 .IsRequired()

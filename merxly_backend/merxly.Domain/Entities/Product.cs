@@ -27,6 +27,7 @@ namespace merxly.Domain.Entities
         // Navigation properties
         public Category Category { get; set; }
         public Store Store { get; set; }
+        public ICollection<ProductAttribute> ProductAttributes { get; set; } = new List<ProductAttribute>();
         public ICollection<ProductVariant> Variants { get; set; } = new List<ProductVariant>();
         public ICollection<Review> Reviews { get; set; } = new List<Review>();
     }
