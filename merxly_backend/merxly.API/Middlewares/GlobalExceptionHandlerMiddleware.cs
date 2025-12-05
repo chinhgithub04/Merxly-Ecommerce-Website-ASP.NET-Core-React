@@ -21,20 +21,15 @@ namespace merxly.API.Middlewares
             {
                 await _next(context);
             }
-            catch (InvalidOperationException ex)
-            {
-                _logger.LogWarning(ex, "Invalid operation attempt: {Message}", ex.Message);
-                await HandleExceptionAsync(context, ex, StatusCodes.Status400BadRequest, ex.Message);
-            }
             catch (ValidationException ex)
             {
                 _logger.LogWarning(ex, "Validation failed: {Errors}", string.Join(", ", ex.Errors));
                 await HandleExceptionAsync(context, ex, StatusCodes.Status400BadRequest, "Validation failed", ex.Errors.Select(e => e.ErrorMessage).ToList());
             }
-            catch (UnauthorizedAccessException ex)
+            catch (ConflictException ex)
             {
-                _logger.LogWarning(ex, "Unauthorized access attempt: {Message}", ex.Message);
-                await HandleExceptionAsync(context, ex, StatusCodes.Status401Unauthorized, "Unauthorized");
+                _logger.LogWarning(ex, "Conflict occurred: {Message}", ex.Message);
+                await HandleExceptionAsync(context, ex, StatusCodes.Status409Conflict, ex.Message);
             }
             catch (ForbiddenAccessException ex)
             {
@@ -45,6 +40,16 @@ namespace merxly.API.Middlewares
             {
                 _logger.LogWarning(ex, "Resource not found: {Message}", ex.Message);
                 await HandleExceptionAsync(context, ex, StatusCodes.Status404NotFound, ex.Message);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                _logger.LogWarning(ex, "Unauthorized access attempt: {Message}", ex.Message);
+                await HandleExceptionAsync(context, ex, StatusCodes.Status401Unauthorized, "Unauthorized");
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogWarning(ex, "Invalid operation attempt: {Message}", ex.Message);
+                await HandleExceptionAsync(context, ex, StatusCodes.Status400BadRequest, ex.Message);
             }
             catch (Exception ex)
             {

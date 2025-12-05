@@ -3,6 +3,7 @@ using merxly.Application.DTOs.Common;
 using merxly.Application.DTOs.Product;
 using merxly.Application.DTOs.Product.Update;
 using merxly.Application.DTOs.ProductAttribute;
+using merxly.Application.DTOs.ProductAttribute.Update;
 using merxly.Application.DTOs.ProductAttributeValue;
 using merxly.Application.DTOs.ProductVariant;
 using merxly.Application.DTOs.ProductVariant.Update;
@@ -310,9 +311,64 @@ namespace merxly.Application.Services
             throw new NotImplementedException();
         }
 
-        public Task<StoreDetailProductDto> UpdateProductAttributeAsync(Guid productAttributeId, UpdateProductAttributeDto updateAttributesDto, CancellationToken cancellationToken)
+        public async Task<BulkUpdateProductAttributesResponseDto> UpdateProductAttributeAsync(Guid productId, BulkUpdateProductAttributesDto bulkUpdateProductAttributesDto, Guid storeId, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            _logger.LogInformation("Updating attributes for product: {ProductId}", productId);
+            var product = await _unitOfWork.Product.GetProductWithAttributesByIdAsync(
+                productId,
+                cancellationToken);
+
+            if (product == null)
+            {
+                _logger.LogWarning("Product not found: {ProductId}", productId);
+                throw new NotFoundException("Product not found.");
+            }
+
+            // Verify ownership
+            if (product.StoreId != storeId)
+            {
+                _logger.LogWarning("Store {StoreId} is not the owner of product {ProductId}", storeId, productId);
+                throw new ForbiddenAccessException("You don't have permission to update this product.");
+            }
+
+            // Map of existing attributes for quick lookup
+            var dbAttributesMap = product.ProductAttributes.ToDictionary(a => a.Id);
+            foreach (var updateAttributeDto in bulkUpdateProductAttributesDto.Attributes)
+            {
+                if (dbAttributesMap.TryGetValue(updateAttributeDto.Id, out var attribute))
+                {
+                    if (!string.IsNullOrWhiteSpace(updateAttributeDto.Name) && !updateAttributeDto.Name.Trim().Equals(attribute.Name, StringComparison.OrdinalIgnoreCase))
+                    {
+                        // Check for duplicate attribute name
+                        bool isDuplicateName = product.ProductAttributes
+                            .Any(a => a.Id != updateAttributeDto.Id && a.Name.Equals(updateAttributeDto.Name, StringComparison.OrdinalIgnoreCase));
+
+                        if (isDuplicateName)
+                        {
+                            _logger.LogWarning("Duplicate attribute name: {AttributeName} for product: {ProductId}", updateAttributeDto.Name, productId);
+                            throw new ConflictException($"Attribute name '{updateAttributeDto.Name}' already exists for this product.");
+                        }
+                    }
+                    _mapper.Map(updateAttributeDto, attribute);
+                    _unitOfWork.ProductAttribute.Update(attribute);
+                    _logger.LogInformation("Updated attribute: {AttributeId} for product: {ProductId}", attribute.Id, productId);
+                }
+                else
+                {
+                    _logger.LogWarning("Attribute not found: {AttributeId} for product: {ProductId}", updateAttributeDto.Id, productId);
+                    throw new NotFoundException($"Attribute with ID {updateAttributeDto.Id} not found for this product.");
+                }
+            }
+
+            UpdateProductVariantNames(product);
+            _unitOfWork.Product.Update(product);
+
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            _logger.LogInformation("Attributes updated successfully for product: {ProductId}", productId);
+            return new BulkUpdateProductAttributesResponseDto
+            {
+                UpdatedAttributes = _mapper.Map<List<ResponseUpdateAttributeItemDto>>(product.ProductAttributes)
+            };
         }
 
         public Task<StoreDetailProductDto> UpdateProductAttributeValueAsync(Guid productAttributeValueId, UpdateProductAttributeValueDto updateAttributeValueDto, CancellationToken cancellationToken)
@@ -340,7 +396,7 @@ namespace merxly.Application.Services
                 throw new ForbiddenAccessException("You don't have permission to update this product.");
             }
 
-            //
+            // Map of existing variants for quick lookup
             var dbVariantsMap = product.Variants.ToDictionary(v => v.Id);
 
             foreach (var updateVariantDto in bulkUpdateProductVariantsDto.Variants)
@@ -433,6 +489,31 @@ namespace merxly.Application.Services
             }
 
             product.MainMediaPublicId = mainMedia?.MediaPublicId;
+        }
+
+        private void UpdateProductVariantNames(Product product)
+        {
+            if (product.Variants == null || !product.Variants.Any())
+            {
+                return;
+            }
+
+            foreach (var variant in product.Variants)
+            {
+                if (variant.VariantAttributeValues == null || !variant.VariantAttributeValues.Any())
+                {
+                    continue;
+                }
+
+                // Get attribute values ordered by the attribute's display order
+                var attributeValues = variant.VariantAttributeValues
+                    .OrderBy(vav => vav.ProductAttributeValue.ProductAttribute.DisplayOrder)
+                    .Select(vav => vav.ProductAttributeValue.Value)
+                    .ToList();
+
+                // Create variant name by joining attribute values with " / "
+                variant.Name = string.Join(" / ", attributeValues);
+            }
         }
     }
 }
