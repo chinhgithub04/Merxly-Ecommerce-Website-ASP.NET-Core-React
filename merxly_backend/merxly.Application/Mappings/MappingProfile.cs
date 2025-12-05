@@ -10,9 +10,11 @@ using merxly.Application.DTOs.ProductAttributeValue.Update;
 using merxly.Application.DTOs.ProductVariant;
 using merxly.Application.DTOs.ProductVariant.Update;
 using merxly.Application.DTOs.ProductVariantMedia;
+using merxly.Application.DTOs.ProductVariantMedia.Update;
 using merxly.Application.DTOs.Store;
 using merxly.Application.Interfaces.Services;
 using merxly.Domain.Entities;
+using merxly.Domain.Enums;
 
 namespace merxly.Application.Mappings
 {
@@ -117,6 +119,15 @@ namespace merxly.Application.Mappings
 
             // ProductVariantMedia Mappings
             CreateMap<CreateProductVariantMediaDto, ProductVariantMedia>();
+
+            CreateMap<BulkUpdateVariantMediaItemDto, ProductVariantMedia>()
+                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+
+            CreateMap<ProductVariantMedia, ResponseUpdateVariantMediaItemDto>()
+                .ForMember(dest => dest.MediaUrl, opt => opt.MapFrom(src => 
+                    src.MediaType == MediaType.Image 
+                        ? _cloudinaryUrlService.GetThumbnailImageUrl(src.MediaPublicId)
+                        : _cloudinaryUrlService.GetVideoUrl(src.MediaPublicId)));
         }
     }
 }

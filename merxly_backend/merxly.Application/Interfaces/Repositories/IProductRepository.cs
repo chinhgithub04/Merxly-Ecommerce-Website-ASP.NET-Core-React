@@ -10,5 +10,6 @@ namespace merxly.Application.Interfaces.Repositories
         Task<PaginatedResultDto<Product>> GetPaginatedProductsWithQueryParametersAsync(ProductQueryParameters queryParameters, CancellationToken cancellationToken = default);
         Task<Product?> GetProductWithVariantsByIdAsync(Guid productId, CancellationToken cancellationToken = default);
         Task<Product?> GetProductWithAttributesByIdAsync(Guid productId, CancellationToken cancellationToken = default);
+        Task<Product?> GetProductWithVariantsAndMediaByIdAsync(Guid productId, CancellationToken cancellationToken = default);
     }
 }

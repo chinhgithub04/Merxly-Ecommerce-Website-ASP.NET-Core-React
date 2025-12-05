@@ -9,6 +9,7 @@ using merxly.Application.DTOs.ProductAttributeValue.Update;
 using merxly.Application.DTOs.ProductVariant;
 using merxly.Application.DTOs.ProductVariant.Update;
 using merxly.Application.DTOs.ProductVariantMedia;
+using merxly.Application.DTOs.ProductVariantMedia.Update;
 using merxly.Application.Interfaces;
 using merxly.Application.Interfaces.Services;
 using merxly.Domain.Entities;
@@ -483,9 +484,108 @@ namespace merxly.Application.Services
             };
         }
 
-        public Task<ProductVariantMediaDto> UpdateProductVariantMediaAsync(Guid productVariantMediaId, UpdateProductVariantMediaDto updateProductVariantMediaDto, CancellationToken cancellationToken)
+        public async Task<BulkUpdateProductMediaResponseDto> UpdateProductVariantMediaAsync(Guid productId, BulkUpdateProductMediaRequestDto bulkUpdateProductMediaRequestDto, Guid storeId, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            _logger.LogInformation("Updating variant media for product: {ProductId}", productId);
+            var product = await _unitOfWork.Product.GetProductWithVariantsAndMediaByIdAsync(
+                productId,
+                cancellationToken);
+
+            if (product == null)
+            {
+                _logger.LogWarning("Product not found: {ProductId}", productId);
+                throw new NotFoundException("Product not found.");
+            }
+
+            // Verify ownership
+            if (product.StoreId != storeId)
+            {
+                _logger.LogWarning("Store {StoreId} is not the owner of product {ProductId}", storeId, productId);
+                throw new ForbiddenAccessException("You don't have permission to update this product.");
+            }
+
+            var responseWrappers = new List<ResponseUpdateVariantMediaWrapperDto>();
+
+            foreach (var variantMediaWrapper in bulkUpdateProductMediaRequestDto.ProductVariantMedias)
+            {
+                var variant = product.Variants.FirstOrDefault(v => v.Id == variantMediaWrapper.ProductVariantId);
+                
+                if (variant == null)
+                {
+                    _logger.LogWarning("Variant not found: {VariantId} for product: {ProductId}", variantMediaWrapper.ProductVariantId, productId);
+                    throw new NotFoundException($"Variant with ID {variantMediaWrapper.ProductVariantId} not found for this product.");
+                }
+
+                // Get all media IDs from DTO
+                var dtoMediaIds = variantMediaWrapper.VariantMedias
+                    .Where(m => m.Id.HasValue)
+                    .Select(m => m.Id!.Value)
+                    .ToHashSet();
+
+                // Delete media items that exist in database but not in DTO
+                var mediaToDelete = variant.Media
+                    .Where(m => !dtoMediaIds.Contains(m.Id))
+                    .ToList();
+
+                foreach (var mediaToRemove in mediaToDelete)
+                {
+                    variant.Media.Remove(mediaToRemove);
+                    _unitOfWork.ProductVariantMedia.Remove(mediaToRemove);
+                    _logger.LogInformation("Deleted media item: {MediaId} for variant: {VariantId}", mediaToRemove.Id, variant.Id);
+                }
+
+                var updatedMediaItems = new List<ProductVariantMedia>();
+
+                foreach (var mediaItemDto in variantMediaWrapper.VariantMedias)
+                {
+                    if (mediaItemDto.Id.HasValue)
+                    {
+                        // Update existing media item
+                        var existingMedia = variant.Media.FirstOrDefault(m => m.Id == mediaItemDto.Id.Value);
+                        
+                        if (existingMedia == null)
+                        {
+                            _logger.LogWarning("Media item not found: {MediaId} for variant: {VariantId}", mediaItemDto.Id.Value, variant.Id);
+                            throw new NotFoundException($"Media item with ID {mediaItemDto.Id.Value} not found for this variant.");
+                        }
+
+                        _mapper.Map(mediaItemDto, existingMedia);
+                        _unitOfWork.ProductVariantMedia.Update(existingMedia);
+                        updatedMediaItems.Add(existingMedia);
+                        _logger.LogInformation("Updated media item: {MediaId} for variant: {VariantId}", existingMedia.Id, variant.Id);
+                    }
+                    else
+                    {
+                        // Add new media item
+                        var newMedia = _mapper.Map<ProductVariantMedia>(mediaItemDto);
+                        newMedia.ProductVariantId = variant.Id;
+                        variant.Media.Add(newMedia);
+                        await _unitOfWork.ProductVariantMedia.AddAsync(newMedia, cancellationToken);
+                        updatedMediaItems.Add(newMedia);
+                        _logger.LogInformation("Added new media item for variant: {VariantId}", variant.Id);
+                    }
+                }
+
+                // Ensure only one main media per variant
+                EnsureSingleMainMediaPerVariant(variant);
+
+                responseWrappers.Add(new ResponseUpdateVariantMediaWrapperDto
+                {
+                    ProductVariantId = variant.Id,
+                    VariantMedias = _mapper.Map<List<ResponseUpdateVariantMediaItemDto>>(updatedMediaItems)
+                });
+            }
+
+            UpdateProductMainMedia(product);
+            _unitOfWork.Product.Update(product);
+
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            _logger.LogInformation("Variant media updated successfully for product: {ProductId}", productId);
+            
+            return new BulkUpdateProductMediaResponseDto
+            {
+                ProductVariantMedias = responseWrappers
+            };
         }
 
         public Task DeleteProductAsync(Guid productId, CancellationToken cancellationToken)
@@ -568,6 +668,40 @@ namespace merxly.Application.Services
                 // Create variant name: Product Name - Attribute Value 1 / Attribute Value 2
                 var variantAttributesString = string.Join(" / ", attributeValues);
                 variant.Name = $"{product.Name} - {variantAttributesString}";
+            }
+        }
+
+        private void EnsureSingleMainMediaPerVariant(ProductVariant variant)
+        {
+            if (variant.Media == null || !variant.Media.Any())
+            {
+                return;
+            }
+
+            // Get all media ordered by display order
+            var orderedMedia = variant.Media.OrderBy(m => m.DisplayOrder).ToList();
+
+            // Get all media marked as main
+            var mainMediaItems = orderedMedia.Where(m => m.IsMain).ToList();
+
+            if (mainMediaItems.Count > 1)
+            {
+                // Multiple main media found - keep only the first one based on display order
+                var firstMain = mainMediaItems.First();
+                foreach (var media in mainMediaItems.Where(m => m.Id != firstMain.Id))
+                {
+                    media.IsMain = false;
+                    _unitOfWork.ProductVariantMedia.Update(media);
+                }
+                _logger.LogInformation("Ensured single main media for variant: {VariantId}, kept media: {MediaId}", variant.Id, firstMain.Id);
+            }
+            else if (!mainMediaItems.Any())
+            {
+                // No main media found - set the first one as main
+                var firstMedia = orderedMedia.First();
+                firstMedia.IsMain = true;
+                _unitOfWork.ProductVariantMedia.Update(firstMedia);
+                _logger.LogInformation("Set first media as main for variant: {VariantId}, media: {MediaId}", variant.Id, firstMedia.Id);
             }
         }
     }

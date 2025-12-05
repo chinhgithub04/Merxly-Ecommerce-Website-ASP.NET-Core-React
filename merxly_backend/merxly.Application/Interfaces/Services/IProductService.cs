@@ -8,6 +8,7 @@ using merxly.Application.DTOs.ProductAttributeValue.Update;
 using merxly.Application.DTOs.ProductVariant;
 using merxly.Application.DTOs.ProductVariant.Update;
 using merxly.Application.DTOs.ProductVariantMedia;
+using merxly.Application.DTOs.ProductVariantMedia.Update;
 
 namespace merxly.Application.Interfaces.Services
 {
@@ -27,7 +28,7 @@ namespace merxly.Application.Interfaces.Services
         Task<BulkUpdateProductAttributesResponseDto> UpdateProductAttributeAsync(Guid productId, BulkUpdateProductAttributesDto bulkUpdateProductAttributesDto, Guid storeId, CancellationToken cancellationToken);
         Task<BulkUpdateProductAttributeValuesResponseDto> UpdateProductAttributeValueAsync(Guid productAttributeId, BulkUpdateProductAttributeValuesDto bulkUpdateProductAttributeValuesDto, Guid storeId, CancellationToken cancellationToken);
         Task<BulkUpdateProductVariantsResponseDto> UpdateProductVariantAsync(Guid productId, BulkUpdateProductVariantsDto bulkUpdateProductVariantsDto, Guid storeId,CancellationToken cancellationToken);
-        Task<ProductVariantMediaDto> UpdateProductVariantMediaAsync(Guid productVariantMediaId, UpdateProductVariantMediaDto updateProductVariantMediaDto, CancellationToken cancellationToken);
+        Task<BulkUpdateProductMediaResponseDto> UpdateProductVariantMediaAsync(Guid productId, BulkUpdateProductMediaRequestDto bulkUpdateProductMediaRequestDto, Guid storeId, CancellationToken cancellationToken);
         Task DeleteProductAsync(Guid productId, CancellationToken cancellationToken);
 
         // Admin
