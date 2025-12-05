@@ -5,6 +5,7 @@ using merxly.Application.DTOs.Product.Update;
 using merxly.Application.DTOs.ProductAttribute;
 using merxly.Application.DTOs.ProductAttribute.Update;
 using merxly.Application.DTOs.ProductAttributeValue;
+using merxly.Application.DTOs.ProductAttributeValue.Update;
 using merxly.Application.DTOs.ProductVariant;
 using merxly.Application.DTOs.ProductVariant.Update;
 using merxly.Application.DTOs.ProductVariantMedia;
@@ -360,9 +361,6 @@ namespace merxly.Application.Services
                 }
             }
 
-            UpdateProductVariantNames(product);
-            _unitOfWork.Product.Update(product);
-
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             _logger.LogInformation("Attributes updated successfully for product: {ProductId}", productId);
             return new BulkUpdateProductAttributesResponseDto
@@ -371,9 +369,64 @@ namespace merxly.Application.Services
             };
         }
 
-        public Task<StoreDetailProductDto> UpdateProductAttributeValueAsync(Guid productAttributeValueId, UpdateProductAttributeValueDto updateAttributeValueDto, CancellationToken cancellationToken)
+        public async Task<BulkUpdateProductAttributeValuesResponseDto> UpdateProductAttributeValueAsync(Guid productAttributeId, BulkUpdateProductAttributeValuesDto bulkUpdateProductAttributeValuesDto, Guid storeId, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            _logger.LogInformation("Updating attribute values for product attribute: {ProductAttributeId}", productAttributeId);
+            var productAttribute = await _unitOfWork.ProductAttribute.GetProductAttributeWithValuesByIdAsync(
+                productAttributeId,
+                cancellationToken);
+
+            if (productAttribute == null)
+            {
+                _logger.LogWarning("Product attribute not found: {ProductAttributeId}", productAttributeId);
+                throw new NotFoundException("Product attribute not found.");
+            }
+
+            // Verify ownership
+            if (productAttribute.Product.StoreId != storeId)
+            {
+                _logger.LogWarning("Store {StoreId} is not the owner of product attribute {ProductAttributeId}", storeId, productAttributeId);
+                throw new ForbiddenAccessException("You don't have permission to update this product attribute.");
+            }
+
+            // Map of existing attribute values for quick lookup
+            var dbAttributeValuesMap = productAttribute.ProductAttributeValues.ToDictionary(av => av.Id);
+            foreach (var updateAttributeValueDto in bulkUpdateProductAttributeValuesDto.AttributeValues)
+            {
+                if (dbAttributeValuesMap.TryGetValue(updateAttributeValueDto.Id, out var attributeValue))
+                {
+                    if (!string.IsNullOrWhiteSpace(updateAttributeValueDto.Value) && !updateAttributeValueDto.Value.Trim().Equals(attributeValue.Value, StringComparison.OrdinalIgnoreCase))
+                    {
+                        // Check for duplicate attribute value
+                        bool isDuplicateValue = productAttribute.ProductAttributeValues
+                            .Any(av => av.Id != updateAttributeValueDto.Id && av.Value.Equals(updateAttributeValueDto.Value, StringComparison.OrdinalIgnoreCase));
+
+                        if (isDuplicateValue)
+                        {
+                            _logger.LogWarning("Duplicate attribute value: {AttributeValue} for product attribute: {ProductAttributeId}", updateAttributeValueDto.Value, productAttributeId);
+                            throw new ConflictException($"Attribute value '{updateAttributeValueDto.Value}' already exists for this attribute.");
+                        }
+                    }
+                    _mapper.Map(updateAttributeValueDto, attributeValue);
+                    _unitOfWork.ProductAttributeValue.Update(attributeValue);
+                    _logger.LogInformation("Updated attribute value: {AttributeValueId} for product attribute: {ProductAttributeId}", attributeValue.Id, productAttributeId);
+                }
+                else
+                {
+                    _logger.LogWarning("Attribute value not found: {AttributeValueId} for product attribute: {ProductAttributeId}", updateAttributeValueDto.Id, productAttributeId);
+                    throw new NotFoundException($"Attribute value with ID {updateAttributeValueDto.Id} not found for this product attribute.");
+                }
+            }
+
+            UpdateProductVariantNames(productAttribute.Product);
+            _unitOfWork.Product.Update(productAttribute.Product);
+
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            _logger.LogInformation("Attribute values updated successfully for product attribute: {ProductAttributeId}", productAttributeId);
+            return new BulkUpdateProductAttributeValuesResponseDto
+            {
+                UpdatedAttributeValues = _mapper.Map<List<ResponseUpdateAttributeValueItemDto>>(productAttribute.ProductAttributeValues)
+            };
         }
 
         public async Task<BulkUpdateProductVariantsResponseDto> UpdateProductVariantAsync(Guid productId, BulkUpdateProductVariantsDto bulkUpdateProductVariantsDto, Guid storeId, CancellationToken cancellationToken)
@@ -502,6 +555,7 @@ namespace merxly.Application.Services
             {
                 if (variant.VariantAttributeValues == null || !variant.VariantAttributeValues.Any())
                 {
+                    variant.Name = product.Name;
                     continue;
                 }
 
@@ -511,8 +565,9 @@ namespace merxly.Application.Services
                     .Select(vav => vav.ProductAttributeValue.Value)
                     .ToList();
 
-                // Create variant name by joining attribute values with " / "
-                variant.Name = string.Join(" / ", attributeValues);
+                // Create variant name: Product Name - Attribute Value 1 / Attribute Value 2
+                var variantAttributesString = string.Join(" / ", attributeValues);
+                variant.Name = $"{product.Name} - {variantAttributesString}";
             }
         }
     }

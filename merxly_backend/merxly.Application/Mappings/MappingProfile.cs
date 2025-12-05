@@ -6,6 +6,7 @@ using merxly.Application.DTOs.Product.Update;
 using merxly.Application.DTOs.ProductAttribute;
 using merxly.Application.DTOs.ProductAttribute.Update;
 using merxly.Application.DTOs.ProductAttributeValue;
+using merxly.Application.DTOs.ProductAttributeValue.Update;
 using merxly.Application.DTOs.ProductVariant;
 using merxly.Application.DTOs.ProductVariant.Update;
 using merxly.Application.DTOs.ProductVariantMedia;
@@ -39,7 +40,8 @@ namespace merxly.Application.Mappings
                     _cloudinaryUrlService.GetMediumImageUrl(src.ImagePublicId)));
             
             CreateMap<CreateCategoryDto, Category>();
-            CreateMap<UpdateCategoryDto, Category>();
+            CreateMap<UpdateCategoryDto, Category>()
+                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
 
             // Store Mappings
             CreateMap<Store, DetailStoreDto>()
@@ -79,7 +81,8 @@ namespace merxly.Application.Mappings
             CreateMap<CreateProductVariantDto, ProductVariant>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(_ => Guid.NewGuid()));
 
-            CreateMap<BulkUpdateVariantItemDto, ProductVariant>();
+            CreateMap<BulkUpdateVariantItemDto, ProductVariant>()
+                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
 
             CreateMap<ProductVariant, ResponseUpdateVariantItemDto>();
 
@@ -93,7 +96,8 @@ namespace merxly.Application.Mappings
             CreateMap<UpdateProductAttributeDto, ProductAttribute>()
                 .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
 
-            CreateMap<BulkUpdateAttributeItemDto, ProductAttribute>();
+            CreateMap<BulkUpdateAttributeItemDto, ProductAttribute>()
+                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
 
             CreateMap<ProductAttribute, ResponseUpdateAttributeItemDto>();
 
@@ -105,6 +109,11 @@ namespace merxly.Application.Mappings
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(_ => Guid.NewGuid()));
             CreateMap<UpdateProductAttributeValueDto, ProductAttributeValue>()
                 .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+
+            CreateMap<BulkUpdateAttributeValueItemDto, ProductAttributeValue>()
+                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+
+            CreateMap<ProductAttributeValue, ResponseUpdateAttributeValueItemDto>();
 
             // ProductVariantMedia Mappings
             CreateMap<CreateProductVariantMediaDto, ProductVariantMedia>();
