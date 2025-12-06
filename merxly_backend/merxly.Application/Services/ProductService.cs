@@ -7,6 +7,7 @@ using merxly.Application.DTOs.ProductAttribute.Update;
 using merxly.Application.DTOs.ProductAttributeValue;
 using merxly.Application.DTOs.ProductAttributeValue.Update;
 using merxly.Application.DTOs.ProductVariant;
+using merxly.Application.DTOs.ProductVariant.Delete;
 using merxly.Application.DTOs.ProductVariant.Update;
 using merxly.Application.DTOs.ProductVariantMedia.Update;
 using merxly.Application.Interfaces;
@@ -445,6 +446,88 @@ namespace merxly.Application.Services
                 cancellationToken);
 
             return _mapper.Map<DetailProductDto>(updatedProduct);
+        }
+
+        public async Task<BulkDeleteVariantsResponseDto> DeleteProductVariantsAsync(
+            Guid productId,
+            BulkDeleteVariantsDto bulkDeleteVariantsDto,
+            Guid storeId,
+            CancellationToken cancellationToken)
+        {
+            _logger.LogInformation("Deleting variants for product: {ProductId}", productId);
+
+            var product = await _unitOfWork.Product.GetProductWithVariantsByIdAsync(
+                productId,
+                cancellationToken);
+
+            if (product == null)
+            {
+                _logger.LogWarning("Product not found: {ProductId}", productId);
+                throw new NotFoundException("Product not found.");
+            }
+
+            // Verify ownership
+            if (product.StoreId != storeId)
+            {
+                _logger.LogWarning("Store {StoreId} is not the owner of product {ProductId}", storeId, productId);
+                throw new ForbiddenAccessException("You don't have permission to update this product.");
+            }
+
+            var deletedVariantIds = new List<Guid>();
+
+            // Soft delete variants
+            foreach (var variantId in bulkDeleteVariantsDto.VariantIds)
+            {
+                var variant = product.Variants.FirstOrDefault(v => v.Id == variantId && !v.IsDeleted);
+
+                if (variant == null)
+                {
+                    _logger.LogWarning("Variant not found or already deleted: {VariantId} for product: {ProductId}", variantId, productId);
+                    throw new NotFoundException($"Variant with ID {variantId} not found or already deleted for this product.");
+                }
+
+                // Soft delete the variant
+                variant.IsDeleted = true;
+                variant.IsActive = false;
+                
+                // Append timestamp to SKU to avoid conflicts
+                if (!string.IsNullOrEmpty(variant.SKU))
+                {
+                    variant.SKU = $"{variant.SKU}_DELETED_{DateTime.UtcNow:yyyyMMddHHmmss}";
+                }
+
+                _unitOfWork.ProductVariant.Update(variant);
+                deletedVariantIds.Add(variantId);
+
+                _logger.LogInformation("Soft deleted variant: {VariantId} for product: {ProductId}", variantId, productId);
+            }
+
+            // Check if at least one variant remains active
+            var remainingActiveVariants = product.Variants.Where(v => !v.IsDeleted && v.IsActive).ToList();
+            
+            if (!remainingActiveVariants.Any())
+            {
+                _logger.LogWarning("Cannot delete all variants. At least one variant must remain active for product: {ProductId}", productId);
+                throw new InvalidOperationException("Cannot delete all variants. At least one variant must remain active.");
+            }
+
+            UpdateProductPricesAndStock(product);
+            UpdateProductMainMedia(product);
+
+            _unitOfWork.Product.Update(product);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            _logger.LogInformation("Variants deleted successfully for product: {ProductId}", productId);
+
+            return new BulkDeleteVariantsResponseDto
+            {
+                ProductId = product.Id,
+                DeletedVariantIds = deletedVariantIds,
+                RemainingVariants = _mapper.Map<List<ResponseUpdateVariantItemDto>>(remainingActiveVariants),
+                NewMinPrice = product.MinPrice ?? 0,
+                NewMaxPrice = product.MaxPrice ?? 0,
+                NewTotalStock = product.TotalStock
+            };
         }
 
         public async Task DeleteProductAsync(Guid productId, Guid storeId, CancellationToken cancellationToken)
