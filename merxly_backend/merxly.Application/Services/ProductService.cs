@@ -5,6 +5,7 @@ using merxly.Application.DTOs.Product.Update;
 using merxly.Application.DTOs.ProductAttribute;
 using merxly.Application.DTOs.ProductAttribute.Update;
 using merxly.Application.DTOs.ProductAttributeValue;
+using merxly.Application.DTOs.ProductAttributeValue.Delete;
 using merxly.Application.DTOs.ProductAttributeValue.Update;
 using merxly.Application.DTOs.ProductVariant;
 using merxly.Application.DTOs.ProductVariant.Delete;
@@ -672,6 +673,116 @@ namespace merxly.Application.Services
             return new BulkUpdateProductAttributeValuesResponseDto
             {
                 UpdatedAttributeValues = _mapper.Map<List<ResponseUpdateAttributeValueItemDto>>(productAttribute.ProductAttributeValues)
+            };
+        }
+
+        public async Task<BulkDeleteAttributeValuesResponseDto> DeleteAttributeValuesAndRegenerateVariantsAsync(
+            Guid productId,
+            DeleteAttributeValuesWithVariantsDto deleteAttributeValuesWithVariantsDto,
+            Guid storeId,
+            CancellationToken cancellationToken)
+        {
+            _logger.LogInformation("Deleting attribute values and regenerating variants for product: {ProductId}", productId);
+
+            var product = await _unitOfWork.Product.GetProductWithAttributesByIdAsync(
+                productId,
+                cancellationToken);
+
+            if (product == null)
+            {
+                _logger.LogWarning("Product not found: {ProductId}", productId);
+                throw new NotFoundException("Product not found.");
+            }
+
+            // Verify ownership
+            if (product.StoreId != storeId)
+            {
+                _logger.LogWarning("Store {StoreId} is not the owner of product {ProductId}", storeId, productId);
+                throw new ForbiddenAccessException("You don't have permission to update this product.");
+            }
+
+            var deletedAttributeValueIds = new List<Guid>();
+            var deletedAttributeIds = new List<Guid>();
+            var attributesToDelete = new List<ProductAttribute>();
+
+            // Delete attribute values
+            foreach (var attributeValueId in deleteAttributeValuesWithVariantsDto.AttributeValueIds)
+            {
+                bool found = false;
+                // Find the attribute containing this value
+                foreach (var attribute in product.ProductAttributes)
+                {
+                    var attributeValue = attribute.ProductAttributeValues
+                        .FirstOrDefault(av => av.Id == attributeValueId);
+
+                    if (attributeValue != null)
+                    {
+                        attribute.ProductAttributeValues.Remove(attributeValue);
+                        _unitOfWork.ProductAttributeValue.Remove(attributeValue);
+                        deletedAttributeValueIds.Add(attributeValueId);
+                        found = true;
+
+                        _logger.LogInformation("Deleted attribute value: {AttributeValueId} from attribute: {AttributeId}", 
+                            attributeValueId, attribute.Id);
+
+                        // Check if this attribute now has 0 values
+                        if (!attribute.ProductAttributeValues.Any())
+                        {
+                            if (!attributesToDelete.Contains(attribute))
+                            {
+                                attributesToDelete.Add(attribute);
+                                _logger.LogInformation("Attribute {AttributeId} marked for deletion (no values remaining)", attribute.Id);
+                            }
+                        }
+                        break;
+                    }
+                }
+
+                if (!found)
+                {
+                    _logger.LogWarning("Attribute value not found: {ze} for product: {ProductId}", 
+                        attributeValueId, productId);
+                    throw new NotFoundException($"Attribute value with ID {attributeValueId} not found for this product.");
+                }
+            }
+
+            // Delete attributes with no values
+            foreach (var attribute in attributesToDelete)
+            {
+                product.ProductAttributes.Remove(attribute);
+                _unitOfWork.ProductAttribute.Remove(attribute);
+                deletedAttributeIds.Add(attribute.Id);
+                _logger.LogInformation("Deleted attribute: {AttributeId} (no values remaining)", attribute.Id);
+            }
+
+            // Check if at least one attribute remains
+            if (!product.ProductAttributes.Any())
+            {
+                _logger.LogWarning("Cannot delete all attributes. At least one attribute must remain for product: {ProductId}", productId);
+                throw new InvalidOperationException("Cannot delete all attribute values. At least one attribute must remain for the product.");
+            }
+
+            // Regenerate variants with remaining attribute values
+            RegenerateVariantsInternal(product, deleteAttributeValuesWithVariantsDto.ProductVariants);
+
+            UpdateProductPricesAndStock(product);
+            UpdateProductMainMedia(product);
+
+            _unitOfWork.Product.Update(product);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            _logger.LogInformation("Attribute values deleted and variants regenerated successfully for product: {ProductId}", productId);
+
+            return new BulkDeleteAttributeValuesResponseDto
+            {
+                ProductId = product.Id,
+                DeletedAttributeValueIds = deletedAttributeValueIds,
+                DeletedAttributeIds = deletedAttributeIds,
+                RemainingAttributes = _mapper.Map<List<ResponseUpdateAttributeItemDto>>(product.ProductAttributes),
+                RegeneratedVariants = _mapper.Map<List<ResponseUpdateVariantItemDto>>(product.Variants.Where(v => !v.IsDeleted && v.IsActive)),
+                NewMinPrice = product.MinPrice ?? 0,
+                NewMaxPrice = product.MaxPrice ?? 0,
+                NewTotalStock = product.TotalStock
             };
         }
 
