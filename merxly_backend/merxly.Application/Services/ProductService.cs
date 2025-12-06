@@ -8,7 +8,6 @@ using merxly.Application.DTOs.ProductAttributeValue;
 using merxly.Application.DTOs.ProductAttributeValue.Update;
 using merxly.Application.DTOs.ProductVariant;
 using merxly.Application.DTOs.ProductVariant.Update;
-using merxly.Application.DTOs.ProductVariantMedia;
 using merxly.Application.DTOs.ProductVariantMedia.Update;
 using merxly.Application.Interfaces;
 using merxly.Application.Interfaces.Services;
@@ -192,7 +191,7 @@ namespace merxly.Application.Services
             return _mapper.Map<StoreDetailProductDto>(product);
         }
 
-        public async Task<StoreDetailProductDto> AddAttributesAndRegenerateVariantsAsync(
+        public async Task<AddAttributesWithVariantsResponseDto> AddAttributesAndRegenerateVariantsAsync(
             Guid productId,
             AddAttributeWithVariantsDto addAttributeWithVariantsDto,
             Guid storeId,
@@ -226,6 +225,9 @@ namespace merxly.Application.Services
                 throw new InvalidOperationException($"A product can have a maximum of 3 attributes. Current: {product.ProductAttributes.Count}, attempting to add: {addAttributeWithVariantsDto.ProductAttributes.Count}.");
             }
 
+            // Track added attributes
+            var addedAttributes = new List<ProductAttribute>();
+
             // Add new ProductAttributes and ProductAttributeValues
             foreach (var createProductAttributeDto in addAttributeWithVariantsDto.ProductAttributes)
             {
@@ -253,6 +255,7 @@ namespace merxly.Application.Services
                         productAttributeValue.Value, productAttribute.Name);
                 }
                 product.ProductAttributes.Add(productAttribute);
+                addedAttributes.Add(productAttribute);
             }
 
             // Regenerate variants
@@ -266,7 +269,101 @@ namespace merxly.Application.Services
 
             _logger.LogInformation("Attributes added and variants regenerated successfully for product: {ProductId}", productId);
 
-            return _mapper.Map<StoreDetailProductDto>(product);
+            return new AddAttributesWithVariantsResponseDto
+            {
+                ProductId = product.Id,
+                AddedAttributes = _mapper.Map<List<ResponseUpdateAttributeItemDto>>(addedAttributes),
+                RegeneratedVariants = _mapper.Map<List<ResponseUpdateVariantItemDto>>(product.Variants.Where(v => !v.IsDeleted && v.IsActive)),
+                NewMinPrice = product.MinPrice ?? 0,
+                NewMaxPrice = product.MaxPrice ?? 0,
+                NewTotalStock = product.TotalStock
+            };
+        }
+
+        public async Task<AddAttributeValuesWithVariantsResponseDto> AddAttributeValuesAndRegenerateVariantsAsync(
+            Guid productId,
+            AddAttributeValuesAndVariants addAttributeValuesAndVariants,
+            Guid storeId,
+            CancellationToken cancellationToken)
+        {
+            _logger.LogInformation("Adding attribute values and regenerating variants for product: {ProductId}", productId);
+
+            var product = await _unitOfWork.Product.GetProductWithAttributesByIdAsync(
+                productId,
+                cancellationToken);
+
+            if (product == null)
+            {
+                _logger.LogWarning("Product not found: {ProductId}", productId);
+                throw new NotFoundException("Product not found.");
+            }
+
+            // Verify ownership
+            if (product.StoreId != storeId)
+            {
+                _logger.LogWarning("Store {StoreId} is not the owner of product {ProductId}", storeId, productId);
+                throw new ForbiddenAccessException("You don't have permission to update this product.");
+            }
+
+            // Track added attribute values
+            var addedAttributeValues = new List<ProductAttributeValue>();
+
+            // Add new attribute values to existing attributes
+            foreach (var attributeValueAddition in addAttributeValuesAndVariants.AttributeValueAdditions)
+            {
+                var productAttribute = product.ProductAttributes
+                    .FirstOrDefault(a => a.Id == attributeValueAddition.ProductAttributeId);
+
+                if (productAttribute == null)
+                {
+                    _logger.LogWarning("Product attribute not found: {AttributeId} for product: {ProductId}", 
+                        attributeValueAddition.ProductAttributeId, productId);
+                    throw new NotFoundException($"Product attribute with ID {attributeValueAddition.ProductAttributeId} not found for this product.");
+                }
+
+                // Check for duplicate attribute values
+                foreach (var newValueDto in attributeValueAddition.AttributeValues)
+                {
+                    bool isDuplicateValue = productAttribute.ProductAttributeValues
+                        .Any(av => av.Value.Equals(newValueDto.Value, StringComparison.OrdinalIgnoreCase));
+
+                    if (isDuplicateValue)
+                    {
+                        _logger.LogWarning("Duplicate attribute value: {AttributeValue} for attribute: {AttributeId}", 
+                            newValueDto.Value, attributeValueAddition.ProductAttributeId);
+                        throw new ConflictException($"Attribute value '{newValueDto.Value}' already exists for this attribute.");
+                    }
+
+                    // Create new ProductAttributeValue
+                    var productAttributeValue = _mapper.Map<ProductAttributeValue>(newValueDto);
+                    productAttribute.ProductAttributeValues.Add(productAttributeValue);
+                    addedAttributeValues.Add(productAttributeValue);
+
+                    _logger.LogInformation("Added attribute value: {AttributeValue} to attribute: {AttributeId}", 
+                        productAttributeValue.Value, productAttribute.Id);
+                }
+            }
+
+            // Regenerate variants with new attribute values
+            RegenerateVariantsInternal(product, addAttributeValuesAndVariants.ProductVariants);
+
+            UpdateProductPricesAndStock(product);
+            UpdateProductMainMedia(product);
+
+            _unitOfWork.Product.Update(product);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            _logger.LogInformation("Attribute values added and variants regenerated successfully for product: {ProductId}", productId);
+
+            return new AddAttributeValuesWithVariantsResponseDto
+            {
+                ProductId = product.Id,
+                AddedAttributeValues = _mapper.Map<List<ResponseUpdateAttributeValueItemDto>>(addedAttributeValues),
+                RegeneratedVariants = _mapper.Map<List<ResponseUpdateVariantItemDto>>(product.Variants.Where(v => !v.IsDeleted && v.IsActive)),
+                NewMinPrice = product.MinPrice ?? 0,
+                NewMaxPrice = product.MaxPrice ?? 0,
+                NewTotalStock = product.TotalStock
+            };
         }
 
         public async Task<ResponseUpdateProductDto> UpdateProductAsync(

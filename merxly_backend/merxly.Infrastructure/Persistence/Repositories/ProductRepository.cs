@@ -142,6 +142,7 @@ namespace merxly.Infrastructure.Persistence.Repositories
             var product = await _dbSet
                 .AsNoTracking()
                 .Include(p => p.ProductAttributes)
+                .ThenInclude(pa => pa.ProductAttributeValues)
                 .Include(p => p.Variants)
                 .ThenInclude(pa => pa.VariantAttributeValues)
                 .FirstOrDefaultAsync(p => p.Id == productId, cancellationToken);
