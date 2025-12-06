@@ -97,6 +97,13 @@ namespace merxly.Application.Services
                 throw new NotFoundException("Category not found.");
             }
 
+            // Validate maximum 3 attributes per product
+            if (createProductDto.ProductAttributes.Count > 3)
+            {
+                _logger.LogWarning("Product cannot have more than 3 attributes. Requested: {Count}", createProductDto.ProductAttributes.Count);
+                throw new InvalidOperationException("A product can have a maximum of 3 attributes.");
+            }
+
             // Create product
             var product = _mapper.Map<Product>(createProductDto);
             product.StoreId = store.Id;

@@ -21,7 +21,8 @@ namespace merxly.Application.Validators.Product
                 .NotEmpty().WithMessage("Category is required.");
 
             RuleFor(x => x.ProductAttributes)
-                .NotEmpty().WithMessage("At least one product attribute is required.");
+                .NotEmpty().WithMessage("At least one product attribute is required.")
+                .Must(attributes => attributes.Count <= 3).WithMessage("A product can have a maximum of 3 attributes.");
 
             RuleForEach(x => x.ProductAttributes)
                 .SetValidator(new CreateProductAttributeDtoValidator());
