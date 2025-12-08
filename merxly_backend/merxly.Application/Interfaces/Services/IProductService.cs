@@ -2,6 +2,7 @@ using merxly.Application.DTOs.Common;
 using merxly.Application.DTOs.Product;
 using merxly.Application.DTOs.Product.Update;
 using merxly.Application.DTOs.ProductAttribute;
+using merxly.Application.DTOs.ProductAttribute.Delete;
 using merxly.Application.DTOs.ProductAttribute.Update;
 using merxly.Application.DTOs.ProductAttributeValue;
 using merxly.Application.DTOs.ProductAttributeValue.Delete;
@@ -26,6 +27,7 @@ namespace merxly.Application.Interfaces.Services
         Task<BulkUpdateProductAttributesResponseDto> UpdateProductAttributeAsync(Guid productId, BulkUpdateProductAttributesDto bulkUpdateProductAttributesDto, Guid storeId, CancellationToken cancellationToken);
         Task<BulkUpdateProductAttributeValuesResponseDto> UpdateProductAttributeValueAsync(Guid productAttributeId, BulkUpdateProductAttributeValuesDto bulkUpdateProductAttributeValuesDto, Guid storeId, CancellationToken cancellationToken);
         Task<BulkDeleteAttributeValuesResponseDto> DeleteAttributeValuesAndRegenerateVariantsAsync(Guid productId, DeleteAttributeValuesWithVariantsDto deleteAttributeValuesWithVariantsDto, Guid storeId, CancellationToken cancellationToken);
+        Task<BulkDeleteAttributesResponseDto> DeleteAttributesAndRegenerateVariantsAsync(Guid productId, DeleteAttributesWithVariantsDto deleteAttributesWithVariantsDto, Guid storeId, CancellationToken cancellationToken);
         Task<BulkUpdateProductVariantsResponseDto> UpdateProductVariantAsync(Guid productId, BulkUpdateProductVariantsDto bulkUpdateProductVariantsDto, Guid storeId,CancellationToken cancellationToken);
         Task<BulkUpdateProductMediaResponseDto> UpdateProductVariantMediaAsync(Guid productId, BulkUpdateProductMediaRequestDto bulkUpdateProductMediaRequestDto, Guid storeId, CancellationToken cancellationToken);
         Task<BulkDeleteVariantsResponseDto> DeleteProductVariantsAsync(Guid productId, BulkDeleteVariantsDto bulkDeleteVariantsDto, Guid storeId, CancellationToken cancellationToken);
