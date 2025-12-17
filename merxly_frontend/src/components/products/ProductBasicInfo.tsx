@@ -40,6 +40,8 @@ export const ProductBasicInfo = ({
   onDescriptionChange,
   onCategoryChange,
 }: ProductBasicInfoProps) => {
+  const quillKey = description ? 'with-content' : 'empty';
+
   return (
     <div className='bg-white rounded-lg border border-neutral-200 p-6'>
       <h2 className='text-base font-semibold text-neutral-900 mb-4'>
@@ -59,6 +61,7 @@ export const ProductBasicInfo = ({
             Description
           </label>
           <ReactQuill
+            key={quillKey}
             theme='snow'
             value={description}
             onChange={onDescriptionChange}
