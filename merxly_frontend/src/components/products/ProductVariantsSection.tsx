@@ -4,7 +4,9 @@ import {
   ChevronUpIcon,
   TrashIcon,
   Bars3Icon,
+  PhotoIcon,
 } from '@heroicons/react/24/outline';
+import { VariantMediaModal } from './VariantMediaModal';
 
 // Internal types
 interface AttributeValue {
@@ -24,6 +26,15 @@ interface Variant {
   price: number;
   available: number;
   sku: string;
+  media?: MediaFile[];
+}
+
+interface MediaFile {
+  id: string;
+  file: File;
+  preview: string;
+  isMain: boolean;
+  timestamp: Date;
 }
 
 interface ProductVariantsSectionProps {
@@ -55,6 +66,10 @@ export const ProductVariantsSection = ({
   }>({});
   const [draggedAttrIndex, setDraggedAttrIndex] = useState<number | null>(null);
   const [draggedValueIndex, setDraggedValueIndex] = useState<number | null>(
+    null
+  );
+  const [mediaModalOpen, setMediaModalOpen] = useState(false);
+  const [selectedVariantId, setSelectedVariantId] = useState<string | null>(
     null
   );
 
@@ -441,6 +456,25 @@ export const ProductVariantsSection = ({
     return variantsInGroup.reduce((sum, v) => sum + v.available, 0);
   };
 
+  // Media handlers
+  const handleOpenMediaModal = (variantId: string) => {
+    setSelectedVariantId(variantId);
+    setMediaModalOpen(true);
+  };
+
+  const handleSaveMedia = (files: MediaFile[]) => {
+    if (!selectedVariantId) return;
+
+    const updated = variants.map((v) =>
+      v.id === selectedVariantId ? { ...v, media: files } : v
+    );
+    onVariantsChange(updated);
+  };
+
+  const getVariantMedia = (variantId: string): MediaFile[] => {
+    return variants.find((v) => v.id === variantId)?.media || [];
+  };
+
   return (
     <div className='bg-white rounded-lg border border-neutral-200 p-6'>
       <h2 className='text-base font-semibold text-neutral-900 mb-4'>
@@ -633,8 +667,9 @@ export const ProductVariantsSection = ({
           )}
 
           {/* Table Header */}
-          <div className='grid grid-cols-[auto_1fr_120px_120px_150px] gap-4 px-4 py-3 bg-neutral-50 border-b border-neutral-200 text-xs font-semibold text-neutral-700'>
+          <div className='grid grid-cols-[auto_auto_1fr_120px_120px_150px] gap-4 px-4 py-3 bg-neutral-50 border-b border-neutral-200 text-xs font-semibold text-neutral-700'>
             <div className='w-6'></div>
+            <div className='w-10'></div>
             <div>Variant</div>
             <div>Price</div>
             <div>Available</div>
@@ -673,7 +708,7 @@ export const ProductVariantsSection = ({
                               )}
                             </button>
                           </div>
-                          <div>
+                          <div className='pl-[52px]'>
                             <input
                               type='text'
                               value={getGroupPrice(groupVariants)}
@@ -703,10 +738,21 @@ export const ProductVariantsSection = ({
                           groupVariants.map((variant) => (
                             <div
                               key={variant.id}
-                              className='grid grid-cols-[auto_1fr_120px_120px_150px] gap-4 px-4 py-3 bg-neutral-50/30 hover:bg-neutral-50'
+                              className='grid grid-cols-[auto_auto_1fr_120px_120px_150px] gap-4 px-4 py-3 bg-neutral-50/30 hover:bg-neutral-50'
                             >
                               <div className='w-6 flex items-center pl-4'>
                                 <input type='checkbox' className='rounded' />
+                              </div>
+                              <div className='w-10 flex items-center pl-4'>
+                                <button
+                                  type='button'
+                                  onClick={() =>
+                                    handleOpenMediaModal(variant.id)
+                                  }
+                                  className='w-8 h-8 flex items-center justify-center border border-neutral-300 rounded hover:bg-neutral-100 transition-colors'
+                                >
+                                  <PhotoIcon className='w-4 h-4 text-neutral-400' />
+                                </button>
                               </div>
                               <div className='text-sm text-neutral-700 pl-4'>
                                 {getVariantName(variant)}
@@ -763,10 +809,19 @@ export const ProductVariantsSection = ({
                 variants.map((variant) => (
                   <div
                     key={variant.id}
-                    className='grid grid-cols-[auto_1fr_120px_120px_150px] gap-4 px-4 py-3 hover:bg-neutral-50'
+                    className='grid grid-cols-[auto_auto_1fr_120px_120px_150px] gap-4 px-4 py-3 hover:bg-neutral-50'
                   >
                     <div className='w-6 flex items-center'>
                       <input type='checkbox' className='rounded' />
+                    </div>
+                    <div className='w-10 flex items-center'>
+                      <button
+                        type='button'
+                        onClick={() => handleOpenMediaModal(variant.id)}
+                        className='w-8 h-8 flex items-center justify-center border border-neutral-300 rounded hover:bg-neutral-100 transition-colors'
+                      >
+                        <PhotoIcon className='w-4 h-4 text-neutral-400' />
+                      </button>
                     </div>
                     <div className='text-sm text-neutral-700'>
                       {getVariantName(variant)}
@@ -814,6 +869,19 @@ export const ProductVariantsSection = ({
           </div>
         </div>
       )}
+
+      {/* Media Upload Modal */}
+      <VariantMediaModal
+        isOpen={mediaModalOpen}
+        onClose={() => {
+          setMediaModalOpen(false);
+          setSelectedVariantId(null);
+        }}
+        onSave={handleSaveMedia}
+        initialFiles={
+          selectedVariantId ? getVariantMedia(selectedVariantId) : []
+        }
+      />
     </div>
   );
 };

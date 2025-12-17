@@ -18,6 +18,12 @@ namespace merxly.Infrastructure.Persistence.Configurations
                 .IsRequired()
                 .HasMaxLength(500);
 
+            builder.Property(pvm => pvm.FileName)
+                .IsRequired();
+
+            builder.Property(pvm => pvm.FileExtension)
+                .IsRequired();
+
             builder.Property(pvm => pvm.MediaType)
                 .IsRequired()
                 .HasConversion<int>();

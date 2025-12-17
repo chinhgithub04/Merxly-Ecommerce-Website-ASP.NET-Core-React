@@ -7,6 +7,9 @@ namespace merxly.Domain.Entities
     {
         public Guid Id { get; set; }
         public string MediaPublicId { get; set; }
+        public string FileName { get; set; }
+        public string FileExtension { get; set; }
+        public long? FileSizeInBytes { get; set; }
         public MediaType MediaType { get; set; }
         public int DisplayOrder { get; set; }
         public bool IsMain { get; set; }
