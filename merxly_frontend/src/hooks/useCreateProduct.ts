@@ -1,8 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useNavigate, useParams } from 'react-router-dom';
-import { createProduct, getProductById } from '../services/productService';
-import type { CreateProductDto } from '../types/models/product';
+import {
+  createProduct,
+  getProductById,
+  updateProduct,
+} from '../services/productService';
+import type {
+  CreateProductDto,
+  UpdateProductDto,
+} from '../types/models/product';
 import type { CreateProductAttributeDto } from '../types/models/productAttribute';
 import type { CreateProductVariantDto } from '../types/models/productVariant';
 import type { CreateProductVariantMediaDto } from '../types/models/productVariantMedia';
@@ -40,6 +47,15 @@ export const useCreateProduct = () => {
   const [isActive, setIsActive] = useState(true);
   const [isStoreFeatured, setIsStoreFeatured] = useState(false);
 
+  // Initial snapshot for edit mode (to track changes)
+  const [initialBasicInfo, setInitialBasicInfo] = useState<{
+    name: string;
+    description: string;
+    categoryId: string | null;
+    isActive: boolean;
+    isStoreFeatured: boolean;
+  } | null>(null);
+
   // Attributes and variants (managed by ProductVariantsSection)
   const [attributes, setAttributes] = useState<Attribute[]>([]);
   const [variants, setVariants] = useState<Variant[]>([]);
@@ -70,6 +86,15 @@ export const useCreateProduct = () => {
       setCategoryId(product.categoryId);
       setIsActive(product.isActive);
       setIsStoreFeatured(product.isStoreFeatured);
+
+      // Capture initial snapshot for change tracking
+      setInitialBasicInfo({
+        name: product.name,
+        description: product.description || '',
+        categoryId: product.categoryId,
+        isActive: product.isActive,
+        isStoreFeatured: product.isStoreFeatured,
+      });
 
       // Map attributes
       const mappedAttributes: Attribute[] = product.productAttributes
@@ -253,7 +278,17 @@ export const useCreateProduct = () => {
     };
   };
 
-  // Mutation
+  // Check if basic info has changed (dirty state)
+  const isDirty = isEditMode
+    ? initialBasicInfo !== null &&
+      (productName !== initialBasicInfo.name ||
+        description !== initialBasicInfo.description ||
+        categoryId !== initialBasicInfo.categoryId ||
+        isActive !== initialBasicInfo.isActive ||
+        isStoreFeatured !== initialBasicInfo.isStoreFeatured)
+    : false;
+
+  // Create mutation
   const createMutation = useMutation({
     mutationFn: createProduct,
     onSuccess: () => {
@@ -267,16 +302,67 @@ export const useCreateProduct = () => {
     },
   });
 
-  const handleSubmit = () => {
-    const dto = buildCreateProductDto();
+  // Update mutation
+  const updateMutation = useMutation({
+    mutationFn: (dto: UpdateProductDto) => updateProduct(productId!, dto),
+    onSuccess: (response) => {
+      // Update initial snapshot to new values
+      const updated = response.data;
+      if (updated) {
+        setInitialBasicInfo({
+          name: updated.name,
+          description: updated.description || '',
+          categoryId: updated.categoryId,
+          isActive: updated.isActive,
+          isStoreFeatured: updated.isStoreFeatured,
+        });
+        alert('Product saved');
+      }
+    },
+    onError: (error: any) => {
+      console.error('Failed to update product:', error);
+      const errorMessage =
+        error.response?.data?.message || 'Failed to update product';
+      setErrors({ variants: errorMessage });
+    },
+  });
 
-    if (dto) {
-      createMutation.mutate(dto);
+  const handleSubmit = () => {
+    if (isEditMode) {
+      // Build update DTO with only basic info fields
+      const updateDto: UpdateProductDto = {
+        name: productName.trim(),
+        description: description.trim() || null,
+        categoryId: categoryId!,
+        isActive,
+        isStoreFeatured,
+      };
+      updateMutation.mutate(updateDto);
+    } else {
+      // Create mode - existing logic
+      const dto = buildCreateProductDto();
+      if (dto) {
+        createMutation.mutate(dto);
+      }
     }
   };
 
-  const handleDiscard = () => {
+  const handleBack = () => {
     navigate('/store/products');
+  };
+
+  const handleDiscard = () => {
+    if (isEditMode && initialBasicInfo) {
+      // Edit mode: restore original values
+      setProductName(initialBasicInfo.name);
+      setDescription(initialBasicInfo.description);
+      setCategoryId(initialBasicInfo.categoryId);
+      setIsActive(initialBasicInfo.isActive);
+      setIsStoreFeatured(initialBasicInfo.isStoreFeatured);
+    } else {
+      // Create mode: navigate back
+      navigate('/store/products');
+    }
   };
 
   return {
@@ -303,11 +389,13 @@ export const useCreateProduct = () => {
 
     // Actions
     handleSubmit,
+    handleBack,
     handleDiscard,
 
     // Status
-    isSubmitting: createMutation.isPending,
+    isSubmitting: createMutation.isPending || updateMutation.isPending,
     isLoading: isLoadingProduct,
     isEditMode,
+    isDirty,
   };
 };

@@ -57,3 +57,20 @@ export interface StoreDetailProductDto {
   productAttributes: ProductAttributeDto[];
   variants: ProductVariantDto[];
 }
+
+export interface UpdateProductDto {
+  name?: string;
+  description?: string | null;
+  isStoreFeatured?: boolean;
+  isActive?: boolean;
+  categoryId?: string;
+}
+
+export interface ResponseUpdateProductDto {
+  id: string;
+  name: string;
+  description: string | null;
+  isStoreFeatured: boolean;
+  isActive: boolean;
+  categoryId: string;
+}

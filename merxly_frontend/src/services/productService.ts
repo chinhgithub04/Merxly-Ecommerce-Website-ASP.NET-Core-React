@@ -5,6 +5,8 @@ import type {
   ProductQueryParameters,
   CreateProductDto,
   StoreDetailProductDto,
+  UpdateProductDto,
+  ResponseUpdateProductDto,
 } from '../types/models/product';
 import apiClient from './apiClient';
 
@@ -41,6 +43,17 @@ export const getProductById = async (
 ): Promise<Response<StoreDetailProductDto>> => {
   const response = await apiClient.get<Response<StoreDetailProductDto>>(
     `/StoreProducts/${productId}`
+  );
+  return response.data;
+};
+
+export const updateProduct = async (
+  productId: string,
+  product: UpdateProductDto
+): Promise<Response<ResponseUpdateProductDto>> => {
+  const response = await apiClient.patch<Response<ResponseUpdateProductDto>>(
+    `/StoreProducts/${productId}/basic`,
+    product
   );
   return response.data;
 };

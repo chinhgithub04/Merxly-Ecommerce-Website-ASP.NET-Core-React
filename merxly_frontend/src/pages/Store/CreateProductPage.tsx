@@ -25,10 +25,12 @@ export const CreateProductPage = () => {
     setVariants,
     setGroupBy,
     handleSubmit,
+    handleBack,
     handleDiscard,
     isSubmitting,
     isLoading,
     isEditMode,
+    isDirty,
   } = useCreateProduct();
 
   // Show loading state while fetching product data
@@ -48,9 +50,11 @@ export const CreateProductPage = () => {
       {/* Custom Header */}
       <CreateProductHeader
         productName={productName}
+        onBack={handleBack}
         onDiscard={handleDiscard}
         onSave={handleSubmit}
         isSaving={isSubmitting}
+        isDirty={isDirty}
       />
 
       {/* Main Content */}

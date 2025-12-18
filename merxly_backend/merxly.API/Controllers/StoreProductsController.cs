@@ -2,6 +2,15 @@
 using merxly.Application.DTOs.Common;
 using merxly.Application.DTOs.Product;
 using merxly.Application.DTOs.Product.Update;
+using merxly.Application.DTOs.ProductAttribute;
+using merxly.Application.DTOs.ProductAttribute.Delete;
+using merxly.Application.DTOs.ProductAttribute.Update;
+using merxly.Application.DTOs.ProductAttributeValue;
+using merxly.Application.DTOs.ProductAttributeValue.Delete;
+using merxly.Application.DTOs.ProductAttributeValue.Update;
+using merxly.Application.DTOs.ProductVariant.Delete;
+using merxly.Application.DTOs.ProductVariant.Update;
+using merxly.Application.DTOs.ProductVariantMedia.Update;
 using merxly.Application.Interfaces.Repositories;
 using merxly.Application.Interfaces.Services;
 using merxly.Domain.Constants;
@@ -69,7 +78,7 @@ namespace merxly.API.Controllers
             return OkResponse(result, "Product detail retrieved successfully.");
         }
 
-        [HttpPatch("{productId}")]
+        [HttpPatch("{productId}/basic")]
         public async Task<ActionResult<ResponseDto<ResponseUpdateProductDto>>> UpdateProduct(Guid productId, [FromBody] UpdateProductDto updateProductDto, CancellationToken cancellationToken)
         {
             var storeId = await GetStoreIdForCurrentUserAsync(_storeRepository, cancellationToken);
@@ -85,6 +94,95 @@ namespace merxly.API.Controllers
             await _productService.DeleteProductAsync(productId, storeId.Value, cancellationToken);
 
             return NoContent();
+        }
+        #endregion
+
+        #region 2. Product Attributes
+        [HttpPost("{productId}/attributes")]
+        public async Task<ActionResult<ResponseDto<AddAttributesWithVariantsResponseDto>>> AddAttributesAndRegenerateVariants(Guid productId, [FromBody] AddAttributeWithVariantsDto addAttributeWithVariantsDto, CancellationToken cancellationToken)
+        {
+            var storeId = await GetStoreIdForCurrentUserAsync(_storeRepository, cancellationToken);
+            var result = await _productService.AddAttributesAndRegenerateVariantsAsync(productId, addAttributeWithVariantsDto, storeId.Value, cancellationToken);
+
+            return OkResponse(result, "Product attributes added and variants regenerated successfully.");
+        }
+
+        [HttpPatch("{productId}/attributes")]
+        public async Task<ActionResult<ResponseDto<BulkUpdateProductAttributesResponseDto>>> UpdateProductAttribute(Guid productId, [FromBody] BulkUpdateProductAttributesDto bulkUpdateProductAttributesDto, CancellationToken cancellationToken)
+        {
+            var storeId = await GetStoreIdForCurrentUserAsync(_storeRepository, cancellationToken);
+            var result = await _productService.UpdateProductAttributeAsync(productId, bulkUpdateProductAttributesDto, storeId.Value, cancellationToken);
+
+            return OkResponse(result, "Product attributes updated successfully.");
+        }
+
+        [HttpDelete("{productId}/attributes")]
+        public async Task<ActionResult<ResponseDto<BulkDeleteAttributesResponseDto>>> DeleteAttributesAndRegenerateVariants(Guid productId, [FromBody] DeleteAttributesWithVariantsDto deleteAttributesWithVariantsDto, CancellationToken cancellationToken)
+        {
+            var storeId = await GetStoreIdForCurrentUserAsync(_storeRepository, cancellationToken);
+            var result = await _productService.DeleteAttributesAndRegenerateVariantsAsync(productId, deleteAttributesWithVariantsDto, storeId.Value, cancellationToken);
+
+            return OkResponse(result, "Product attributes deleted and variants regenerated successfully.");
+        }
+        #endregion
+
+        #region 3. Product Attribute Values
+        [HttpPost("{productId}/attribute-values")]
+        public async Task<ActionResult<ResponseDto<AddAttributeValuesWithVariantsResponseDto>>> AddAttributeValuesAndRegenerateVariants(Guid productId, [FromBody] AddAttributeValuesAndVariants addAttributeValuesAndVariants, CancellationToken cancellationToken)
+        {
+            var storeId = await GetStoreIdForCurrentUserAsync(_storeRepository, cancellationToken);
+            var result = await _productService.AddAttributeValuesAndRegenerateVariantsAsync(productId, addAttributeValuesAndVariants, storeId.Value, cancellationToken);
+
+            return OkResponse(result, "Product attribute values added and variants regenerated successfully.");
+        }
+
+        [HttpPatch("attribute-values/{productAttributeId}")]
+        public async Task<ActionResult<ResponseDto<BulkUpdateProductAttributeValuesResponseDto>>> UpdateProductAttributeValue(Guid productAttributeId, [FromBody] BulkUpdateProductAttributeValuesDto bulkUpdateProductAttributeValuesDto, CancellationToken cancellationToken)
+        {
+            var storeId = await GetStoreIdForCurrentUserAsync(_storeRepository, cancellationToken);
+            var result = await _productService.UpdateProductAttributeValueAsync(productAttributeId, bulkUpdateProductAttributeValuesDto, storeId.Value, cancellationToken);
+
+            return OkResponse(result, "Product attribute values updated successfully.");
+        }
+
+        [HttpDelete("{productId}/attribute-values")]
+        public async Task<ActionResult<ResponseDto<BulkDeleteAttributeValuesResponseDto>>> DeleteAttributeValuesAndRegenerateVariants(Guid productId, [FromBody] DeleteAttributeValuesWithVariantsDto deleteAttributeValuesWithVariantsDto, CancellationToken cancellationToken)
+        {
+            var storeId = await GetStoreIdForCurrentUserAsync(_storeRepository, cancellationToken);
+            var result = await _productService.DeleteAttributeValuesAndRegenerateVariantsAsync(productId, deleteAttributeValuesWithVariantsDto, storeId.Value, cancellationToken);
+
+            return OkResponse(result, "Product attribute values deleted and variants regenerated successfully.");
+        }
+        #endregion
+
+        #region 4. Product Variants
+        [HttpPatch("{productId}/variants")]
+        public async Task<ActionResult<ResponseDto<BulkUpdateProductVariantsResponseDto>>> UpdateProductVariant(Guid productId, [FromBody] BulkUpdateProductVariantsDto bulkUpdateProductVariantsDto, CancellationToken cancellationToken)
+        {
+            var storeId = await GetStoreIdForCurrentUserAsync(_storeRepository, cancellationToken);
+            var result = await _productService.UpdateProductVariantAsync(productId, bulkUpdateProductVariantsDto, storeId.Value, cancellationToken);
+
+            return OkResponse(result, "Product variants updated successfully.");
+        }
+
+        [HttpDelete("{productId}/variants")]
+        public async Task<ActionResult<ResponseDto<BulkDeleteVariantsResponseDto>>> DeleteProductVariants(Guid productId, [FromBody] BulkDeleteVariantsDto bulkDeleteVariantsDto, CancellationToken cancellationToken)
+        {
+            var storeId = await GetStoreIdForCurrentUserAsync(_storeRepository, cancellationToken);
+            var result = await _productService.DeleteProductVariantsAsync(productId, bulkDeleteVariantsDto, storeId.Value, cancellationToken);
+
+            return OkResponse(result, "Product variants deleted successfully.");
+        }
+        #endregion
+
+        #region 5. Product Media
+        [HttpPatch("{productId}/media")]
+        public async Task<ActionResult<ResponseDto<BulkUpdateProductMediaResponseDto>>> UpdateProductVariantMedia(Guid productId, [FromBody] BulkUpdateProductMediaRequestDto bulkUpdateProductMediaRequestDto, CancellationToken cancellationToken)
+        {
+            var storeId = await GetStoreIdForCurrentUserAsync(_storeRepository, cancellationToken);
+            var result = await _productService.UpdateProductVariantMediaAsync(productId, bulkUpdateProductMediaRequestDto, storeId.Value, cancellationToken);
+
+            return OkResponse(result, "Product variant media updated successfully.");
         }
         #endregion
     }
