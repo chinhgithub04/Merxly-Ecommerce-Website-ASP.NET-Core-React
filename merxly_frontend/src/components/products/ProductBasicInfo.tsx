@@ -2,6 +2,7 @@ import { Input } from '../ui/Input';
 import { ProductCategorySelector } from './ProductCategorySelector';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
+import { useEffect, useRef } from 'react';
 
 interface ProductBasicInfoProps {
   productName: string;
@@ -40,7 +41,20 @@ export const ProductBasicInfo = ({
   onDescriptionChange,
   onCategoryChange,
 }: ProductBasicInfoProps) => {
-  const quillKey = description ? 'with-content' : 'empty';
+  const quillRef = useRef<ReactQuill>(null);
+
+  // Sync ReactQuill editor content when description prop changes
+  // This ensures the editor updates when loading product data in edit mode
+  useEffect(() => {
+    const editor = quillRef.current?.getEditor();
+    if (editor) {
+      const currentContent = editor.root.innerHTML;
+      // Only update if content differs to avoid unnecessary re-renders
+      if (currentContent !== description) {
+        editor.root.innerHTML = description;
+      }
+    }
+  }, [description]);
 
   return (
     <div className='bg-white rounded-lg border border-neutral-200 p-6'>
@@ -61,7 +75,7 @@ export const ProductBasicInfo = ({
             Description
           </label>
           <ReactQuill
-            key={quillKey}
+            ref={quillRef}
             theme='snow'
             value={description}
             onChange={onDescriptionChange}
