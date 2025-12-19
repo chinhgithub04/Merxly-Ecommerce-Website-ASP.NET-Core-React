@@ -7,6 +7,7 @@ import {
   updateProduct,
   addAttributeValues,
   updateAttributeValues,
+  deleteAttributeValues,
 } from '../services/productService';
 import type {
   CreateProductDto,
@@ -18,6 +19,7 @@ import type { CreateProductVariantMediaDto } from '../types/models/productVarian
 import type {
   AddAttributeValuesAndVariants,
   BulkUpdateProductAttributeValuesDto,
+  DeleteAttributeValuesWithVariantsDto,
 } from '../types/models/productAttributeValue';
 
 // Internal types for UI state (matches ProductVariantsSection)
@@ -64,6 +66,11 @@ export const useCreateProduct = () => {
 
   // Initial attributes snapshot for edit mode (to track attribute value changes)
   const [initialAttributes, setInitialAttributes] = useState<Attribute[]>([]);
+
+  // Track deleted attribute value IDs (for values that existed in initial snapshot)
+  const [deletedAttributeValueIds, setDeletedAttributeValueIds] = useState<
+    string[]
+  >([]);
 
   // Attributes and variants (managed by ProductVariantsSection)
   const [attributes, setAttributes] = useState<Attribute[]>([]);
@@ -299,6 +306,11 @@ export const useCreateProduct = () => {
     };
   };
 
+  // Detect deleted attribute values (requires DELETE)
+  const hasDeletedAttributeValues = (): boolean => {
+    return deletedAttributeValueIds.length > 0;
+  };
+
   // Detect new attribute values (requires POST)
   const hasNewAttributeValues = (): boolean => {
     if (!isEditMode || initialAttributes.length === 0) return false;
@@ -357,6 +369,9 @@ export const useCreateProduct = () => {
   // Check if attribute values have changed (for dirty state in attributes section)
   const hasAttributeChanges = (): boolean => {
     if (!isEditMode || initialAttributes.length === 0) return false;
+
+    // Check for deleted values
+    if (deletedAttributeValueIds.length > 0) return true;
 
     // Filter out empty values from current attributes
     const currentAttrsFiltered = attributes.map((attr) => ({
@@ -445,6 +460,33 @@ export const useCreateProduct = () => {
     },
   });
 
+  // Delete attribute values mutation (regenerates variants)
+  const deleteAttributeValuesMutation = useMutation({
+    mutationFn: (data: DeleteAttributeValuesWithVariantsDto) =>
+      deleteAttributeValues(productId!, data),
+    onSuccess: (response) => {
+      const data = response.data;
+      if (data) {
+        // Update initialAttributes to remove deleted values
+        const updatedInitialAttrs = initialAttributes.map((attr) => ({
+          ...attr,
+          values: attr.values.filter(
+            (v) => !data.deletedAttributeValueIds.includes(v.id)
+          ),
+        }));
+        setInitialAttributes(updatedInitialAttrs);
+        // Clear deleted tracking
+        setDeletedAttributeValueIds([]);
+      }
+    },
+    onError: (error: any) => {
+      console.error('Failed to delete attribute values:', error);
+      const errorMessage =
+        error.response?.data?.message || 'Failed to delete attribute values';
+      setErrors({ variants: errorMessage });
+    },
+  });
+
   // Add attribute values mutation (creates new variants)
   const addAttributeValuesMutation = useMutation({
     mutationFn: (data: AddAttributeValuesAndVariants) =>
@@ -519,7 +561,7 @@ export const useCreateProduct = () => {
 
   const handleSubmit = async () => {
     if (isEditMode) {
-      // Sequential execution: PATCH /basic → PATCH /attribute-values → POST /attribute-values
+      // Sequential execution: PATCH /basic → DELETE /attribute-values → PATCH /attribute-values → POST /attribute-values
       try {
         // Step 1: Update basic info if changed
         if (isBasicInfoDirty) {
@@ -539,7 +581,16 @@ export const useCreateProduct = () => {
           values: attr.values.filter((v) => v.value.trim()),
         }));
 
-        // Step 2: Update existing attribute values (rename/reorder) if changed
+        // Step 2: Delete attribute values if any deletions
+        if (hasDeletedAttributeValues()) {
+          const deleteDto: DeleteAttributeValuesWithVariantsDto = {
+            attributeValueIds: deletedAttributeValueIds,
+            productVariants: buildCreateProductDto()?.variants || [],
+          };
+          await deleteAttributeValuesMutation.mutateAsync(deleteDto);
+        }
+
+        // Step 3: Update existing attribute values (rename/reorder) if changed
         if (hasUpdatedAttributeValues()) {
           for (const currentAttr of currentAttrsFiltered) {
             const initialAttr = initialAttributes.find(
@@ -554,6 +605,9 @@ export const useCreateProduct = () => {
             }> = [];
 
             currentAttr.values.forEach((currVal, index) => {
+              // Skip if this value was deleted
+              if (deletedAttributeValueIds.includes(currVal.id)) return;
+
               const initialVal = initialAttr.values.find(
                 (v) => v.id === currVal.id
               );
@@ -588,7 +642,7 @@ export const useCreateProduct = () => {
           }
         }
 
-        // Step 3: Add new attribute values (with variant regeneration) if added
+        // Step 4: Add new attribute values (with variant regeneration) if added
         if (hasNewAttributeValues()) {
           for (const currentAttr of currentAttrsFiltered) {
             const initialAttr = initialAttributes.find(
@@ -602,6 +656,9 @@ export const useCreateProduct = () => {
             const newValues: AttributeValue[] = [];
 
             currentAttr.values.forEach((currVal) => {
+              // Skip if this value was deleted
+              if (deletedAttributeValueIds.includes(currVal.id)) return;
+
               if (!initialValueIds.has(currVal.id)) {
                 newValues.push(currVal);
               }
@@ -634,6 +691,7 @@ export const useCreateProduct = () => {
         // Show success message if any update was performed
         if (
           isBasicInfoDirty ||
+          hasDeletedAttributeValues() ||
           hasUpdatedAttributeValues() ||
           hasNewAttributeValues()
         ) {
@@ -649,12 +707,17 @@ export const useCreateProduct = () => {
             isStoreFeatured: isStoreFeatured,
           });
 
-          // Sync attributes snapshot (exclude empty values)
+          // Sync attributes snapshot (exclude empty values and deleted values)
           const syncedAttributes = attributes.map((attr) => ({
             ...attr,
-            values: attr.values.filter((v) => v.value.trim()),
+            values: attr.values.filter(
+              (v) => v.value.trim() && !deletedAttributeValueIds.includes(v.id)
+            ),
           }));
           setInitialAttributes(JSON.parse(JSON.stringify(syncedAttributes)));
+
+          // Clear deleted tracking
+          setDeletedAttributeValueIds([]);
 
           // Update working attributes to match (re-add empty inputs for edit UX)
           const attributesWithEmptyInputs = syncedAttributes.map((attr) => ({
@@ -730,6 +793,7 @@ export const useCreateProduct = () => {
     setAttributes,
     setVariants,
     setGroupBy,
+    setDeletedAttributeValueIds,
 
     // Actions
     handleSubmit,
@@ -740,6 +804,7 @@ export const useCreateProduct = () => {
     isSubmitting:
       createMutation.isPending ||
       updateMutation.isPending ||
+      deleteAttributeValuesMutation.isPending ||
       addAttributeValuesMutation.isPending ||
       updateAttributeValuesMutation.isPending,
     isLoading: isLoadingProduct,

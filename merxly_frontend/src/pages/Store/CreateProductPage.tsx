@@ -24,6 +24,7 @@ export const CreateProductPage = () => {
     setAttributes,
     setVariants,
     setGroupBy,
+    setDeletedAttributeValueIds,
     handleSubmit,
     handleBack,
     handleDiscard,
@@ -86,6 +87,10 @@ export const CreateProductPage = () => {
                 onAttributesChange={setAttributes}
                 onVariantsChange={setVariants}
                 onGroupByChange={setGroupBy}
+                onDeleteAttributeValue={(valueId) => {
+                  setDeletedAttributeValueIds((prev) => [...prev, valueId]);
+                }}
+                isEditMode={isEditMode}
               />
 
               {errors.variants && (

@@ -38,6 +38,8 @@ interface ProductVariantsSectionProps {
   onAttributesChange: (attributes: Attribute[]) => void;
   onVariantsChange: (variants: Variant[]) => void;
   onGroupByChange: (groupBy: string | null) => void;
+  onDeleteAttributeValue?: (valueId: string) => void;
+  isEditMode?: boolean;
 }
 
 export const ProductVariantsSection = ({
@@ -47,6 +49,8 @@ export const ProductVariantsSection = ({
   onAttributesChange,
   onVariantsChange,
   onGroupByChange,
+  onDeleteAttributeValue,
+  isEditMode = false,
 }: ProductVariantsSectionProps) => {
   const [editingAttributeId, setEditingAttributeId] = useState<string | null>(
     null
@@ -196,6 +200,16 @@ export const ProductVariantsSection = ({
 
   // Delete attribute value
   const handleDeleteAttributeValue = (attributeId: string, valueId: string) => {
+    // In edit mode, check if this is an existing value (not a new one with 'val-new-' prefix)
+    // If it's existing, track it for deletion on save
+    if (
+      isEditMode &&
+      !valueId.startsWith('val-new-') &&
+      onDeleteAttributeValue
+    ) {
+      onDeleteAttributeValue(valueId);
+    }
+
     const updated = attributes.map((attr) => {
       if (attr.id === attributeId) {
         const filtered = attr.values.filter((v) => v.id !== valueId);
@@ -576,7 +590,7 @@ export const ProductVariantsSection = ({
                               onClick={() =>
                                 handleDeleteAttributeValue(attr.id, val.id)
                               }
-                              className='p-2 text-neutral-400 hover:text-red-600 transition-colors'
+                              className='cursor-pointer p-2 text-neutral-400 hover:text-red-600 transition-colors'
                             >
                               <TrashIcon className='w-4 h-4' />
                             </button>

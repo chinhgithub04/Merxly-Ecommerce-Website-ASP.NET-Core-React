@@ -797,6 +797,25 @@ namespace merxly.Application.Services
                 throw new InvalidOperationException("Cannot delete all attribute values. At least one attribute must remain for the product.");
             }
 
+            // Reorder DisplayOrder for remaining attribute values in each attribute
+            foreach (var attribute in product.ProductAttributes)
+            {
+                var orderedValues = attribute.ProductAttributeValues
+                    .OrderBy(av => av.DisplayOrder)
+                    .ToList();
+
+                for (int i = 0; i < orderedValues.Count; i++)
+                {
+                    if (orderedValues[i].DisplayOrder != i)
+                    {
+                        orderedValues[i].DisplayOrder = i;
+                        _unitOfWork.ProductAttributeValue.Update(orderedValues[i]);
+                        _logger.LogInformation("Updated DisplayOrder for attribute value: {AttributeValueId} to {DisplayOrder}",
+                            orderedValues[i].Id, i);
+                    }
+                }
+            }
+
             // Regenerate variants with remaining attribute values
             var newVariants = RegenerateVariantsInternal(product, deleteAttributeValuesWithVariantsDto.ProductVariants);
 

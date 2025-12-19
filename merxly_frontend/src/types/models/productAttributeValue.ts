@@ -1,3 +1,4 @@
+import type { ResponseUpdateAttributeItemDto } from './productAttribute';
 import type {
   CreateProductVariantDto,
   ResponseUpdateVariantItemDto,
@@ -55,4 +56,21 @@ export interface AddAttributeValuesWithVariantsResponseDto {
 
 export interface BulkUpdateProductAttributeValuesResponseDto {
   updatedAttributeValues: ResponseUpdateAttributeValueItemDto[];
+}
+
+// Delete attribute values DTOs
+export interface DeleteAttributeValuesWithVariantsDto {
+  attributeValueIds: string[];
+  productVariants: CreateProductVariantDto[];
+}
+
+export interface BulkDeleteAttributeValuesResponseDto {
+  productId: string;
+  deletedAttributeValueIds: string[];
+  deletedAttributeIds: string[];
+  remainingAttributes: ResponseUpdateAttributeItemDto[]; // Can be typed more specifically if needed
+  regeneratedVariants: ResponseUpdateVariantItemDto[];
+  newMinPrice: number;
+  newMaxPrice: number;
+  newTotalStock: number;
 }

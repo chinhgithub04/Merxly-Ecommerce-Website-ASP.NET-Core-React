@@ -13,6 +13,8 @@ import type {
   AddAttributeValuesWithVariantsResponseDto,
   BulkUpdateProductAttributeValuesDto,
   BulkUpdateProductAttributeValuesResponseDto,
+  DeleteAttributeValuesWithVariantsDto,
+  BulkDeleteAttributeValuesResponseDto,
 } from '../types/models/productAttributeValue';
 import apiClient from './apiClient';
 
@@ -81,5 +83,15 @@ export const updateAttributeValues = async (
   const response = await apiClient.patch<
     Response<BulkUpdateProductAttributeValuesResponseDto>
   >(`/StoreProducts/attribute-values/${productAttributeId}`, data);
+  return response.data;
+};
+
+export const deleteAttributeValues = async (
+  productId: string,
+  data: DeleteAttributeValuesWithVariantsDto
+): Promise<Response<BulkDeleteAttributeValuesResponseDto>> => {
+  const response = await apiClient.delete<
+    Response<BulkDeleteAttributeValuesResponseDto>
+  >(`/StoreProducts/${productId}/attribute-values`, { data });
   return response.data;
 };
