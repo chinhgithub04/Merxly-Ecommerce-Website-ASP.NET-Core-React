@@ -1013,8 +1013,8 @@ export const ProductVariantsSection = ({
                     <div className='text-sm text-neutral-700 flex items-center'>
                       {getVariantName(variant)}
                     </div>
-                    <div className='relative'>
-                      <span className='absolute left-2 top-1/2 -translate-y-1/2 text-sm text-neutral-500'>
+                    <div className='relative flex items-center'>
+                      <span className='absolute left-3 text-sm text-neutral-500'>
                         ₫
                       </span>
                       <input
@@ -1027,7 +1027,7 @@ export const ProductVariantsSection = ({
                             parseFloat(e.target.value) || 0
                           )
                         }
-                        className='w-full pl-6 pr-2 py-1.5 border border-neutral-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500'
+                        className='w-full pl-7 pr-2 py-1.5 border border-neutral-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500'
                       />
                     </div>
                     <div>
