@@ -866,7 +866,7 @@ export const ProductVariantsSection = ({
                             />
                           </div>
 
-                          <div>
+                          <div className='flex items-center'>
                             <input
                               type='number'
                               value={getGroupAvailable(groupVariants)}
@@ -874,7 +874,7 @@ export const ProductVariantsSection = ({
                               className='w-full px-2 py-1.5 border border-neutral-200 rounded text-sm bg-neutral-50 text-neutral-400'
                             />
                           </div>
-                          <div>
+                          <div className='flex items-center'>
                             <input
                               type='text'
                               disabled
@@ -943,7 +943,7 @@ export const ProductVariantsSection = ({
                                   className='w-full pl-7 pr-2 py-1.5 border border-neutral-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500'
                                 />
                               </div>
-                              <div>
+                              <div className='flex items-center'>
                                 <input
                                   type='number'
                                   value={variant.available}
@@ -957,7 +957,7 @@ export const ProductVariantsSection = ({
                                   className='w-full px-2 py-1.5 border border-neutral-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500'
                                 />
                               </div>
-                              <div>
+                              <div className='flex items-center'>
                                 <input
                                   type='text'
                                   value={variant.sku}
@@ -1030,7 +1030,7 @@ export const ProductVariantsSection = ({
                         className='w-full pl-7 pr-2 py-1.5 border border-neutral-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500'
                       />
                     </div>
-                    <div>
+                    <div className='flex items-center'>
                       <input
                         type='number'
                         value={variant.available}
@@ -1044,7 +1044,7 @@ export const ProductVariantsSection = ({
                         className='w-full px-2 py-1.5 border border-neutral-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500'
                       />
                     </div>
-                    <div>
+                    <div className='flex items-center'>
                       <input
                         type='text'
                         value={variant.sku}
