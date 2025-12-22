@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, type RefObject } from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useNavigate, useParams } from 'react-router-dom';
+import type { ProductVariantsSectionRef } from '../components/products/ProductVariantsSection';
 import {
   createProduct,
   getProductById,
@@ -51,7 +52,9 @@ interface Variant {
   media?: CreateProductVariantMediaDto[];
 }
 
-export const useCreateProduct = () => {
+export const useCreateProduct = (
+  variantsRef?: RefObject<ProductVariantsSectionRef | null>
+) => {
   const navigate = useNavigate();
   const { id: productId } = useParams<{ id: string }>();
   const isEditMode = !!productId;
@@ -82,6 +85,9 @@ export const useCreateProduct = () => {
 
   // Track deleted attribute IDs (for attributes that existed in initial snapshot)
   const [deletedAttributeIds, setDeletedAttributeIds] = useState<string[]>([]);
+
+  // Track if variants are marked for deletion (UI-only state)
+  const [hasMarkedVariants, setHasMarkedVariants] = useState(false);
 
   // Attributes and variants (managed by ProductVariantsSection)
   const [attributes, setAttributes] = useState<Attribute[]>([]);
@@ -495,7 +501,9 @@ export const useCreateProduct = () => {
     : false;
 
   // Overall dirty state for button enablement
-  const isDirty = isEditMode ? isBasicInfoDirty || hasAttributeChanges() : true; // In create mode, always allow save/discard (original behavior)
+  const isDirty = isEditMode
+    ? isBasicInfoDirty || hasAttributeChanges() || hasMarkedVariants
+    : true; // In create mode, always allow save/discard (original behavior)
 
   // Create mutation
   const createMutation = useMutation({
@@ -1038,6 +1046,10 @@ export const useCreateProduct = () => {
       // Clear deleted tracking
       setDeletedAttributeValueIds([]);
       setDeletedAttributeIds([]);
+
+      // Reset marked for deletion UI state
+      setHasMarkedVariants(false);
+      variantsRef?.current?.resetMarkedForDeletion();
     } else {
       // Create mode: navigate back
       navigate('/store/products');
@@ -1067,6 +1079,7 @@ export const useCreateProduct = () => {
     setGroupBy,
     setDeletedAttributeValueIds,
     setDeletedAttributeIds,
+    setHasMarkedVariants,
 
     // Actions
     handleSubmit,

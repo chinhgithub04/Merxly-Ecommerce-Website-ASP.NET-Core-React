@@ -1,11 +1,16 @@
+import { useRef } from 'react';
 import { useCreateProduct } from '../../hooks/useCreateProduct';
 import { CreateProductHeader } from '../../components/products/CreateProductHeader';
 import { ProductBasicInfo } from '../../components/products/ProductBasicInfo';
-import { ProductVariantsSection } from '../../components/products/ProductVariantsSection';
+import {
+  ProductVariantsSection,
+  type ProductVariantsSectionRef,
+} from '../../components/products/ProductVariantsSection';
 import { ProductStatusSection } from '../../components/products/ProductStatusSection';
 import { ProductFeaturedSection } from '../../components/products/ProductFeaturedSection';
 
 export const CreateProductPage = () => {
+  const variantsRef = useRef<ProductVariantsSectionRef>(null);
   const {
     productName,
     description,
@@ -26,6 +31,7 @@ export const CreateProductPage = () => {
     setGroupBy,
     setDeletedAttributeValueIds,
     setDeletedAttributeIds,
+    setHasMarkedVariants,
     handleSubmit,
     handleBack,
     handleDiscard,
@@ -33,7 +39,7 @@ export const CreateProductPage = () => {
     isLoading,
     isEditMode,
     isDirty,
-  } = useCreateProduct();
+  } = useCreateProduct(variantsRef);
 
   // Show loading state while fetching product data
   if (isLoading && isEditMode) {
@@ -82,6 +88,7 @@ export const CreateProductPage = () => {
               )}
 
               <ProductVariantsSection
+                ref={variantsRef}
                 attributes={attributes}
                 variants={variants}
                 groupBy={groupBy}
@@ -94,6 +101,7 @@ export const CreateProductPage = () => {
                 onDeleteAttribute={(attributeId) => {
                   setDeletedAttributeIds((prev) => [...prev, attributeId]);
                 }}
+                onMarkedForDeletionChange={setHasMarkedVariants}
                 isEditMode={isEditMode}
               />
 
