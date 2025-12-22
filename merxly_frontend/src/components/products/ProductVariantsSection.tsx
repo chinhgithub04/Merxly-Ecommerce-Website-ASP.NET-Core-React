@@ -799,27 +799,31 @@ export const ProductVariantsSection = forwardRef<
         {/* Variants Table */}
         {shouldShowVariants && (
           <div className='border border-neutral-200 rounded-lg overflow-hidden'>
-            {/* Group By Selector */}
-            {shouldShowGrouping && (
+            {/* Group By Selector and Bulk Actions */}
+            {(shouldShowGrouping || selectedVariants.size > 0) && (
               <div className='px-4 py-3 border-b border-neutral-200 flex items-center justify-between'>
-                <div>
-                  <label className='text-sm font-medium text-neutral-700 mr-3'>
-                    Group by:
-                  </label>
-                  <select
-                    value={groupBy || ''}
-                    onChange={(e) => onGroupByChange(e.target.value || null)}
-                    className='px-3 py-1.5 border border-neutral-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500'
-                  >
-                    {attributes
-                      .filter((a) => a.name && a.values.some((v) => v.value))
-                      .map((attr) => (
-                        <option key={attr.id} value={attr.id}>
-                          {attr.name}
-                        </option>
-                      ))}
-                  </select>
-                </div>
+                {shouldShowGrouping ? (
+                  <div>
+                    <label className='text-sm font-medium text-neutral-700 mr-3'>
+                      Group by:
+                    </label>
+                    <select
+                      value={groupBy || ''}
+                      onChange={(e) => onGroupByChange(e.target.value || null)}
+                      className='px-3 py-1.5 border border-neutral-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500'
+                    >
+                      {attributes
+                        .filter((a) => a.name && a.values.some((v) => v.value))
+                        .map((attr) => (
+                          <option key={attr.id} value={attr.id}>
+                            {attr.name}
+                          </option>
+                        ))}
+                    </select>
+                  </div>
+                ) : (
+                  <div></div>
+                )}
                 {selectedVariants.size > 0 && (
                   <div className='flex items-center gap-2'>
                     <button
@@ -883,19 +887,23 @@ export const ProductVariantsSection = forwardRef<
                             }`}
                           >
                             <div className='w-6 flex items-center'>
-                              <input
-                                type='checkbox'
-                                className='rounded cursor-pointer'
-                                checked={isGroupChecked(groupVariants)}
-                                ref={(el) => {
-                                  if (el)
-                                    el.indeterminate =
-                                      isGroupIndeterminate(groupVariants);
-                                }}
-                                onChange={() =>
-                                  handleToggleGroup(groupVariants)
-                                }
-                              />
+                              {!isGroupFullyMarkedForDeletion(
+                                groupVariants
+                              ) && (
+                                <input
+                                  type='checkbox'
+                                  className='rounded cursor-pointer'
+                                  checked={isGroupChecked(groupVariants)}
+                                  ref={(el) => {
+                                    if (el)
+                                      el.indeterminate =
+                                        isGroupIndeterminate(groupVariants);
+                                  }}
+                                  onChange={() =>
+                                    handleToggleGroup(groupVariants)
+                                  }
+                                />
+                              )}
                             </div>
                             <div className='flex flex-col'>
                               <span className='text-sm font-semibold text-neutral-900'>
