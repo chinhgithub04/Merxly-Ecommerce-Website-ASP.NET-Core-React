@@ -609,19 +609,16 @@ export const ProductVariantsSection = forwardRef<
     };
 
     const handleMarkForDeletion = () => {
-      if (isEditMode) {
-        // Edit mode: mark for deletion (will be deleted on save)
-        setMarkedForDeletion(new Set(selectedVariants));
-        setSelectedVariants(new Set());
-        onMarkedForDeletionChange?.(Array.from(selectedVariants));
-      } else {
-        // Create mode: remove from UI immediately
-        const updatedVariants = variants.filter(
-          (v) => !selectedVariants.has(v.id)
-        );
-        onVariantsChange(updatedVariants);
-        setSelectedVariants(new Set());
-      }
+      setMarkedForDeletion(new Set(selectedVariants));
+      setSelectedVariants(new Set());
+      onMarkedForDeletionChange?.(Array.from(selectedVariants));
+    };
+
+    const handleUndoDeletion = (variantId: string) => {
+      const newMarked = new Set(markedForDeletion);
+      newMarked.delete(variantId);
+      setMarkedForDeletion(newMarked);
+      onMarkedForDeletionChange?.(Array.from(newMarked));
     };
 
     const isGroupFullyMarkedForDeletion = (
@@ -998,10 +995,22 @@ export const ProductVariantsSection = forwardRef<
                                     <div className='text-sm text-neutral-700 pl-4 flex items-center'>
                                       {getVariantName(variant)}
                                     </div>
-                                    <div className='col-span-3 flex items-center text-sm text-error-600 font-medium'>
-                                      {isEditMode
-                                        ? 'This variant will be deleted'
-                                        : 'This variant will not be created'}
+                                    <div className='col-span-3 flex items-center gap-1 text-sm text-error-600 font-medium'>
+                                      <span>
+                                        {isEditMode
+                                          ? 'This variant will be deleted'
+                                          : 'This variant will not be created'}
+                                      </span>
+                                      <span>·</span>
+                                      <button
+                                        type='button'
+                                        onClick={() =>
+                                          handleUndoDeletion(variant.id)
+                                        }
+                                        className='cursor-pointer text-primary-600 hover:text-primary-700 underline font-medium'
+                                      >
+                                        Undo
+                                      </button>
                                     </div>
                                   </>
                                 ) : (
@@ -1129,10 +1138,20 @@ export const ProductVariantsSection = forwardRef<
                           <div className='text-sm text-neutral-700 flex items-center'>
                             {getVariantName(variant)}
                           </div>
-                          <div className='col-span-3 flex items-center text-sm text-error-600 font-medium'>
-                            {isEditMode
-                              ? 'This variant will be deleted'
-                              : 'This variant will not be created'}
+                          <div className='col-span-3 flex items-center gap-1 text-sm text-error-600 font-medium'>
+                            <span>
+                              {isEditMode
+                                ? 'This variant will be deleted'
+                                : 'This variant will not be created'}
+                            </span>
+                            <span>·</span>
+                            <button
+                              type='button'
+                              onClick={() => handleUndoDeletion(variant.id)}
+                              className='cursor-pointer text-primary-600 hover:text-primary-700 underline font-medium'
+                            >
+                              Undo
+                            </button>
                           </div>
                         </>
                       ) : (
