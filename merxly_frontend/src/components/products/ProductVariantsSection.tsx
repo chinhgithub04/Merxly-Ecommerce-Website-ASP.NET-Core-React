@@ -40,7 +40,7 @@ interface ProductVariantsSectionProps {
   onGroupByChange: (groupBy: string | null) => void;
   onDeleteAttributeValue?: (valueId: string) => void;
   onDeleteAttribute?: (attributeId: string) => void;
-  onMarkedForDeletionChange?: (hasMarked: boolean) => void;
+  onMarkedForDeletionChange?: (markedIds: string[]) => void;
   isEditMode?: boolean;
 }
 
@@ -100,7 +100,7 @@ export const ProductVariantsSection = forwardRef<
     useImperativeHandle(ref, () => ({
       resetMarkedForDeletion: () => {
         setMarkedForDeletion(new Set());
-        onMarkedForDeletionChange?.(false);
+        onMarkedForDeletionChange?.([]);
       },
     }));
 
@@ -611,7 +611,7 @@ export const ProductVariantsSection = forwardRef<
     const handleMarkForDeletion = () => {
       setMarkedForDeletion(new Set(selectedVariants));
       setSelectedVariants(new Set());
-      onMarkedForDeletionChange?.(true);
+      onMarkedForDeletionChange?.(Array.from(selectedVariants));
     };
 
     const isGroupFullyMarkedForDeletion = (

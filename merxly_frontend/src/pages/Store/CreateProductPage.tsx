@@ -31,7 +31,7 @@ export const CreateProductPage = () => {
     setGroupBy,
     setDeletedAttributeValueIds,
     setDeletedAttributeIds,
-    setHasMarkedVariants,
+    setMarkedForDeletionIds,
     handleSubmit,
     handleBack,
     handleDiscard,
@@ -101,7 +101,7 @@ export const CreateProductPage = () => {
                 onDeleteAttribute={(attributeId) => {
                   setDeletedAttributeIds((prev) => [...prev, attributeId]);
                 }}
-                onMarkedForDeletionChange={setHasMarkedVariants}
+                onMarkedForDeletionChange={setMarkedForDeletionIds}
                 isEditMode={isEditMode}
               />
 

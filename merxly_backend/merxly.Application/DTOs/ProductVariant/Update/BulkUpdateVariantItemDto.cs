@@ -10,6 +10,6 @@ namespace merxly.Application.DTOs.ProductVariant.Update
         public decimal? Width { get; init; }
         public decimal? Height { get; init; }
         public int? StockQuantity { get; init; }
-        public bool? IsActive { get; init; }
+        // public bool? IsActive { get; init; }
     }
 }

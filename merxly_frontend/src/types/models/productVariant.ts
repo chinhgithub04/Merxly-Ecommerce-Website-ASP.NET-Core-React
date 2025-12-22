@@ -39,3 +39,23 @@ export interface ResponseUpdateVariantItemDto {
   stockQuantity: number;
   isActive: boolean;
 }
+
+export interface BulkUpdateVariantItemDto {
+  id: string;
+  sku?: string | null;
+  price?: number;
+  stockQuantity?: number;
+}
+
+export interface BulkUpdateProductVariantsDto {
+  updatedVariants: BulkUpdateVariantItemDto[];
+  deletedVariantIds?: string[];
+}
+
+export interface BulkUpdateProductVariantsResponseDto {
+  productId: string;
+  newMinPrice: number;
+  newMaxPrice: number;
+  newTotalStock: number;
+  updatedVariants: ResponseUpdateVariantItemDto[];
+}

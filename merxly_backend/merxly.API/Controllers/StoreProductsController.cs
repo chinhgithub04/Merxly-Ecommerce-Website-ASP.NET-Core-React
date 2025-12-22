@@ -164,15 +164,6 @@ namespace merxly.API.Controllers
 
             return OkResponse(result, "Product variants updated successfully.");
         }
-
-        [HttpDelete("{productId}/variants")]
-        public async Task<ActionResult<ResponseDto<BulkDeleteVariantsResponseDto>>> DeleteProductVariants(Guid productId, [FromBody] BulkDeleteVariantsDto bulkDeleteVariantsDto, CancellationToken cancellationToken)
-        {
-            var storeId = await GetStoreIdForCurrentUserAsync(_storeRepository, cancellationToken);
-            var result = await _productService.DeleteProductVariantsAsync(productId, bulkDeleteVariantsDto, storeId.Value, cancellationToken);
-
-            return OkResponse(result, "Product variants deleted successfully.");
-        }
         #endregion
 
         #region 5. Product Media

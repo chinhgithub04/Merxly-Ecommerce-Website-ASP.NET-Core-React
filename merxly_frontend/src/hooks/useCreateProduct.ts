@@ -12,6 +12,7 @@ import {
   addAttributes,
   updateAttributes,
   deleteAttributes,
+  updateVariants,
 } from '../services/productService';
 import type {
   CreateProductDto,
@@ -23,7 +24,10 @@ import type {
   BulkUpdateProductAttributesDto,
   DeleteAttributesWithVariantsDto,
 } from '../types/models/productAttribute';
-import type { CreateProductVariantDto } from '../types/models/productVariant';
+import type {
+  CreateProductVariantDto,
+  BulkUpdateProductVariantsDto,
+} from '../types/models/productVariant';
 import type { CreateProductVariantMediaDto } from '../types/models/productVariantMedia';
 import type {
   AddAttributeValuesAndVariants,
@@ -86,8 +90,13 @@ export const useCreateProduct = (
   // Track deleted attribute IDs (for attributes that existed in initial snapshot)
   const [deletedAttributeIds, setDeletedAttributeIds] = useState<string[]>([]);
 
-  // Track if variants are marked for deletion (UI-only state)
-  const [hasMarkedVariants, setHasMarkedVariants] = useState(false);
+  // Track variants marked for deletion (variant IDs)
+  const [markedForDeletionIds, setMarkedForDeletionIds] = useState<string[]>(
+    []
+  );
+
+  // Initial variants snapshot for edit mode (to track variant changes)
+  const [initialVariants, setInitialVariants] = useState<Variant[]>([]);
 
   // Attributes and variants (managed by ProductVariantsSection)
   const [attributes, setAttributes] = useState<Attribute[]>([]);
@@ -222,6 +231,9 @@ export const useCreateProduct = (
         });
 
       setVariants(mappedVariants);
+
+      // Capture initial variants snapshot
+      setInitialVariants(JSON.parse(JSON.stringify(mappedVariants)));
 
       // Set default groupBy if needed
       if (mappedAttributes.length >= 2) {
@@ -490,6 +502,38 @@ export const useCreateProduct = (
     return false;
   };
 
+  // Detect if variants have been marked for deletion
+  const hasMarkedForDeletion = (): boolean => {
+    return markedForDeletionIds.length > 0;
+  };
+
+  // Detect if any variant fields have been edited
+  const hasVariantChanges = (): boolean => {
+    if (!isEditMode || initialVariants.length === 0) return false;
+
+    // Filter out variants marked for deletion
+    const activeVariants = variants.filter(
+      (v) => !markedForDeletionIds.includes(v.id)
+    );
+
+    for (const currVariant of activeVariants) {
+      const initialVariant = initialVariants.find(
+        (v) => v.id === currVariant.id
+      );
+      if (!initialVariant) continue;
+
+      if (
+        currVariant.price !== initialVariant.price ||
+        currVariant.available !== initialVariant.available ||
+        currVariant.sku !== initialVariant.sku
+      ) {
+        return true;
+      }
+    }
+
+    return false;
+  };
+
   // Separate dirty flags for precise detection
   const isBasicInfoDirty = isEditMode
     ? initialBasicInfo !== null &&
@@ -502,7 +546,10 @@ export const useCreateProduct = (
 
   // Overall dirty state for button enablement
   const isDirty = isEditMode
-    ? isBasicInfoDirty || hasAttributeChanges() || hasMarkedVariants
+    ? isBasicInfoDirty ||
+      hasAttributeChanges() ||
+      hasMarkedForDeletion() ||
+      hasVariantChanges()
     : true; // In create mode, always allow save/discard (original behavior)
 
   // Create mutation
@@ -725,6 +772,41 @@ export const useCreateProduct = (
       console.error('Failed to delete attributes:', error);
       const errorMessage =
         error.response?.data?.message || 'Failed to delete attributes';
+      setErrors({ variants: errorMessage });
+    },
+  });
+
+  // Update variants mutation (bulk edit + delete)
+  const updateVariantsMutation = useMutation({
+    mutationFn: (data: BulkUpdateProductVariantsDto) =>
+      updateVariants(productId!, data),
+    onSuccess: (response) => {
+      const data = response.data;
+      if (data) {
+        // Update initialVariants to reflect new state
+        // Remove deleted variants and update changed ones
+        const updatedInitialVariants = variants
+          .filter((v) => !markedForDeletionIds.includes(v.id))
+          .map((v) => ({ ...v }));
+        setInitialVariants(updatedInitialVariants);
+
+        // Permanently remove deleted variants from UI
+        const activeVariants = variants.filter(
+          (v) => !markedForDeletionIds.includes(v.id)
+        );
+        setVariants(activeVariants);
+
+        // Clear deletion tracking
+        setMarkedForDeletionIds([]);
+
+        // Reset marked for deletion UI state
+        variantsRef?.current?.resetMarkedForDeletion();
+      }
+    },
+    onError: (error: any) => {
+      console.error('Failed to update variants:', error);
+      const errorMessage =
+        error.response?.data?.message || 'Failed to update variants';
       setErrors({ variants: errorMessage });
     },
   });
@@ -957,6 +1039,31 @@ export const useCreateProduct = (
           }
         }
 
+        // Step 8: Update variants (bulk edit + delete) if any changes
+        if (hasMarkedForDeletion() || hasVariantChanges()) {
+          // Build list of variants to update (exclude marked for deletion)
+          const activeVariants = variants.filter(
+            (v) => !markedForDeletionIds.includes(v.id)
+          );
+
+          const updatedVariants = activeVariants.map((variant) => ({
+            id: variant.id,
+            sku: variant.sku || null,
+            price: variant.price,
+            stockQuantity: variant.available,
+          }));
+
+          const updateDto: BulkUpdateProductVariantsDto = {
+            updatedVariants,
+            deletedVariantIds:
+              markedForDeletionIds.length > 0
+                ? markedForDeletionIds
+                : undefined,
+          };
+
+          await updateVariantsMutation.mutateAsync(updateDto);
+        }
+
         // Show success message if any update was performed
         if (
           isBasicInfoDirty ||
@@ -965,7 +1072,9 @@ export const useCreateProduct = (
           hasNewAttributeValues() ||
           hasDeletedAttributes() ||
           hasUpdatedAttributes() ||
-          hasNewAttributes()
+          hasNewAttributes() ||
+          hasMarkedForDeletion() ||
+          hasVariantChanges()
         ) {
           alert('Product saved');
 
@@ -1047,8 +1156,15 @@ export const useCreateProduct = (
       setDeletedAttributeValueIds([]);
       setDeletedAttributeIds([]);
 
+      // Restore variants to initial state
+      if (initialVariants.length > 0) {
+        setVariants(JSON.parse(JSON.stringify(initialVariants)));
+      }
+
+      // Clear marked for deletion
+      setMarkedForDeletionIds([]);
+
       // Reset marked for deletion UI state
-      setHasMarkedVariants(false);
       variantsRef?.current?.resetMarkedForDeletion();
     } else {
       // Create mode: navigate back
@@ -1079,7 +1195,7 @@ export const useCreateProduct = (
     setGroupBy,
     setDeletedAttributeValueIds,
     setDeletedAttributeIds,
-    setHasMarkedVariants,
+    setMarkedForDeletionIds,
 
     // Actions
     handleSubmit,
@@ -1095,7 +1211,8 @@ export const useCreateProduct = (
       updateAttributeValuesMutation.isPending ||
       deleteAttributesMutation.isPending ||
       addAttributesMutation.isPending ||
-      updateAttributesMutation.isPending,
+      updateAttributesMutation.isPending ||
+      updateVariantsMutation.isPending,
     isLoading: isLoadingProduct,
     isEditMode,
     isDirty,

@@ -959,7 +959,36 @@ namespace merxly.Application.Services
             // Map of existing variants for quick lookup
             var dbVariantsMap = product.Variants.ToDictionary(v => v.Id);
 
-            foreach (var updateVariantDto in bulkUpdateProductVariantsDto.Variants)
+            // Delete variants
+            if (bulkUpdateProductVariantsDto.DeletedVariantIds != null && bulkUpdateProductVariantsDto.DeletedVariantIds.Count > 0)
+            {
+                foreach (var variantId in bulkUpdateProductVariantsDto.DeletedVariantIds)
+                {
+                    if (dbVariantsMap.TryGetValue(variantId, out var variant))
+                    {
+                        // Soft delete the variant
+                        variant.IsDeleted = true;
+                        variant.IsActive = false;
+
+                        // Append timestamp to SKU to avoid conflicts
+                        if (!string.IsNullOrEmpty(variant.SKU))
+                        {
+                            variant.SKU = $"{variant.SKU}_DELETED_{DateTime.UtcNow:yyyyMMddHHmmss}";
+                        }
+
+                        _unitOfWork.ProductVariant.Update(variant);
+                        _logger.LogInformation("Soft deleted variant: {VariantId} for product: {ProductId}", variantId, productId);
+                    }
+                    else
+                    {
+                        _logger.LogWarning("Variant not found: {VariantId} for product: {ProductId}", variantId, productId);
+                        throw new NotFoundException($"Variant with ID {variantId} not found for this product.");
+                    }
+                }
+            }
+
+            // Update variants
+            foreach (var updateVariantDto in bulkUpdateProductVariantsDto.UpdatedVariants)
             {
                 if (dbVariantsMap.TryGetValue(updateVariantDto.Id, out var variant))
                 {
