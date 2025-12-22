@@ -609,9 +609,19 @@ export const ProductVariantsSection = forwardRef<
     };
 
     const handleMarkForDeletion = () => {
-      setMarkedForDeletion(new Set(selectedVariants));
-      setSelectedVariants(new Set());
-      onMarkedForDeletionChange?.(Array.from(selectedVariants));
+      if (isEditMode) {
+        // Edit mode: mark for deletion (will be deleted on save)
+        setMarkedForDeletion(new Set(selectedVariants));
+        setSelectedVariants(new Set());
+        onMarkedForDeletionChange?.(Array.from(selectedVariants));
+      } else {
+        // Create mode: remove from UI immediately
+        const updatedVariants = variants.filter(
+          (v) => !selectedVariants.has(v.id)
+        );
+        onVariantsChange(updatedVariants);
+        setSelectedVariants(new Set());
+      }
     };
 
     const isGroupFullyMarkedForDeletion = (
