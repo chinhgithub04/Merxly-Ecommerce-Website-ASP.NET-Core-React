@@ -1,4 +1,8 @@
-import { HomeHeader, HomeActionBar } from '../../components/layout/home';
+import {
+  HomeHeader,
+  HomeActionBar,
+  HomeFooter,
+} from '../../components/layout/home';
 import { ShopWithCategories, FeaturedProduct } from '../../components/home';
 
 export const HomePage = () => {
@@ -12,6 +16,7 @@ export const HomePage = () => {
         <ShopWithCategories />
         <FeaturedProduct />
       </main>
+      <HomeFooter />
     </div>
   );
 };
