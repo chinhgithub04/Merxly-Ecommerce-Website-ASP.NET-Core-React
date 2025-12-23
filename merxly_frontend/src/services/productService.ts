@@ -1,6 +1,7 @@
 import type { Response, PagedResponse } from '../types/api/common';
 import type { CategoryForStore } from '../types/models/category';
 import type {
+  ProductDto,
   ProductForStore,
   ProductQueryParameters,
   CreateProductDto,
@@ -30,6 +31,20 @@ import type {
 } from '../types/models/productVariant';
 import apiClient from './apiClient';
 
+// Customer
+export const getTop10FeaturedProducts = async (
+  categoryId?: string
+): Promise<Response<ProductDto[]>> => {
+  const response = await apiClient.get<Response<ProductDto[]>>(
+    '/Products/top-10-featured',
+    {
+      params: categoryId ? { categoryId } : {},
+    }
+  );
+  return response.data;
+};
+
+// Store Products
 export const getStoreProducts = async (
   params: ProductQueryParameters
 ): Promise<Response<PagedResponse<ProductForStore>>> => {

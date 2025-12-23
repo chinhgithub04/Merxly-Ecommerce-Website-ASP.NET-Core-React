@@ -8,6 +8,23 @@ import type {
   ProductVariantDto,
 } from './productVariant';
 
+export interface ProductDto {
+  id: string;
+  name: string;
+  minPrice: number | null;
+  maxPrice: number | null;
+  totalStock: number;
+  mainMediaPublicId: string | null;
+  averageRating: number;
+  reviewCount: number;
+  isStoreFeatured: boolean;
+  isPlatformFeatured: boolean;
+  totalSold: number;
+  categoryName: string;
+  categoryId: string;
+  createdAt: string;
+}
+
 export interface ProductForStore {
   id: string;
   name: string;

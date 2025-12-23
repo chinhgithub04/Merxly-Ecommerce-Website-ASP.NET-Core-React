@@ -52,6 +52,19 @@ namespace merxly.Application.Services
             return paginatedResult;
         }
 
+        public async Task<IEnumerable<ProductDto>> GetTop10FeaturedProductsAsync(Guid? categoryId, CancellationToken cancellationToken)
+        {
+            _logger.LogInformation("Retrieving top 10 featured products. CategoryId: {CategoryId}", categoryId);
+
+            var products = await _unitOfWork.Product.GetTop10FeaturedProductsAsync(categoryId, cancellationToken);
+
+            var productDtos = _mapper.Map<IEnumerable<ProductDto>>(products);
+
+            _logger.LogInformation("Top 10 featured products retrieved successfully. CategoryId: {CategoryId}", categoryId);
+
+            return productDtos;
+        }
+
         public async Task<DetailProductDto> GetProductByIdAsync(Guid productId, CancellationToken cancellationToken)
         {
             _logger.LogInformation("Getting product by ID: {ProductId}", productId);
@@ -1402,5 +1415,7 @@ namespace merxly.Application.Services
 
             return result;
         }
+
+
     }
 }

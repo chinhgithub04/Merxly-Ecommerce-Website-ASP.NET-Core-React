@@ -1,5 +1,5 @@
 import { HomeHeader, HomeActionBar } from '../../components/layout/home';
-import { ShopWithCategories } from '../../components/home';
+import { ShopWithCategories, FeaturedProduct } from '../../components/home';
 
 export const HomePage = () => {
   return (
@@ -10,6 +10,7 @@ export const HomePage = () => {
       <main className='pt-[136px]'>
         {/* 80px header + 56px action bar */}
         <ShopWithCategories />
+        <FeaturedProduct />
       </main>
     </div>
   );

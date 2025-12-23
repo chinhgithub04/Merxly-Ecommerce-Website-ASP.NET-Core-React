@@ -183,6 +183,23 @@ namespace merxly.Infrastructure.Persistence.Repositories
             };
         }
 
+        public Task<List<Product>> GetTop10FeaturedProductsAsync(Guid? categoryId, CancellationToken cancellationToken = default)
+        {
+            IQueryable<Product> query = _dbSet.AsNoTracking().Include(p => p.Category);
+            if (categoryId.HasValue)
+            {
+                query = query.Where(p => p.CategoryId == categoryId.Value);
+            }
+
+            query = query.Where(p => p.IsPlatformFeatured && !p.IsDeleted && p.IsActive)
+                         .OrderByDescending(p => p.TotalSold)
+                         .ThenByDescending(p => p.AverageRating)
+                         .ThenByDescending(p => p.CreatedAt)
+                         .Take(10);
+
+            return query.ToListAsync(cancellationToken);
+        }
+
         public async Task<Product?> GetProductDetailsByIdAsync(Guid productId, CancellationToken cancellationToken = default)
         {
             return await _dbSet
@@ -245,5 +262,7 @@ namespace merxly.Infrastructure.Persistence.Repositories
 
             return product;
         }
+
+
     }
 }

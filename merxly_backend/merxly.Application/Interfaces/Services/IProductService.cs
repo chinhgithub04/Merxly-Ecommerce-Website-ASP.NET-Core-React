@@ -19,7 +19,7 @@ namespace merxly.Application.Interfaces.Services
         // Customer
         Task<PaginatedResultDto<ProductDto>> GetProductsAsync(ProductQueryParameters parameters, CancellationToken cancellationToken);
         Task<DetailProductDto> GetProductByIdAsync(Guid productId, CancellationToken cancellationToken);
-
+        Task<IEnumerable<ProductDto>> GetTop10FeaturedProductsAsync(Guid? categoryId, CancellationToken cancellationToken);
         // Store
         Task<PaginatedResultDto<ProductForStoreDto>> GetAllProductsForStoreAsync(Guid storeId, ProductQueryParametersForStore parameters, CancellationToken cancellationToken);
         Task<IEnumerable<CategoryForStoreDto>> GetUsedCategoriesByStoreIdAsync(Guid storeId, CancellationToken cancellationToken);
