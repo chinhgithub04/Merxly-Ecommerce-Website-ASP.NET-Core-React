@@ -1,4 +1,5 @@
 import { HomeHeader, HomeActionBar } from '../../components/layout/home';
+import { ShopWithCategories } from '../../components/home';
 
 export const HomePage = () => {
   return (
@@ -6,7 +7,10 @@ export const HomePage = () => {
       <HomeHeader />
       <HomeActionBar />
       {/* Main content area - empty for now */}
-      <main className='pt-[136px]'>{/* 80px header + 56px action bar */}</main>
+      <main className='pt-[136px]'>
+        {/* 80px header + 56px action bar */}
+        <ShopWithCategories />
+      </main>
     </div>
   );
 };

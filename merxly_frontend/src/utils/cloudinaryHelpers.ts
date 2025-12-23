@@ -158,3 +158,25 @@ export const getMediaThumbnailUrl = (
   }
   return getProductImageUrl(publicId, 'thumbnail');
 };
+
+/**
+ * Get a Cloudinary category image URL with transformations
+ * @param publicId - The Cloudinary public ID of the category image
+ * @param width - Image width in pixels (default: 200)
+ * @param height - Image height in pixels (default: 200)
+ * @returns The transformed category image URL
+ */
+export const getCategoryImageUrl = (
+  publicId: string,
+  width: number = 200,
+  height: number = 200
+): string => {
+  const image = cld.image(publicId);
+
+  // Apply transformations
+  image
+    .resize(fill().width(width).height(height).gravity(autoGravity()))
+    .quality(auto());
+
+  return image.toURL();
+};

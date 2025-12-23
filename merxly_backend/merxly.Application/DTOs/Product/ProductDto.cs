@@ -7,7 +7,7 @@ namespace merxly.Application.DTOs.Product
         public decimal? MinPrice { get; init; }
         public decimal? MaxPrice { get; init; }
         public int TotalStock { get; init; }
-        public string? MainMediaUrl { get; init; }
+        public string? MainMediaPublicId { get; init; }
         public double AverageRating { get; init; }
         public int ReviewCount { get; init; }
         public bool IsStoreFeatured { get; init; }

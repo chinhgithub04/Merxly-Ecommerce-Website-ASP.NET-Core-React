@@ -8,6 +8,7 @@
     {
         public Guid Id { get; init; }
         public string Name { get; init; }
-        public string? ImageUrl { get; init; }
+        public string? ImagePublicId { get; init; }
+        public bool IsActive { get; init; }
     }
 }

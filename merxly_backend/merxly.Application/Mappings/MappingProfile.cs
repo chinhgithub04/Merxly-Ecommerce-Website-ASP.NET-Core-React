@@ -26,8 +26,7 @@ namespace merxly.Application.Mappings
             CreateMap(typeof(PaginatedResultDto<>), typeof(PaginatedResultDto<>));
 
             // Category Mappings
-            CreateMap<Category, ParentCategoryDto>()
-                .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom<ThumbnailImageUrlResolver<Category, ParentCategoryDto>, string?>(src => src.ImagePublicId));
+            CreateMap<Category, ParentCategoryDto>();
 
             CreateMap<Category, CategoryDto>()
                 .ForMember(dest => dest.Children, opt => opt.MapFrom(src => src.SubCategories));
@@ -49,7 +48,6 @@ namespace merxly.Application.Mappings
 
             // Product Mappings
             CreateMap<Product, ProductDto>()
-                .ForMember(dest => dest.MainMediaUrl, opt => opt.MapFrom<ThumbnailImageUrlResolver<Product, ProductDto>, string?>(src => src.MainMediaPublicId))
                 .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.Name));
 
             CreateMap<Product, ProductForStoreDto>()

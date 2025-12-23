@@ -5,6 +5,13 @@ export interface CategoryDto {
   children: CategoryDto[];
 }
 
+export interface ParentCategoryDto {
+  id: string;
+  name: string;
+  imagePublicId: string | null;
+  isActive: boolean;
+}
+
 export interface CategoryForStore {
   id: string;
   name: string;
