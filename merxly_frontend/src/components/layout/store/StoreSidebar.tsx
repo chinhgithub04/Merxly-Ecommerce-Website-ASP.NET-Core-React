@@ -4,6 +4,7 @@ import {
   ShoppingBagIcon,
   CubeIcon,
   MapPinIcon,
+  BanknotesIcon,
   Cog6ToothIcon,
   ArrowRightStartOnRectangleIcon,
 } from '@heroicons/react/24/outline';
@@ -20,6 +21,7 @@ const navigationItems: NavItem[] = [
   { name: 'Orders', path: '/store/orders', icon: ShoppingBagIcon },
   { name: 'Products', path: '/store/products', icon: CubeIcon },
   { name: 'Locations', path: '/store/locations', icon: MapPinIcon },
+  { name: 'Payments', path: '/store/payments', icon: BanknotesIcon },
   { name: 'Settings', path: '/store/settings', icon: Cog6ToothIcon },
 ];
 
