@@ -16,6 +16,7 @@ import { CreateProductPage } from './pages/Store/CreateProductPage';
 import { UserRole } from './types/enums';
 import { StoreLocationsPage } from './pages/Store/StoreLocationsPage';
 import { StorePaymentsPage } from './pages/Store/StorePaymentsPage';
+import { StoreMyStorePage } from './pages/Store/StoreMyStorePage';
 
 function App() {
   const { isAuthenticated } = useAuth();
@@ -39,6 +40,7 @@ function App() {
           <Route path='products' element={<StoreProductsPage />} />
           <Route path='locations' element={<StoreLocationsPage />} />
           <Route path='payments' element={<StorePaymentsPage />} />
+          <Route path='my-store' element={<StoreMyStorePage />} />
           <Route path='settings' element={<StoreSettingsPage />} />
         </Route>
 
