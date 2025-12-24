@@ -1,5 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { LoginPage } from './pages/Auth/LoginPage';
+import { RegisterPage } from './pages/Auth/RegisterPage';
+import { ForgotPasswordPage } from './pages/Auth/ForgotPasswordPage';
 import { HomePage } from './pages/Home';
 import { SearchProductPage, ProductDetailPage } from './pages/Customer';
 import { useAuth } from './contexts/AuthContext';
@@ -34,6 +36,8 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path='/login' element={<LoginPage />} />
+        <Route path='/register' element={<RegisterPage />} />
+        <Route path='/forgot-password' element={<ForgotPasswordPage />} />
         <Route path='/sign-up-new-store' element={<SignUpNewStorePage />} />
 
         {/* Admin Routes with Layout */}
