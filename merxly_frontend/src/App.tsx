@@ -17,6 +17,7 @@ import { UserRole } from './types/enums';
 import { StoreLocationsPage } from './pages/Store/StoreLocationsPage';
 import { StorePaymentsPage } from './pages/Store/StorePaymentsPage';
 import { StoreMyStorePage } from './pages/Store/StoreMyStorePage';
+import { SignUpNewStorePage } from './pages/SignUpNewStorePage';
 
 function App() {
   const { isAuthenticated } = useAuth();
@@ -25,6 +26,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path='/login' element={<LoginPage />} />
+        <Route path='/sign-up-new-store' element={<SignUpNewStorePage />} />
 
         {/* Store Owner Routes with Layout */}
         <Route
