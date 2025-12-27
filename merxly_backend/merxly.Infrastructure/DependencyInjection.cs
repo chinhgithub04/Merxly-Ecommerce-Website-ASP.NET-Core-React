@@ -1,12 +1,8 @@
 ﻿using CloudinaryDotNet;
-using FluentValidation;
-using FluentValidation.AspNetCore;
 using merxly.Application.Interfaces;
 using merxly.Application.Interfaces.Repositories;
 using merxly.Application.Interfaces.Services;
-using merxly.Application.Mappings;
 using merxly.Application.Settings;
-using merxly.Application.Validators.Auth;
 using merxly.Domain.Entities;
 using merxly.Infrastructure.Persistence;
 using merxly.Infrastructure.Persistence.Repositories;
@@ -18,6 +14,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Stripe;
 using System.Text;
 using System.Text.Json;
 
@@ -98,7 +95,7 @@ namespace merxly.Infrastructure
                         context.HandleResponse();
                         context.Response.StatusCode = StatusCodes.Status401Unauthorized;
                         context.Response.ContentType = "application/json";
-                        
+
                         var result = JsonSerializer.Serialize(new
                         {
                             data = (object?)null,
@@ -107,14 +104,14 @@ namespace merxly.Infrastructure
                             statusCode = 401,
                             errors = new[] { "Authentication token is missing or invalid." }
                         });
-                        
+
                         return context.Response.WriteAsync(result);
                     },
                     OnForbidden = context =>
                     {
                         context.Response.StatusCode = StatusCodes.Status403Forbidden;
                         context.Response.ContentType = "application/json";
-                        
+
                         var result = JsonSerializer.Serialize(new
                         {
                             data = (object?)null,
@@ -123,7 +120,7 @@ namespace merxly.Infrastructure
                             statusCode = 403,
                             errors = new[] { "Insufficient permissions." }
                         });
-                        
+
                         return context.Response.WriteAsync(result);
                     }
                 };
@@ -160,6 +157,7 @@ namespace merxly.Infrastructure
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IFileStorageService, CloudinaryService>();
             services.AddScoped<ICloudinaryUrlService, CloudinaryUrlService>();
+            services.AddScoped<IStripeService, StripeService>();
 
             // Cloudinary Service
             var cloudinarySettings = configuration.GetSection("CloudinarySettings").Get<CloudinarySettings>()
@@ -167,13 +165,18 @@ namespace merxly.Infrastructure
 
             services.AddSingleton(x =>
             {
-                var account = new Account(
+                var account = new CloudinaryDotNet.Account(
                     cloudinarySettings.CloudName,
                     cloudinarySettings.ApiKey,
                     cloudinarySettings.ApiSecret
                 );
                 return new Cloudinary(account);
             });
+
+            // Stripe Settings
+            services.Configure<StripeSettings>(configuration.GetSection("StripeSettings"));
+            StripeConfiguration.ApiKey = configuration.GetSection("StripeSettings:SecretKey").Get<string>();
+
 
             return services;
         }

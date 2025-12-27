@@ -1,5 +1,4 @@
 ﻿using merxly.Application.DTOs.Common;
-using merxly.Application.Interfaces;
 using merxly.Application.Interfaces.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;

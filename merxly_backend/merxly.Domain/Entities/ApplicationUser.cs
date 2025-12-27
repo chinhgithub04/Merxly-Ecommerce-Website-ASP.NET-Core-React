@@ -8,13 +8,13 @@ namespace merxly.Domain.Entities
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string? AvatarPublicId { get; set; }
-        public DateTime CreatedAt {  get; set; }
+        public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
         public bool IsActive { get; set; }
 
         // Stripe Integration - for saved payment methods
-        public string? StripeCustomerId { get; set; } // User account id on Stripe
-        public string? DefaultPaymentMethodId { get; set; } //A specific payment method (card information). Ex: MBank Card: mbank-12345
+        public string? StripeCustomerId { get; set; } // Stripe Customer ID for purchasing
+        public string? DefaultPaymentMethodId { get; set; } //A specific payment method (card information).
 
         // Navigation properties
         public Store? Store { get; set; }

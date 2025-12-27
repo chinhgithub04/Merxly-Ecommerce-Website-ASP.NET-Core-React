@@ -20,6 +20,8 @@ namespace merxly.Domain.Entities
 
         // Stripe Connect Integration - for store payouts
         public string? StripeConnectAccountId { get; set; }
+        public bool IsPayoutEnabled { get; set; }
+        public string? StripeAccountStatus { get; set; }
 
         // Foreign Keys
         public string OwnerId { get; set; }

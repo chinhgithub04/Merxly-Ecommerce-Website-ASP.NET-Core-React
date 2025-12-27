@@ -56,6 +56,10 @@ namespace merxly.Infrastructure.Persistence.Configurations
             builder.Property(s => s.StripeConnectAccountId)
                 .HasMaxLength(100);
 
+            builder.Property(s => s.IsPayoutEnabled)
+                .IsRequired()
+                .HasDefaultValue(false);
+
 
             // Relationships
             builder.HasOne(s => s.Address)
