@@ -32,6 +32,7 @@ namespace merxly.Infrastructure.Persistence
         public DbSet<ReviewMedia> ReviewMedia { get; set; }
         public DbSet<Store> Stores { get; set; }
         public DbSet<StoreAddress> StoreAddresses { get; set; }
+        public DbSet<StoreTransfer> StoreTransfers { get; set; }
         public DbSet<Wishlist> Wishlists { get; set; }
         public DbSet<WishlistItem> WishlistItems { get; set; }
 

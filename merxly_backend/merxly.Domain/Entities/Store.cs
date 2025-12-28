@@ -31,5 +31,6 @@ namespace merxly.Domain.Entities
         public ICollection<Product> Products { get; set; } = new List<Product>();
         public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
         public StoreAddress? Address { get; set; }
+        public ICollection<StoreTransfer> StoreTransfers { get; set; } = new List<StoreTransfer>();
     }
 }

@@ -50,11 +50,6 @@ namespace merxly.Infrastructure.Persistence.Configurations
                 .HasForeignKey(o => o.ShippingAddressId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasOne(o => o.BillingAddress)
-                .WithMany()
-                .HasForeignKey(o => o.BillingAddressId)
-                .OnDelete(DeleteBehavior.Restrict);
-
             builder.HasMany(o => o.OrderItems)
                 .WithOne(oi => oi.Order)
                 .HasForeignKey(oi => oi.OrderId)

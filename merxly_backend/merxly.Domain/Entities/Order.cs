@@ -16,18 +16,15 @@ namespace merxly.Domain.Entities
         public string? Notes { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
-        public DateTime? ShippedAt { get; set; }
-        public DateTime? DeliveredAt { get; set; }
+        public DateTime? CompletedAt { get; set; }
 
         // Foreign Keys
         public string UserId { get; set; }
         public Guid ShippingAddressId { get; set; }
-        public Guid BillingAddressId { get; set; }
 
         // Navigation properties
         public ApplicationUser User { get; set; }
         public Address ShippingAddress { get; set; }
-        public Address BillingAddress { get; set; }
         public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
         public ICollection<OrderStatusHistory> StatusHistory { get; set; } = new List<OrderStatusHistory>();
         public Payment? Payment { get; set; }

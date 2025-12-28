@@ -22,6 +22,15 @@ namespace merxly.Infrastructure.Persistence.Configurations
                 .IsRequired()
                 .HasPrecision(18, 2);
 
+            builder.Property(p => p.Currency)
+                .IsRequired()
+                .HasDefaultValue("vnd")
+                .HasMaxLength(3);
+
+            builder.Property(p => p.TotalCommission)
+                .IsRequired()
+                .HasPrecision(18, 2);
+
             builder.Property(p => p.Status)
                 .IsRequired()
                 .HasConversion<string>();
@@ -46,6 +55,11 @@ namespace merxly.Infrastructure.Persistence.Configurations
                 .WithOne(r => r.Payment)
                 .HasForeignKey(r => r.PaymentId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasMany(p => p.StoreTransfers)
+                .WithOne(st => st.Payment)
+                .HasForeignKey(st => st.PaymentId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             // Indexes
             builder.HasIndex(p => p.PaymentIntentId)
