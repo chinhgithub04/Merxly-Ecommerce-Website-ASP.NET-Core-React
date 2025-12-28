@@ -17,20 +17,26 @@ namespace merxly.Infrastructure.Persistence.Configurations
                 .IsRequired()
                 .HasMaxLength(200);
 
-            builder.Property(a => a.AddressLine1)
+            builder.Property(a => a.Title)
+                .HasMaxLength(100);
+
+            builder.Property(a => a.AddressLine)
                 .IsRequired()
                 .HasMaxLength(200);
 
-            builder.Property(a => a.AddressLine2)
-                .HasMaxLength(200);
+            builder.Property(a => a.CityCode)
+                .IsRequired();
 
-            builder.Property(a => a.City)
+            builder.Property(a => a.CityName)
                 .IsRequired()
-                .HasMaxLength(100);
+                .HasMaxLength(300);
 
-            builder.Property(a => a.StateProvince)
+            builder.Property(a => a.WardCode)
+                .IsRequired();
+
+            builder.Property(a => a.WardName)
                 .IsRequired()
-                .HasMaxLength(100);
+                .HasMaxLength(300);
 
             builder.Property(a => a.PostalCode)
                 .IsRequired()

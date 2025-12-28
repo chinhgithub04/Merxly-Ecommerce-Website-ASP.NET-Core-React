@@ -13,20 +13,23 @@ namespace merxly.Infrastructure.Persistence.Configurations
             builder.HasKey(sa => sa.Id);
 
             // Properties
-            builder.Property(sa => sa.AddressLine1)
+            builder.Property(sa => sa.AddressLine)
                 .IsRequired()
                 .HasMaxLength(200);
 
-            builder.Property(sa => sa.AddressLine2)
-                .HasMaxLength(200);
+            builder.Property(sa => sa.CityCode)
+                .IsRequired();
 
-            builder.Property(sa => sa.City)
+            builder.Property(sa => sa.CityName)
                 .IsRequired()
-                .HasMaxLength(100);
+                .HasMaxLength(300);
 
-            builder.Property(sa => sa.StateProvince)
+            builder.Property(sa => sa.WardCode)
+                .IsRequired();
+
+            builder.Property(sa => sa.WardName)
                 .IsRequired()
-                .HasMaxLength(100);
+                .HasMaxLength(300);
 
             builder.Property(sa => sa.PostalCode)
                 .IsRequired()

@@ -1,11 +1,7 @@
-using merxly.Domain.Interfaces;
-
-namespace merxly.Domain.Entities
+namespace merxly.Application.DTOs.CustomerAddress
 {
-    public class Address : ICreatedDate, IModifiedDate
+    public class CreateCustomerAddressDto
     {
-        public Guid Id { get; set; }
-
         public string FullName { get; set; }
         public string? Title { get; set; }
         public string AddressLine { get; set; }
@@ -16,13 +12,5 @@ namespace merxly.Domain.Entities
         public string PostalCode { get; set; }
         public string? PhoneNumber { get; set; }
         public bool IsDefault { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime? UpdatedAt { get; set; }
-
-        // Foreign Keys
-        public string UserId { get; set; }
-
-        // Navigation properties
-        public ApplicationUser User { get; set; }
     }
 }

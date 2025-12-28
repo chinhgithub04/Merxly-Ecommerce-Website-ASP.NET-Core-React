@@ -2,6 +2,7 @@
 using merxly.Application.DTOs.Cart;
 using merxly.Application.DTOs.Category;
 using merxly.Application.DTOs.Common;
+using merxly.Application.DTOs.CustomerAddress;
 using merxly.Application.DTOs.Product;
 using merxly.Application.DTOs.Product.Update;
 using merxly.Application.DTOs.ProductAttribute;
@@ -166,6 +167,16 @@ namespace merxly.Application.Mappings
             CreateMap<AddToCartDto, CartItem>();
 
             CreateMap<UpdateCartItemDto, CartItem>();
+
+            // Customer Address Mappings
+            CreateMap<Address, CustomerAddressDto>()
+                .ForMember(dest => dest.FullAddress, opt => opt.MapFrom(src =>
+                    $"{src.AddressLine}, {src.WardName}, {src.CityName}"));
+
+            CreateMap<CreateCustomerAddressDto, Address>();
+
+            CreateMap<UpdateCustomerAddressDto, Address>()
+                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
         }
     }
 }
