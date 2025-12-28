@@ -8,7 +8,7 @@ import {
   ProductDetailPage,
   CartPage,
 } from './pages/Customer';
-import { PaymentMethodsPage } from './pages/User';
+import { DashboardPage } from './pages/User';
 import { useAuth } from './contexts/AuthContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { StoreOwnerLayout } from './components/layout';
@@ -35,8 +35,6 @@ import { StoreMyStorePage } from './pages/Store/StoreMyStorePage';
 import { SignUpNewStorePage } from './pages/SignUpNewStorePage';
 
 function App() {
-  const { isAuthenticated } = useAuth();
-
   return (
     <BrowserRouter>
       <Routes>
@@ -109,10 +107,10 @@ function App() {
           <Route path='products/:id' element={<ProductDetailPage />} />
           <Route path='cart' element={<CartPage />} />
           <Route
-            path='payment-methods'
+            path='dashboard'
             element={
               <ProtectedRoute>
-                <PaymentMethodsPage />
+                <DashboardPage />
               </ProtectedRoute>
             }
           />
