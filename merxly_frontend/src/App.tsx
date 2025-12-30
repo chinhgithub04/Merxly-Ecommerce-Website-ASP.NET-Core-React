@@ -1,4 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { Elements } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
 import { LoginPage } from './pages/Auth/LoginPage';
 import { RegisterPage } from './pages/Auth/RegisterPage';
 import { ForgotPasswordPage } from './pages/Auth/ForgotPasswordPage';
@@ -7,9 +9,9 @@ import {
   SearchProductPage,
   ProductDetailPage,
   CartPage,
+  CheckoutPage,
 } from './pages/Customer';
 import { DashboardPage } from './pages/User';
-import { useAuth } from './contexts/AuthContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { StoreOwnerLayout } from './components/layout';
 import { AdminLayout } from './components/layout/admin';
@@ -33,6 +35,10 @@ import { StoreLocationsPage } from './pages/Store/StoreLocationsPage';
 import { StorePaymentsPage } from './pages/Store/StorePaymentsPage';
 import { StoreMyStorePage } from './pages/Store/StoreMyStorePage';
 import { SignUpNewStorePage } from './pages/SignUpNewStorePage';
+
+const stripePromise = loadStripe(
+  import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || ''
+);
 
 function App() {
   return (
@@ -106,6 +112,16 @@ function App() {
           <Route path='products' element={<SearchProductPage />} />
           <Route path='products/:id' element={<ProductDetailPage />} />
           <Route path='cart' element={<CartPage />} />
+          <Route
+            path='checkout'
+            element={
+              <Elements stripe={stripePromise}>
+                <ProtectedRoute>
+                  <CheckoutPage />
+                </ProtectedRoute>
+              </Elements>
+            }
+          />
           <Route
             path='dashboard'
             element={

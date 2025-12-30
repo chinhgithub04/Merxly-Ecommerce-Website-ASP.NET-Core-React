@@ -1,12 +1,25 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useCart } from '../../hooks/useCart';
 import { CartTotals, StoreCartSection } from '../../components/cart';
 import type { StoreCartGroup } from '../../types/models/cart';
 
 export const CartPage = () => {
+  const navigate = useNavigate();
   const { cart, isLoading, updateCartItem, removeCartItem, clearCart } =
     useCart();
   const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
+
+  // Default select all items when cart loads
+  useEffect(() => {
+    if (
+      cart?.cartItems &&
+      cart.cartItems.length > 0 &&
+      selectedItems.size === 0
+    ) {
+      setSelectedItems(new Set(cart.cartItems.map((item) => item.id)));
+    }
+  }, [cart?.cartItems]);
 
   // Group cart items by store
   const storeGroups = useMemo<StoreCartGroup[]>(() => {
@@ -31,6 +44,14 @@ export const CartPage = () => {
 
     return Array.from(groupsMap.values());
   }, [cart?.cartItems]);
+
+  // Calculate subtotal for selected items only
+  const selectedSubtotal = useMemo(() => {
+    if (!cart?.cartItems) return 0;
+    return cart.cartItems
+      .filter((item) => selectedItems.has(item.id))
+      .reduce((sum, item) => sum + item.priceAtAdd * item.quantity, 0);
+  }, [cart?.cartItems, selectedItems]);
 
   const handleSelectItem = (itemId: string) => {
     const newSelected = new Set(selectedItems);
@@ -147,7 +168,18 @@ export const CartPage = () => {
 
         {/* Right: Cart Totals */}
         <div className='col-span-1'>
-          <CartTotals subtotal={cart?.subtotal || 0} />
+          <CartTotals
+            subtotal={selectedSubtotal}
+            selectedItemsCount={selectedItems.size}
+            onCheckout={() => {
+              const selectedCartItems = cart?.cartItems.filter((item) =>
+                selectedItems.has(item.id)
+              );
+              navigate('/checkout', {
+                state: { selectedItems: selectedCartItems },
+              });
+            }}
+          />
         </div>
       </div>
     </div>

@@ -114,22 +114,30 @@ namespace merxly.Infrastructure.Services
             _logger.LogInformation("Creating payment intent for customer {CustomerId} with amount {Amount} {Currency}",
                 customerId, amount, currency);
 
+            // Zero-decimal currencies (amounts are in whole units, not cents)
+            var zeroDecimalCurrencies = new HashSet<string> { "bif", "clp", "djf", "gnf", "jpy", "kmf", "krw", "mga", "pyg", "rwf", "ugx", "vnd", "vuv", "xaf", "xof", "xpf" };
+
+            // Convert amount based on currency type
+            long stripeAmount = zeroDecimalCurrencies.Contains(currency.ToLower())
+                ? (long)amount  // Zero-decimal currencies: use amount as-is
+                : (long)(amount * 100);  // Other currencies: convert to smallest unit (cents)
+
             var options = new PaymentIntentCreateOptions
             {
-                Amount = (long)(amount * 100), // Convert to cents
+                Amount = stripeAmount,
                 Currency = currency.ToLower(),
                 Customer = customerId,
                 PaymentMethod = paymentMethodId,
                 Metadata = metadata,
-                // If payment method is provided, set it to automatically confirm
-                ConfirmationMethod = "manual",
+                ConfirmationMethod = "automatic",
                 CaptureMethod = "automatic",
             };
 
             var service = new PaymentIntentService();
             var paymentIntent = await service.CreateAsync(options, null, cancellationToken);
 
-            _logger.LogInformation("Payment intent created with ID: {PaymentIntentId}", paymentIntent.Id);
+            _logger.LogInformation("Payment intent created with ID: {PaymentIntentId}, Amount: {StripeAmount}",
+                paymentIntent.Id, stripeAmount);
             return paymentIntent;
         }
 
