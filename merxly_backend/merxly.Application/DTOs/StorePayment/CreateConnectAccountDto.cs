@@ -4,6 +4,6 @@ namespace merxly.Application.DTOs.StorePayment
     {
         public string Country { get; set; } = "US";
         public string Email { get; set; }
-        public string BusinessType { get; set; } = "individual"; // or "company"
+        public string BusinessType { get; set; } = "individual";
     }
 }

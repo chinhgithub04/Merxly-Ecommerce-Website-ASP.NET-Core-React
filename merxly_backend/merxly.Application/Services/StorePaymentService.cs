@@ -74,6 +74,7 @@ namespace merxly.Application.Services
             store.StripeAccountStatus = "pending";
             store.IsPayoutEnabled = false;
 
+            _unitOfWork.Store.Update(store);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             _logger.LogInformation("Stripe Connect account created for store: {StoreId}, account: {AccountId}",
@@ -251,7 +252,8 @@ namespace merxly.Application.Services
             store.StripeConnectAccountId = null;
             store.StripeAccountStatus = null;
             store.IsPayoutEnabled = false;
-            store.UpdatedAt = DateTime.UtcNow;
+
+            _unitOfWork.Store.Update(store);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
