@@ -18,5 +18,11 @@ namespace merxly.Infrastructure.Persistence.Repositories
                 .Select(s => s.Id)
                 .FirstOrDefaultAsync(cancellationToken);
         }
+
+        public async Task<Store?> GetByStripeConnectAccountIdAsync(string stripeConnectAccountId, CancellationToken cancellationToken = default)
+        {
+            return await _dbSet
+                .FirstOrDefaultAsync(s => s.StripeConnectAccountId == stripeConnectAccountId, cancellationToken);
+        }
     }
 }

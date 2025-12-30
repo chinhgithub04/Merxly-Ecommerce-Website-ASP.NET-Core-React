@@ -160,6 +160,7 @@ namespace merxly.Infrastructure
             services.AddScoped<IFileStorageService, CloudinaryService>();
             services.AddScoped<ICloudinaryUrlService, CloudinaryUrlService>();
             services.AddScoped<IStripeService, StripeService>();
+            services.AddScoped<IStripeWebhookService, StripeWebhookService>();
 
             // Cloudinary Service
             var cloudinarySettings = configuration.GetSection("CloudinarySettings").Get<CloudinarySettings>()
