@@ -1,11 +1,36 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useCart } from '../../hooks/useCart';
-import { CartTable, CartTotals } from '../../components/cart';
+import { CartTotals, StoreCartSection } from '../../components/cart';
+import type { StoreCartGroup } from '../../types/models/cart';
 
 export const CartPage = () => {
   const { cart, isLoading, updateCartItem, removeCartItem, clearCart } =
     useCart();
   const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
+
+  // Group cart items by store
+  const storeGroups = useMemo<StoreCartGroup[]>(() => {
+    if (!cart?.cartItems) return [];
+
+    const groupsMap = new Map<string, StoreCartGroup>();
+
+    cart.cartItems.forEach((item) => {
+      if (!groupsMap.has(item.storeId)) {
+        groupsMap.set(item.storeId, {
+          storeId: item.storeId,
+          storeName: item.storeName,
+          items: [],
+          storeSubtotal: 0,
+        });
+      }
+
+      const group = groupsMap.get(item.storeId)!;
+      group.items.push(item);
+      group.storeSubtotal += item.priceAtAdd * item.quantity;
+    });
+
+    return Array.from(groupsMap.values());
+  }, [cart?.cartItems]);
 
   const handleSelectItem = (itemId: string) => {
     const newSelected = new Set(selectedItems);
@@ -24,6 +49,11 @@ export const CartPage = () => {
       setSelectedItems(new Set());
     }
   };
+
+  const isAllSelected =
+    cart && cart.cartItems.length > 0
+      ? cart.cartItems.every((item) => selectedItems.has(item.id))
+      : false;
 
   const handleUpdateQuantity = async (itemId: string, quantity: number) => {
     try {
@@ -68,14 +98,22 @@ export const CartPage = () => {
 
   return (
     <div className='px-20 py-12'>
-      <div className='grid grid-cols-3 gap-8'>
-        {/* Left: Shopping Cart Section */}
+      <div className='grid grid-cols-3 gap-6'>
+        {/* Left: Cart Items (2 columns wide) */}
         <div className='col-span-2'>
-          {/* Header */}
-          <div className='bg-white border-t border-x border-neutral-200 rounded-t-lg px-4 py-4 flex items-center justify-between'>
-            <h1 className='text-xl font-semibold text-neutral-900'>
-              Shopping Cart
-            </h1>
+          {/* Header with Select All and Clear */}
+          <div className='bg-white border border-neutral-200 rounded-t-lg px-6 py-4 flex items-center justify-between'>
+            <div className='flex items-center gap-3'>
+              <input
+                type='checkbox'
+                checked={isAllSelected}
+                onChange={(e) => handleSelectAll(e.target.checked)}
+                className='w-4 h-4 rounded border-neutral-300 text-primary-600 focus:ring-2 focus:ring-primary-600 cursor-pointer'
+              />
+              <h1 className='text-xl font-semibold text-neutral-900'>
+                Shopping Cart
+              </h1>
+            </div>
             {cart && cart.cartItems.length > 0 && (
               <button
                 onClick={handleClearAll}
@@ -86,15 +124,25 @@ export const CartPage = () => {
             )}
           </div>
 
-          {/* Cart Table */}
-          <CartTable
-            items={cart?.cartItems || []}
-            selectedItems={selectedItems}
-            onSelectItem={handleSelectItem}
-            onSelectAll={handleSelectAll}
-            onUpdateQuantity={handleUpdateQuantity}
-            onRemoveItem={handleRemoveItem}
-          />
+          {/* Cart Items Grouped by Store */}
+          <div className='bg-neutral-50 border-x border-b border-neutral-200 rounded-b-lg p-4'>
+            {storeGroups.length === 0 ? (
+              <div className='bg-white rounded-lg border border-neutral-200 px-4 py-12 text-center text-neutral-500'>
+                Your cart is empty
+              </div>
+            ) : (
+              storeGroups.map((group) => (
+                <StoreCartSection
+                  key={group.storeId}
+                  group={group}
+                  selectedItems={selectedItems}
+                  onSelectItem={handleSelectItem}
+                  onUpdateQuantity={handleUpdateQuantity}
+                  onRemoveItem={handleRemoveItem}
+                />
+              ))
+            )}
+          </div>
         </div>
 
         {/* Right: Cart Totals */}

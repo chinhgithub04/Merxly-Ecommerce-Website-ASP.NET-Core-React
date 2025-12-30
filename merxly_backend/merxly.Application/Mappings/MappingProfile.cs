@@ -155,6 +155,7 @@ namespace merxly.Application.Mappings
                 .ForMember(dest => dest.Subtotal, opt => opt.MapFrom(src => src.CartItems.Sum(ci => ci.Quantity * ci.PriceAtAdd)));
 
             CreateMap<CartItem, CartItemDto>()
+                .ForMember(dest => dest.ProductId, opt => opt.MapFrom(src => src.ProductVariant.ProductId))
                 .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.ProductVariant.Name))
                 .ForMember(dest => dest.StockQuantity, opt => opt.MapFrom(src => src.ProductVariant.StockQuantity))
                 .ForMember(dest => dest.ProductImagePublicId, opt => opt.MapFrom(src =>
@@ -163,7 +164,9 @@ namespace merxly.Application.Mappings
                     pav => pav.ProductAttributeValue.ProductAttribute.Name,
                     pav => pav.ProductAttributeValue.Value
                 )))
-                .ForMember(dest => dest.IsAvailable, opt => opt.MapFrom(src => src.ProductVariant.IsActive && src.ProductVariant.StockQuantity > 0));
+                .ForMember(dest => dest.IsAvailable, opt => opt.MapFrom(src => src.ProductVariant.IsActive && src.ProductVariant.StockQuantity > 0))
+                .ForMember(dest => dest.StoreId, opt => opt.MapFrom(src => src.ProductVariant.Product.StoreId))
+                .ForMember(dest => dest.StoreName, opt => opt.MapFrom(src => src.ProductVariant.Product.Store.StoreName));
 
             CreateMap<AddToCartDto, CartItem>();
 

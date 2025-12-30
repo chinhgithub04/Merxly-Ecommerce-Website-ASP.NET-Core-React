@@ -10,6 +10,7 @@ export interface UpdateCartItemDto {
 export interface CartItemDto {
   id: string;
   productVariantId: string;
+  productId: string;
   productName: string;
   productImagePublicId: string | null;
   priceAtAdd: number;
@@ -17,7 +18,16 @@ export interface CartItemDto {
   stockQuantity: number;
   isAvailable: boolean;
   selectedAttributes: Record<string, string>;
+  storeId: string;
+  storeName: string;
   createdAt: string;
+}
+
+export interface StoreCartGroup {
+  storeId: string;
+  storeName: string;
+  items: CartItemDto[];
+  storeSubtotal: number;
 }
 
 export interface CartDto {

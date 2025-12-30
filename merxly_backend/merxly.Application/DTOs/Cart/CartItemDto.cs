@@ -4,6 +4,7 @@ namespace merxly.Application.DTOs.Cart
     {
         public Guid Id { get; set; }
         public Guid ProductVariantId { get; set; }
+        public Guid ProductId { get; set; }
         public string ProductName { get; set; }
         public string? ProductImagePublicId { get; set; }
         public decimal PriceAtAdd { get; set; }
@@ -11,6 +12,11 @@ namespace merxly.Application.DTOs.Cart
         public int StockQuantity { get; set; }
         public bool IsAvailable { get; set; }
         public Dictionary<string, string> SelectedAttributes { get; set; } = new();
+
+        // Store Information
+        public Guid StoreId { get; set; }
+        public string StoreName { get; set; }
+
         public DateTime CreatedAt { get; set; }
     }
 }

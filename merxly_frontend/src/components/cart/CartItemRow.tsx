@@ -48,7 +48,7 @@ export const CartItemRow = ({
 
   return (
     <tr className='hover:bg-neutral-50 transition-colors'>
-      <td className='px-4 py-4'>
+      <td className='px-4 py-4 w-12'>
         <input
           type='checkbox'
           checked={isSelected}
@@ -56,7 +56,7 @@ export const CartItemRow = ({
           className='w-4 h-4 rounded border-neutral-300 text-primary-600 focus:ring-2 focus:ring-primary-600 cursor-pointer'
         />
       </td>
-      <td className='px-4 py-4'>
+      <td className='px-4 py-4 w-96'>
         <div className='flex items-center gap-3'>
           <div className='w-16 h-16 rounded-lg border border-neutral-200 overflow-hidden bg-neutral-100 shrink-0'>
             {item.productImagePublicId ? (
@@ -71,14 +71,14 @@ export const CartItemRow = ({
               </div>
             )}
           </div>
-          <div className='flex flex-col gap-1'>
-            <span className='text-sm font-medium text-neutral-900'>
+          <div className='flex flex-col gap-1 min-w-0 flex-1'>
+            <span className='text-sm font-medium text-neutral-900 line-clamp-2'>
               {item.productName}
             </span>
             {Object.entries(item.selectedAttributes).length > 0 && (
               <div className='text-xs text-neutral-600 space-y-0.5'>
                 {Object.entries(item.selectedAttributes).map(([key, value]) => (
-                  <div key={key}>
+                  <div key={key} className='truncate'>
                     <span className='font-semibold'>{key}:</span> {value}
                   </div>
                 ))}
@@ -92,12 +92,12 @@ export const CartItemRow = ({
           </div>
         </div>
       </td>
-      <td className='px-4 py-4'>
-        <span className='text-sm text-neutral-900'>
+      <td className='px-4 py-4 w-32'>
+        <span className='text-sm text-neutral-900 whitespace-nowrap'>
           ₫{item.priceAtAdd.toLocaleString('vi-VN')}
         </span>
       </td>
-      <td className='px-4 py-4'>
+      <td className='px-4 py-4 w-40'>
         <div className='flex items-center border border-neutral-300 rounded-lg w-fit'>
           <button
             onClick={handleDecrement}
@@ -123,12 +123,12 @@ export const CartItemRow = ({
           </button>
         </div>
       </td>
-      <td className='px-4 py-4'>
-        <span className='text-sm font-medium text-neutral-900'>
+      <td className='px-4 py-4 w-32'>
+        <span className='text-sm font-medium text-neutral-900 whitespace-nowrap'>
           ₫{subtotal.toLocaleString('vi-VN')}
         </span>
       </td>
-      <td className='px-4 py-4'>
+      <td className='px-4 py-4 w-16'>
         <button
           onClick={() => onRemove(item.id)}
           className='cursor-pointer p-2 text-neutral-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors'

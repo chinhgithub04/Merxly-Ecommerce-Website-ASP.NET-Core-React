@@ -1,4 +1,4 @@
 export { CartItemRow } from './CartItemRow';
-export { CartTable } from './CartTable';
 export { CartTotals } from './CartTotals';
+export { StoreCartSection } from './StoreCartSection';
 export { AddToCartModal } from './AddToCartModal';
