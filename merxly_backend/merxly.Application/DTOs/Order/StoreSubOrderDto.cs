@@ -5,7 +5,7 @@ namespace merxly.Application.DTOs.Order
     public record StoreSubOrderDto
     {
         public Guid Id { get; init; }
-        public required string OrderNumber { get; init; }
+        public required string SubOrderNumber { get; init; }
         public string CustomerFullName { get; init; }
         public string CustomerEmail { get; init; }
         public OrderStatus Status { get; init; }

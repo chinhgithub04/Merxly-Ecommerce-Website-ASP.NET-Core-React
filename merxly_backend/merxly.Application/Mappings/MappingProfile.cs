@@ -191,14 +191,14 @@ namespace merxly.Application.Mappings
                 .ForMember(dest => dest.OrderItems, opt => opt.MapFrom(src => src.OrderItems));
 
             CreateMap<SubOrder, StoreSubOrderDto>()
-                .ForMember(dest => dest.OrderNumber, opt => opt.MapFrom(src => src.Order.OrderNumber))
+                .ForMember(dest => dest.SubOrderNumber, opt => opt.MapFrom(src => src.SubOrderNumber))
                 .ForMember(dest => dest.CustomerFullName, opt => opt.MapFrom(src =>
                     $"{src.Order.User.FirstName} {src.Order.User.LastName}"))
                 .ForMember(dest => dest.CustomerEmail, opt => opt.MapFrom(src => src.Order.User.Email))
                 .ForMember(dest => dest.TotalItems, opt => opt.MapFrom(src => src.OrderItems.Sum(oi => oi.Quantity)));
 
             CreateMap<SubOrder, StoreSubOrderDetailDto>()
-                .ForMember(dest => dest.OrderNumber, opt => opt.MapFrom(src => src.Order.OrderNumber))
+                .ForMember(dest => dest.SubOrderNumber, opt => opt.MapFrom(src => src.SubOrderNumber))
                 .ForMember(dest => dest.CustomerFullName, opt => opt.MapFrom(src =>
                     $"{src.Order.User.FirstName} {src.Order.User.LastName}"))
                 .ForMember(dest => dest.CustomerEmail, opt => opt.MapFrom(src => src.Order.User.Email))

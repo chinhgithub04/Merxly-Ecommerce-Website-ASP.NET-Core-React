@@ -64,7 +64,7 @@ export const StoreOrdersPage = () => {
     if (!data?.items) return [];
     return data.items.map((item) => ({
       id: item.id,
-      orderNumber: item.orderNumber,
+      subOrderNumber: item.subOrderNumber,
       customerName: item.customerFullName,
       customerEmail: item.customerEmail,
       status: item.status,

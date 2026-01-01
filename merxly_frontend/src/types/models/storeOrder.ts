@@ -3,7 +3,7 @@ import type { OrderStatus } from '../enums/Status';
 
 export interface StoreSubOrderDto {
   id: string;
-  orderNumber: string;
+  subOrderNumber: string;
   customerFullName: string;
   customerEmail: string;
   status: OrderStatus;

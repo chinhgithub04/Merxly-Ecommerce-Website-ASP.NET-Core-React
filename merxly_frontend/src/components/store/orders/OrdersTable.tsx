@@ -3,7 +3,7 @@ import { OrderStatus } from '../../../types/enums/Status';
 
 export interface Order {
   id: string;
-  orderNumber: string;
+  subOrderNumber: string;
   customerName: string;
   customerEmail: string;
   status: OrderStatus;
@@ -100,7 +100,7 @@ export const OrdersTable = ({ orders, onViewOrder }: OrdersTableProps) => {
               >
                 <td className='py-3 px-4'>
                   <span className='text-sm font-medium text-neutral-900'>
-                    {order.orderNumber}
+                    {order.subOrderNumber}
                   </span>
                 </td>
                 <td className='py-3 px-4'>
