@@ -92,10 +92,12 @@ namespace merxly.Infrastructure.Persistence.Repositories
 
             if (!string.IsNullOrWhiteSpace(filter.SearchTerm))
             {
-                var searchTerm = filter.SearchTerm.Trim();
+                var searchTerm = filter.SearchTerm.Trim().ToLower();
                 query = query.Where(so =>
-                    so.SubOrderNumber.Contains(searchTerm) ||
-                    so.Order.OrderNumber.Contains(searchTerm));
+                    so.Order.OrderNumber.ToLower().Contains(searchTerm) ||
+                    so.Order.User.FirstName.ToLower().Contains(searchTerm) ||
+                    so.Order.User.LastName.ToLower().Contains(searchTerm) ||
+                    so.Order.User.Email.ToLower().Contains(searchTerm));
             }
 
             if (filter.FromDate.HasValue)

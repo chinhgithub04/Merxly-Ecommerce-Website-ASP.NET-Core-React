@@ -7,197 +7,104 @@ import {
   type Order,
 } from '../../components/store/orders/OrdersTable';
 import { OrderDetailsModal } from '../../components/store/orders/OrderDetailsModal';
+import { useStoreOrders } from '../../hooks/useStoreOrders';
+import { OrderStatus } from '../../types/enums/Status';
+import type { StoreSubOrderFilterDto } from '../../types/models/storeOrder';
 
-// Hardcoded orders data
-const mockOrders: Order[] = [
-  {
-    id: '1',
-    orderNumber: 'ORD-2024-1245',
-    customerName: 'John Smith',
-    customerEmail: 'john.smith@example.com',
-    status: 'Processing',
-    totalAmount: 299.99,
-    itemCount: 3,
-    createdAt: '2024-12-24T10:30:00',
-  },
-  {
-    id: '2',
-    orderNumber: 'ORD-2024-1244',
-    customerName: 'Sarah Johnson',
-    customerEmail: 'sarah.j@example.com',
-    status: 'Shipped',
-    totalAmount: 149.5,
-    itemCount: 2,
-    createdAt: '2024-12-24T09:15:00',
-    shippedAt: '2024-12-24T14:00:00',
-    carrier: 'FedEx',
-  },
-  {
-    id: '3',
-    orderNumber: 'ORD-2024-1243',
-    customerName: 'Michael Brown',
-    customerEmail: 'mbrown@example.com',
-    status: 'Delivered',
-    totalAmount: 89.99,
-    itemCount: 1,
-    createdAt: '2024-12-23T15:20:00',
-    shippedAt: '2024-12-23T18:00:00',
-    deliveredAt: '2024-12-24T11:30:00',
-    carrier: 'UPS',
-  },
-  {
-    id: '4',
-    orderNumber: 'ORD-2024-1242',
-    customerName: 'Emily Davis',
-    customerEmail: 'emily.davis@example.com',
-    status: 'Confirmed',
-    totalAmount: 425.0,
-    itemCount: 5,
-    createdAt: '2024-12-23T12:45:00',
-  },
-  {
-    id: '5',
-    orderNumber: 'ORD-2024-1241',
-    customerName: 'David Wilson',
-    customerEmail: 'dwilson@example.com',
-    status: 'Pending',
-    totalAmount: 199.99,
-    itemCount: 2,
-    createdAt: '2024-12-22T16:10:00',
-  },
-  {
-    id: '6',
-    orderNumber: 'ORD-2024-1240',
-    customerName: 'Lisa Anderson',
-    customerEmail: 'lisa.a@example.com',
-    status: 'Cancelled',
-    totalAmount: 75.5,
-    itemCount: 1,
-    createdAt: '2024-12-22T10:30:00',
-  },
-  {
-    id: '7',
-    orderNumber: 'ORD-2024-1239',
-    customerName: 'James Martinez',
-    customerEmail: 'jmartinez@example.com',
-    status: 'Delivered',
-    totalAmount: 349.99,
-    itemCount: 4,
-    createdAt: '2024-12-21T14:20:00',
-    shippedAt: '2024-12-21T18:00:00',
-    deliveredAt: '2024-12-23T10:15:00',
-    carrier: 'DHL',
-  },
-  {
-    id: '8',
-    orderNumber: 'ORD-2024-1238',
-    customerName: 'Patricia Taylor',
-    customerEmail: 'ptaylor@example.com',
-    status: 'Processing',
-    totalAmount: 156.75,
-    itemCount: 2,
-    createdAt: '2024-12-21T11:00:00',
-  },
-];
-
-// Mock order details
-const mockOrderDetails = {
-  orderNumber: 'ORD-2024-1245',
-  customerName: 'John Smith',
-  customerEmail: 'john.smith@example.com',
-  status: 'Processing',
-  totalAmount: 299.99,
-  subTotal: 279.99,
-  tax: 20.0,
-  shippingCost: 0,
-  createdAt: '2024-12-24T10:30:00',
-  shippingAddress: {
-    street: '123 Main Street, Apt 4B',
-    city: 'New York',
-    state: 'NY',
-    zipCode: '10001',
-    country: 'United States',
-  },
-  items: [
-    {
-      id: '1',
-      productName: 'Wireless Headphones Pro',
-      variantDetails: 'Color: Black, Size: Standard',
-      quantity: 1,
-      unitPrice: 149.99,
-      totalPrice: 149.99,
-    },
-    {
-      id: '2',
-      productName: 'USB-C Cable 3m',
-      variantDetails: 'Length: 3m',
-      quantity: 2,
-      unitPrice: 25.0,
-      totalPrice: 50.0,
-    },
-    {
-      id: '3',
-      productName: 'Phone Case Premium',
-      variantDetails: 'Color: Blue, Material: Silicone',
-      quantity: 1,
-      unitPrice: 80.0,
-      totalPrice: 80.0,
-    },
-  ],
-  notes: 'Please handle with care',
-};
-
-type OrderStatus =
+type OrderStatusFilter =
   | 'All'
-  | 'Pending'
   | 'Confirmed'
   | 'Processing'
+  | 'Delivering'
   | 'Shipped'
-  | 'Delivered'
+  | 'Completed'
   | 'Cancelled';
 
 export const StoreOrdersPage = () => {
-  const [selectedStatus, setSelectedStatus] = useState<OrderStatus>('All');
+  const [selectedStatus, setSelectedStatus] =
+    useState<OrderStatusFilter>('All');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
+  const [pageNumber, setPageNumber] = useState(1);
+  const pageSize = 20;
 
-  // Filter orders based on status and search
-  const filteredOrders = useMemo(() => {
-    return mockOrders.filter((order) => {
-      const matchesStatus =
-        selectedStatus === 'All' || order.status === selectedStatus;
-      const matchesSearch =
-        searchTerm === '' ||
-        order.orderNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        order.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        order.customerEmail.toLowerCase().includes(searchTerm.toLowerCase());
+  // Build filter for API
+  const filter = useMemo<StoreSubOrderFilterDto>(() => {
+    const apiFilter: StoreSubOrderFilterDto = {
+      pageNumber,
+      pageSize,
+    };
 
-      return matchesStatus && matchesSearch;
-    });
-  }, [selectedStatus, searchTerm]);
+    if (selectedStatus !== 'All') {
+      // Map UI status to enum value
+      const statusMap: Record<OrderStatusFilter, OrderStatus> = {
+        All: OrderStatus.Confirmed, // Not used
+        Confirmed: OrderStatus.Confirmed,
+        Processing: OrderStatus.Processing,
+        Delivering: OrderStatus.Delivering,
+        Shipped: OrderStatus.Shipped,
+        Completed: OrderStatus.Completed,
+        Cancelled: OrderStatus.Cancelled,
+      };
+      apiFilter.status = statusMap[selectedStatus];
+    }
 
-  // Calculate stats
+    if (searchTerm.trim()) {
+      apiFilter.searchTerm = searchTerm.trim();
+    }
+
+    return apiFilter;
+  }, [selectedStatus, searchTerm, pageNumber]);
+
+  // Fetch orders from API
+  const { data, isLoading, error } = useStoreOrders(filter);
+
+  // Transform API data to UI format
+  const orders = useMemo<Order[]>(() => {
+    if (!data?.items) return [];
+    return data.items.map((item) => ({
+      id: item.id,
+      orderNumber: item.orderNumber,
+      customerName: item.customerFullName,
+      customerEmail: item.customerEmail,
+      status: item.status,
+      totalAmount: item.totalAmount,
+      itemCount: item.totalItems,
+      createdAt: item.createdAt,
+    }));
+  }, [data]);
+
+  // Calculate stats from API data
   const stats = useMemo(() => {
+    if (!orders.length) {
+      return {
+        totalOrders: 0,
+        pendingOrders: 0,
+        processingOrders: 0,
+        shippedOrders: 0,
+        totalRevenue: 0,
+      };
+    }
+
     return {
-      totalOrders: mockOrders.length,
-      pendingOrders: mockOrders.filter((o) => o.status === 'Pending').length,
-      processingOrders: mockOrders.filter(
-        (o) => o.status === 'Processing' || o.status === 'Confirmed'
+      totalOrders: data?.totalCount || 0,
+      pendingOrders: orders.filter((o) => o.status === OrderStatus.Confirmed)
+        .length,
+      processingOrders: orders.filter(
+        (o) =>
+          o.status === OrderStatus.Processing ||
+          o.status === OrderStatus.Delivering
       ).length,
-      shippedOrders: mockOrders.filter((o) => o.status === 'Shipped').length,
-      totalRevenue: mockOrders
-        .filter((o) => o.status !== 'Cancelled')
+      shippedOrders: orders.filter((o) => o.status === OrderStatus.Shipped)
+        .length,
+      totalRevenue: orders
+        .filter((o) => o.status !== OrderStatus.Cancelled)
         .reduce((sum, o) => sum + o.totalAmount, 0),
     };
-  }, []);
+  }, [orders, data]);
 
   const handleViewOrder = (orderId: string) => {
     setSelectedOrderId(orderId);
-  };
-
-  const handleUpdateStatus = (orderId: string, status: string) => {
-    console.log(`Updating order ${orderId} to status ${status}`);
-    // In real app, this would call an API
   };
 
   return (
@@ -232,26 +139,95 @@ export const StoreOrdersPage = () => {
         onSearchChange={setSearchTerm}
       />
 
+      {/* Loading State */}
+      {isLoading && (
+        <div className='text-center py-12'>
+          <p className='text-neutral-500'>Loading orders...</p>
+        </div>
+      )}
+
+      {/* Error State */}
+      {error && (
+        <div className='bg-red-50 border border-red-200 rounded-lg p-4'>
+          <p className='text-red-700'>
+            Failed to load orders. Please try again later.
+          </p>
+        </div>
+      )}
+
       {/* Orders Table */}
-      <OrdersTable
-        orders={filteredOrders}
-        onViewOrder={handleViewOrder}
-        onUpdateStatus={handleUpdateStatus}
-      />
+      {!isLoading && !error && (
+        <>
+          <OrdersTable orders={orders} onViewOrder={handleViewOrder} />
 
-      {/* Pagination Info */}
-      <div className='flex items-center justify-between text-sm text-neutral-600'>
-        <span>
-          Showing {filteredOrders.length} of {mockOrders.length} orders
-        </span>
-      </div>
+          {/* Pagination Info */}
+          {data && (
+            <div className='flex items-center justify-between text-sm text-neutral-600'>
+              <span>
+                Showing {orders.length} of {data.totalCount} orders
+              </span>
+              <div className='flex items-center gap-2'>
+                <span>
+                  Page {data.pageNumber} of {data.totalPages}
+                </span>
+                <div className='flex gap-2'>
+                  <button
+                    onClick={() => setPageNumber((p) => Math.max(1, p - 1))}
+                    disabled={data.pageNumber === 1}
+                    className='px-3 py-1 border border-neutral-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-neutral-50'
+                  >
+                    Previous
+                  </button>
+                  <button
+                    onClick={() => setPageNumber((p) => p + 1)}
+                    disabled={data.pageNumber >= data.totalPages}
+                    className='px-3 py-1 border border-neutral-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-neutral-50'
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </>
+      )}
 
-      {/* Order Details Modal */}
-      <OrderDetailsModal
-        isOpen={selectedOrderId !== null}
-        onClose={() => setSelectedOrderId(null)}
-        order={mockOrderDetails}
-      />
+      {/* Order Details Modal - Keep mock data for now */}
+      {selectedOrderId && (
+        <OrderDetailsModal
+          isOpen={true}
+          onClose={() => setSelectedOrderId(null)}
+          order={{
+            orderNumber: 'ORD-2024-1245',
+            customerName: 'John Smith',
+            customerEmail: 'john.smith@example.com',
+            status: 'Processing',
+            totalAmount: 299.99,
+            subTotal: 279.99,
+            tax: 20.0,
+            shippingCost: 0,
+            createdAt: '2024-12-24T10:30:00',
+            shippingAddress: {
+              street: '123 Main Street, Apt 4B',
+              city: 'New York',
+              state: 'NY',
+              zipCode: '10001',
+              country: 'United States',
+            },
+            items: [
+              {
+                id: '1',
+                productName: 'Wireless Headphones Pro',
+                variantDetails: 'Color: Black, Size: Standard',
+                quantity: 1,
+                unitPrice: 149.99,
+                totalPrice: 149.99,
+              },
+            ],
+            notes: 'Please handle with care',
+          }}
+        />
+      )}
     </div>
   );
 };

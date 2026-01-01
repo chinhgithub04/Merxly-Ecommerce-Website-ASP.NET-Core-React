@@ -1,30 +1,30 @@
 import { useState } from 'react';
 import { MagnifyingGlassIcon, FunnelIcon } from '@heroicons/react/24/outline';
 
-type OrderStatus =
+type OrderStatusFilter =
   | 'All'
-  | 'Pending'
   | 'Confirmed'
   | 'Processing'
+  | 'Delivering'
   | 'Shipped'
-  | 'Delivered'
+  | 'Completed'
   | 'Cancelled';
 
 interface OrderFiltersProps {
-  selectedStatus: OrderStatus;
-  onStatusChange: (status: OrderStatus) => void;
+  selectedStatus: OrderStatusFilter;
+  onStatusChange: (status: OrderStatusFilter) => void;
   searchTerm: string;
   onSearchChange: (term: string) => void;
 }
 
-const statuses: OrderStatus[] = [
-  'All',
-  'Pending',
-  'Confirmed',
-  'Processing',
-  'Shipped',
-  'Delivered',
-  'Cancelled',
+const statuses: { value: OrderStatusFilter; label: string }[] = [
+  { value: 'All', label: 'All' },
+  { value: 'Confirmed', label: 'Pending' }, // Display as "Pending" to indicate new orders
+  { value: 'Processing', label: 'Processing' },
+  { value: 'Delivering', label: 'Delivering' },
+  { value: 'Shipped', label: 'Shipped' },
+  { value: 'Completed', label: 'Completed' },
+  { value: 'Cancelled', label: 'Cancelled' },
 ];
 
 export const OrderFilters = ({
@@ -69,15 +69,15 @@ export const OrderFilters = ({
           <div className='flex flex-wrap gap-2'>
             {statuses.map((status) => (
               <button
-                key={status}
-                onClick={() => onStatusChange(status)}
+                key={status.value}
+                onClick={() => onStatusChange(status.value)}
                 className={`cursor-pointer px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  selectedStatus === status
+                  selectedStatus === status.value
                     ? 'bg-primary-600 text-white'
                     : 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200'
                 }`}
               >
-                {status}
+                {status.label}
               </button>
             ))}
           </div>

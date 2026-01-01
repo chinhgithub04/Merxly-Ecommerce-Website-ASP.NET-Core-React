@@ -34,7 +34,7 @@ export const OrderStats = ({
       <div className='bg-white rounded-lg border border-neutral-200 p-4'>
         <p className='text-sm text-neutral-600 mb-1'>Total Revenue</p>
         <p className='text-2xl font-bold text-green-600'>
-          ${totalRevenue.toLocaleString()}
+          ₫{totalRevenue.toLocaleString()}
         </p>
       </div>
     </div>
