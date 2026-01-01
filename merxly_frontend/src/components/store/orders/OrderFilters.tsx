@@ -53,7 +53,7 @@ export const OrderFilters = ({
         {/* Filter Toggle */}
         <button
           onClick={() => setShowFilters(!showFilters)}
-          className='px-4 py-2 border border-neutral-300 rounded-lg hover:bg-neutral-50 transition-colors flex items-center gap-2'
+          className='cursor-pointer px-4 py-2 border border-neutral-300 rounded-lg hover:bg-neutral-50 transition-colors flex items-center gap-2'
         >
           <FunnelIcon className='h-5 w-5 text-neutral-600' />
           <span className='text-sm font-medium text-neutral-700'>Filters</span>
@@ -71,7 +71,7 @@ export const OrderFilters = ({
               <button
                 key={status}
                 onClick={() => onStatusChange(status)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                className={`cursor-pointer px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                   selectedStatus === status
                     ? 'bg-primary-600 text-white'
                     : 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200'

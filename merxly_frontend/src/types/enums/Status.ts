@@ -3,10 +3,11 @@ export const OrderStatus = {
   Confirmed: 1,
   Processing: 2,
   Delivering: 3,
-  Completed: 4,
-  Cancelled: 5,
-  Refunded: 6,
-  Failed: 7,
+  Shipped: 4,
+  Completed: 5,
+  Cancelled: 6,
+  Refunded: 7,
+  Failed: 8,
 } as const;
 
 export type OrderStatus = (typeof OrderStatus)[keyof typeof OrderStatus];

@@ -148,7 +148,7 @@ export const OrdersTable = ({
                   <div className='flex items-center justify-center gap-2'>
                     <button
                       onClick={() => onViewOrder(order.id)}
-                      className='p-2 text-neutral-600 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors'
+                      className='cursor-pointer p-2 text-neutral-600 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors'
                       title='View Details'
                     >
                       <EyeIcon className='h-5 w-5' />
@@ -157,7 +157,7 @@ export const OrdersTable = ({
                       order.status === 'Confirmed') && (
                       <button
                         onClick={() => onUpdateStatus(order.id, 'Shipped')}
-                        className='p-2 text-neutral-600 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition-colors'
+                        className='cursor-pointer p-2 text-neutral-600 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition-colors'
                         title='Mark as Shipped'
                       >
                         <TruckIcon className='h-5 w-5' />
