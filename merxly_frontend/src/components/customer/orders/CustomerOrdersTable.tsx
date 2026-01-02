@@ -2,20 +2,17 @@ import { useNavigate } from 'react-router-dom';
 import { EyeIcon } from '@heroicons/react/24/outline';
 import { OrderStatus } from '../../../types/enums/Status';
 
-export interface Order {
+export interface CustomerOrder {
   id: string;
   subOrderNumber: string;
-  customerName: string;
-  customerEmail: string;
   status: OrderStatus;
   totalAmount: number;
   itemCount: number;
   createdAt: string;
 }
 
-interface OrdersTableProps {
-  orders: Order[];
-  hideCustomer?: boolean;
+interface CustomerOrdersTableProps {
+  orders: CustomerOrder[];
 }
 
 const getStatusDisplay = (
@@ -63,15 +60,13 @@ const getStatusDisplay = (
   );
 };
 
-export const OrdersTable = ({
-  orders,
-  hideCustomer = false,
-}: OrdersTableProps) => {
+export const CustomerOrdersTable = ({ orders }: CustomerOrdersTableProps) => {
   const navigate = useNavigate();
 
   const handleViewOrder = (orderId: string) => {
-    navigate(`/store/orders/${orderId}`);
+    navigate(`/dashboard/order-history/${orderId}`);
   };
+
   return (
     <div className='bg-white rounded-lg border border-neutral-200 overflow-hidden'>
       <div className='overflow-x-auto'>
@@ -81,11 +76,6 @@ export const OrdersTable = ({
               <th className='text-left py-3 px-4 text-sm font-semibold text-neutral-700'>
                 Order Number
               </th>
-              {!hideCustomer && (
-                <th className='text-left py-3 px-4 text-sm font-semibold text-neutral-700'>
-                  Customer
-                </th>
-              )}
               <th className='text-left py-3 px-4 text-sm font-semibold text-neutral-700'>
                 Status
               </th>
@@ -114,18 +104,6 @@ export const OrdersTable = ({
                     {order.subOrderNumber}
                   </span>
                 </td>
-                {!hideCustomer && (
-                  <td className='py-3 px-4'>
-                    <div>
-                      <p className='text-sm font-medium text-neutral-900'>
-                        {order.customerName}
-                      </p>
-                      <p className='text-xs text-neutral-500'>
-                        {order.customerEmail}
-                      </p>
-                    </div>
-                  </td>
-                )}
                 <td className='py-3 px-4'>
                   <span
                     className={`px-3 py-1 rounded-full text-xs font-medium inline-block ${
