@@ -154,11 +154,11 @@ export const OrderActivityTimeline = ({
                         <div className='mt-1 flex items-center gap-1 text-xs text-neutral-500'>
                           <UserCircleIcon className='h-4 w-4' />
                           <span>
-                            Change by:{' '}
+                            Cancelled by:{' '}
                             {entry.changedBy === OrderChangedBy.CUSTOMER
                               ? 'Customer'
                               : entry.changedBy === OrderChangedBy.STORE_OWNER
-                              ? 'You'
+                              ? 'Store'
                               : 'Admin'}
                           </span>
                         </div>

@@ -11,6 +11,7 @@ import {
   CartPage,
   CheckoutPage,
   OrderHistoryPage,
+  CustomerOrderDetailPage,
 } from './pages/Customer';
 import { DashboardPage } from './pages/User';
 import { ProtectedRoute } from './components/ProtectedRoute';
@@ -138,6 +139,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <OrderHistoryPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path='dashboard/order-history/:subOrderId'
+            element={
+              <ProtectedRoute>
+                <CustomerOrderDetailPage />
               </ProtectedRoute>
             }
           />

@@ -37,9 +37,13 @@ export interface CustomerSubOrderDetailDto {
   storeBannerImagePublicId?: string;
   storeEmail: string;
   storePhoneNumber: string;
+  storeFullAddress: string;
+  storePostalCode: string;
   shippingFullAddress: string;
   shippingPostalCode: string;
   shippingPhoneNumber?: string;
+  customerFullName: string;
+  customerEmail: string;
   createdAt: string;
   updatedAt?: string;
   completedAt?: string;

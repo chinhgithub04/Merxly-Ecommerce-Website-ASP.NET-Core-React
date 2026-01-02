@@ -23,6 +23,7 @@ namespace merxly.Infrastructure.Persistence.Repositories
                 .Include(so => so.Order)
                     .ThenInclude(o => o.User)
                 .Include(so => so.Store)
+                    .ThenInclude(s => s.Address)
                 .Include(so => so.OrderItems)
                     .ThenInclude(oi => oi.ProductVariant)
                         .ThenInclude(pv => pv.Product)
@@ -137,7 +138,7 @@ namespace merxly.Infrastructure.Persistence.Repositories
             CancellationToken cancellationToken = default)
         {
             var query = _dbSet
-                .Where(so => so.Order.UserId == customerId)
+                .Where(so => so.Order.UserId == customerId && so.Status != OrderStatus.Pending)
                 .Include(so => so.Order)
                     .ThenInclude(o => o.ShippingAddress)
                 .Include(so => so.OrderItems)

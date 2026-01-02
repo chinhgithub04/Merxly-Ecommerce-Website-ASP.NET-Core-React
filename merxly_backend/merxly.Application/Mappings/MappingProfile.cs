@@ -201,7 +201,7 @@ namespace merxly.Application.Mappings
             CreateMap<SubOrder, StoreSubOrderDetailDto>()
                 .ForMember(dest => dest.SubOrderNumber, opt => opt.MapFrom(src => src.SubOrderNumber))
                 .ForMember(dest => dest.CustomerFullName, opt => opt.MapFrom(src =>
-                    $"{src.Order.User.FirstName} {src.Order.User.LastName}"))
+                    $"{src.Order.ShippingAddress.FullName}"))
                 .ForMember(dest => dest.CustomerEmail, opt => opt.MapFrom(src => src.Order.User.Email))
                 .ForMember(dest => dest.CustomerFullAddress, opt => opt.MapFrom(src =>
                     $"{src.Order.ShippingAddress.AddressLine}, {src.Order.ShippingAddress.WardName}, {src.Order.ShippingAddress.CityName}"))
@@ -219,10 +219,16 @@ namespace merxly.Application.Mappings
                 .ForMember(dest => dest.StoreBannerImagePublicId, opt => opt.MapFrom(src => src.Store.BannerImagePublicId))
                 .ForMember(dest => dest.StoreEmail, opt => opt.MapFrom(src => src.Store.Email))
                 .ForMember(dest => dest.StorePhoneNumber, opt => opt.MapFrom(src => src.Store.PhoneNumber))
+                .ForMember(dest => dest.StoreFullAddress, opt => opt.MapFrom(src =>
+                    $"{src.Store.Address.AddressLine}, {src.Store.Address.WardName}, {src.Store.Address.CityName}"))
+                .ForMember(dest => dest.StorePostalCode, opt => opt.MapFrom(src => src.Store.Address.PostalCode))
                 .ForMember(dest => dest.ShippingFullAddress, opt => opt.MapFrom(src =>
                     $"{src.Order.ShippingAddress.AddressLine}, {src.Order.ShippingAddress.WardName}, {src.Order.ShippingAddress.CityName}"))
                 .ForMember(dest => dest.ShippingPostalCode, opt => opt.MapFrom(src => src.Order.ShippingAddress.PostalCode))
-                .ForMember(dest => dest.ShippingPhoneNumber, opt => opt.MapFrom(src => src.Order.ShippingAddress.PhoneNumber));
+                .ForMember(dest => dest.ShippingPhoneNumber, opt => opt.MapFrom(src => src.Order.ShippingAddress.PhoneNumber))
+                .ForMember(dest => dest.CustomerFullName, opt => opt.MapFrom(src =>
+                    $"{src.Order.ShippingAddress.FullName}"))
+                .ForMember(dest => dest.CustomerEmail, opt => opt.MapFrom(src => src.Order.User.Email));
 
             CreateMap<OrderItem, OrderItemDto>()
                 .ForMember(dest => dest.StoreName, opt => opt.MapFrom(src => src.Store.StoreName));

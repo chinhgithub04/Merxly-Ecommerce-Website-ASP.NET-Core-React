@@ -23,11 +23,15 @@ namespace merxly.Application.DTOs.CustomerOrders
         public string? StoreBannerImagePublicId { get; init; }
         public string StoreEmail { get; init; }
         public string StorePhoneNumber { get; init; }
+        public string StoreFullAddress { get; init; }
+        public string StorePostalCode { get; init; }
 
         // Shipping Address
         public string ShippingFullAddress { get; init; }
         public string ShippingPostalCode { get; init; }
         public string? ShippingPhoneNumber { get; init; }
+        public string CustomerFullName { get; init; }
+        public string CustomerEmail { get; init; }
 
         public DateTime CreatedAt { get; init; }
         public DateTime? UpdatedAt { get; init; }

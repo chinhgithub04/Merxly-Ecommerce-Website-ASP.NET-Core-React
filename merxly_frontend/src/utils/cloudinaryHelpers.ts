@@ -41,6 +41,22 @@ export const IMAGE_PRESETS = {
     width: 1200,
     height: 1200,
   },
+  /**
+   * Store logo - 80x80px
+   * Used in: Store information display
+   */
+  logo: {
+    width: 80,
+    height: 80,
+  },
+  /**
+   * Store banner - 400px width, 120px height
+   * Used in: Store banner display
+   */
+  banner: {
+    width: 400,
+    height: 120,
+  },
 } as const;
 
 export type ImagePreset = keyof typeof IMAGE_PRESETS;
