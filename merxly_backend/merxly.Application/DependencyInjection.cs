@@ -28,6 +28,7 @@ namespace merxly.Application
             services.AddScoped<IStoreWebhookHandlerService, StoreWebhookHandlerService>();
             services.AddScoped<IPaymentWebhookHandlerService, PaymentWebhookHandlerService>();
             services.AddScoped<IStoreOrderService, StoreOrderService>();
+            services.AddScoped<ICustomerOrderService, CustomerOrderService>();
 
             // AutoMapper Configuration
             services.AddAutoMapper(Assembly.GetExecutingAssembly());

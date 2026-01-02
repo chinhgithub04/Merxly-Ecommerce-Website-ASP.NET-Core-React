@@ -1,4 +1,5 @@
 using merxly.Application.DTOs.Common;
+using merxly.Application.DTOs.CustomerOrders;
 using merxly.Application.DTOs.Order;
 using merxly.Application.Interfaces.Repositories;
 using merxly.Domain.Entities;
@@ -98,6 +99,68 @@ namespace merxly.Infrastructure.Persistence.Repositories
                     so.Order.User.FirstName.ToLower().Contains(searchTerm) ||
                     so.Order.User.LastName.ToLower().Contains(searchTerm) ||
                     so.Order.User.Email.ToLower().Contains(searchTerm));
+            }
+
+            if (filter.FromDate.HasValue)
+            {
+                query = query.Where(so => so.CreatedAt >= filter.FromDate.Value);
+            }
+
+            if (filter.ToDate.HasValue)
+            {
+                var toDateEndOfDay = filter.ToDate.Value.Date.AddDays(1).AddTicks(-1);
+                query = query.Where(so => so.CreatedAt <= toDateEndOfDay);
+            }
+
+            // Get total count
+            var totalCount = await query.CountAsync(cancellationToken);
+
+            // Apply pagination and ordering
+            var items = await query
+                .OrderByDescending(so => so.CreatedAt)
+                .Skip((filter.PageNumber - 1) * filter.PageSize)
+                .Take(filter.PageSize)
+                .ToListAsync(cancellationToken);
+
+            return new PaginatedResultDto<SubOrder>
+            {
+                Items = items,
+                TotalCount = totalCount,
+                PageNumber = filter.PageNumber,
+                PageSize = filter.PageSize
+            };
+        }
+
+        public async Task<PaginatedResultDto<SubOrder>> GetCustomerOrdersAsync(
+            string customerId,
+            CustomerSubOrderFilterDto filter,
+            CancellationToken cancellationToken = default)
+        {
+            var query = _dbSet
+                .Where(so => so.Order.UserId == customerId)
+                .Include(so => so.Order)
+                    .ThenInclude(o => o.ShippingAddress)
+                .Include(so => so.OrderItems)
+                    .ThenInclude(oi => oi.ProductVariant)
+                        .ThenInclude(pv => pv.Product)
+                .Include(so => so.OrderItems)
+                    .ThenInclude(oi => oi.ProductVariant)
+                        .ThenInclude(pv => pv.VariantAttributeValues)
+                            .ThenInclude(vav => vav.ProductAttributeValue)
+                                .ThenInclude(pav => pav.ProductAttribute)
+                .AsQueryable();
+
+            // Apply filters
+            if (filter.Status.HasValue)
+            {
+                query = query.Where(so => so.Status == filter.Status.Value);
+            }
+
+            if (!string.IsNullOrWhiteSpace(filter.SearchTerm))
+            {
+                var searchTerm = filter.SearchTerm.Trim().ToLower();
+                query = query.Where(so =>
+                    so.SubOrderNumber.ToLower().Contains(searchTerm));
             }
 
             if (filter.FromDate.HasValue)

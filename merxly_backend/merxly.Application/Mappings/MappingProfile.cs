@@ -3,6 +3,7 @@ using merxly.Application.DTOs.Cart;
 using merxly.Application.DTOs.Category;
 using merxly.Application.DTOs.Common;
 using merxly.Application.DTOs.CustomerAddress;
+using merxly.Application.DTOs.CustomerOrders;
 using merxly.Application.DTOs.Order;
 using merxly.Application.DTOs.Product;
 using merxly.Application.DTOs.Product.Update;
@@ -207,6 +208,21 @@ namespace merxly.Application.Mappings
                 .ForMember(dest => dest.CustomerPostalCode, opt => opt.MapFrom(src => src.Order.ShippingAddress.PostalCode))
                 .ForMember(dest => dest.CustomerPhoneNumber, opt => opt.MapFrom(src => src.Order.ShippingAddress.PhoneNumber));
 
+            // Customer Order Mappings
+            CreateMap<SubOrder, CustomerSubOrderDto>()
+                .ForMember(dest => dest.TotalItems, opt => opt.MapFrom(src => src.OrderItems.Sum(oi => oi.Quantity)));
+
+            CreateMap<SubOrder, CustomerSubOrderDetailDto>()
+                .ForMember(dest => dest.StoreId, opt => opt.MapFrom(src => src.StoreId))
+                .ForMember(dest => dest.StoreName, opt => opt.MapFrom(src => src.Store.StoreName))
+                .ForMember(dest => dest.StoreLogoImagePublicId, opt => opt.MapFrom(src => src.Store.LogoImagePublicId))
+                .ForMember(dest => dest.StoreBannerImagePublicId, opt => opt.MapFrom(src => src.Store.BannerImagePublicId))
+                .ForMember(dest => dest.StoreEmail, opt => opt.MapFrom(src => src.Store.Email))
+                .ForMember(dest => dest.StorePhoneNumber, opt => opt.MapFrom(src => src.Store.PhoneNumber))
+                .ForMember(dest => dest.ShippingFullAddress, opt => opt.MapFrom(src =>
+                    $"{src.Order.ShippingAddress.AddressLine}, {src.Order.ShippingAddress.WardName}, {src.Order.ShippingAddress.CityName}"))
+                .ForMember(dest => dest.ShippingPostalCode, opt => opt.MapFrom(src => src.Order.ShippingAddress.PostalCode))
+                .ForMember(dest => dest.ShippingPhoneNumber, opt => opt.MapFrom(src => src.Order.ShippingAddress.PhoneNumber));
 
             CreateMap<OrderItem, OrderItemDto>()
                 .ForMember(dest => dest.StoreName, opt => opt.MapFrom(src => src.Store.StoreName));

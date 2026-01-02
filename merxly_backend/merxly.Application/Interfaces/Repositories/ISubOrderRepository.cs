@@ -1,4 +1,5 @@
 using merxly.Application.DTOs.Common;
+using merxly.Application.DTOs.CustomerOrders;
 using merxly.Application.DTOs.Order;
 using merxly.Domain.Entities;
 
@@ -11,6 +12,7 @@ namespace merxly.Application.Interfaces.Repositories
         Task<List<SubOrder>> GetByOrderIdAsync(Guid orderId, CancellationToken cancellationToken = default);
         Task<List<SubOrder>> GetByStoreIdAsync(Guid storeId, CancellationToken cancellationToken = default);
         Task<PaginatedResultDto<SubOrder>> GetStoreOrdersAsync(Guid storeId, StoreSubOrderFilterDto filter, CancellationToken cancellationToken = default);
+        Task<PaginatedResultDto<SubOrder>> GetCustomerOrdersAsync(string customerId, CustomerSubOrderFilterDto filter, CancellationToken cancellationToken = default);
         Task AddRangeAsync(List<SubOrder> subOrders, CancellationToken cancellationToken = default);
     }
 }
