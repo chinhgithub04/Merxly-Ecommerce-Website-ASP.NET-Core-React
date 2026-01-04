@@ -16,19 +16,19 @@ namespace merxly.Infrastructure.Persistence.Configurations
             builder.Property(r => r.Rating)
                 .IsRequired();
 
-            builder.Property(r => r.Title)
-                .HasMaxLength(200);
-
             builder.Property(r => r.Comment)
+                .HasMaxLength(2000);
+
+            builder.Property(r => r.SellerReply)
                 .HasMaxLength(2000);
 
             builder.Property(r => r.CreatedAt)
                 .IsRequired();
 
             // Relationships
-            builder.HasOne(r => r.Order)
-                .WithMany()
-                .HasForeignKey(r => r.OrderId)
+            builder.HasOne(r => r.OrderItem)
+                .WithOne()
+                .HasForeignKey<Review>(r => r.OrderItemId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasMany(r => r.Medias)
@@ -36,14 +36,21 @@ namespace merxly.Infrastructure.Persistence.Configurations
                 .HasForeignKey(ri => ri.ReviewId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // Indexes
-            builder.HasIndex(r => new { r.ProductId, r.Rating });
-            builder.HasIndex(r => new { r.UserId, r.ProductId, r.OrderId })
-                .IsUnique();
-            builder.HasIndex(r => r.CreatedAt);
+            builder.HasOne(r => r.ProductVariant)
+                .WithMany()
+                .HasForeignKey(r => r.ProductVariantId)
+                .OnDelete(DeleteBehavior.Restrict);
 
-            // Check constraint for rating (1-5)
-            builder.ToTable(t => t.HasCheckConstraint("CK_Review_Rating", "`Rating` >= 1 AND `Rating` <= 5"));
+            builder.HasOne(r => r.Store)
+                .WithMany()
+                .HasForeignKey(r => r.StoreId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Indexes
+            builder.HasIndex(r => new { r.ProductId, r.CreatedAt });
+            builder.HasIndex(r => r.StoreId);
+            builder.HasIndex(r => r.UserId);
+            builder.HasIndex(r => r.OrderItemId).IsUnique();
         }
     }
 }
