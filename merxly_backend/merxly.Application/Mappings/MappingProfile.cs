@@ -16,6 +16,7 @@ using merxly.Application.DTOs.ProductVariant.Update;
 using merxly.Application.DTOs.ProductVariantAttributeValue;
 using merxly.Application.DTOs.ProductVariantMedia;
 using merxly.Application.DTOs.ProductVariantMedia.Update;
+using merxly.Application.DTOs.Review;
 using merxly.Application.DTOs.Store;
 using merxly.Application.DTOs.StorePayment;
 using merxly.Application.Mappings.ValueResolvers;
@@ -265,6 +266,19 @@ namespace merxly.Application.Mappings
 
             // Store Payment Mappings
             CreateMap<Store, StorePaymentAccountDto>();
+
+            // Review Mappings
+            CreateMap<ReviewMedia, ReviewMediaDto>();
+
+            CreateMap<Review, ReviewDto>()
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src =>
+                    $"{src.User.FirstName} {src.User.LastName}"))
+                .ForMember(dest => dest.ProductVariantSelected, opt => opt.MapFrom(src =>
+                    string.Join(", ", src.ProductVariant.VariantAttributeValues.Select(vav =>
+                            $"{vav.ProductAttributeValue.ProductAttribute.Name}: {vav.ProductAttributeValue.Value}"))));
+
+            CreateMap<CreateReviewDto, Review>();
+            CreateMap<CreateReviewMediaDto, ReviewMedia>();
         }
     }
 }

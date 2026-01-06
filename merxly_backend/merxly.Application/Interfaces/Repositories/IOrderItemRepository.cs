@@ -6,5 +6,6 @@ namespace merxly.Application.Interfaces.Repositories
     {
         Task<List<OrderItem>> GetByOrderIdAsync(Guid orderId, CancellationToken cancellationToken = default);
         Task AddRangeAsync(List<OrderItem> orderItems, CancellationToken cancellationToken = default);
+        Task<OrderItem?> GetByIdWithDetailsAsync(Guid orderItemId, CancellationToken cancellationToken = default);
     }
 }

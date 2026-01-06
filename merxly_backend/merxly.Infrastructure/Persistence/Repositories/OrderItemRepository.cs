@@ -26,5 +26,17 @@ namespace merxly.Infrastructure.Persistence.Repositories
         {
             await _dbSet.AddRangeAsync(orderItems, cancellationToken);
         }
+
+        public async Task<OrderItem?> GetByIdWithDetailsAsync(Guid orderItemId, CancellationToken cancellationToken = default)
+        {
+            return await _dbSet
+                .AsNoTracking()
+                .Include(oi => oi.SubOrder)
+                    .ThenInclude(so => so.Order)
+                .Include(oi => oi.ProductVariant)
+                    .ThenInclude(pv => pv.Product)
+                .Include(oi => oi.Store)
+                .FirstOrDefaultAsync(oi => oi.Id == orderItemId, cancellationToken);
+        }
     }
 }
