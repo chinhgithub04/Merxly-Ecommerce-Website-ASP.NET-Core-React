@@ -46,7 +46,15 @@ namespace merxly.Infrastructure.Persistence.Repositories
 
         public async Task<PaginatedResultDto<Review>> GetPaginatedReviewsWithQueryParametersAsync(ReviewQueryParameters queryParameters, CancellationToken cancellationToken = default)
         {
-            var query = _dbSet.AsNoTracking().AsQueryable();
+            var query = _dbSet
+            .AsNoTracking()
+            .Include(r => r.ProductVariant)
+                    .ThenInclude(pv => pv.VariantAttributeValues)
+                        .ThenInclude(vav => vav.ProductAttributeValue)
+                            .ThenInclude(pav => pav.ProductAttribute)
+            .Include(r => r.User)
+            .Include(r => r.Medias)
+            .AsQueryable();
 
             if (queryParameters.ProductId.HasValue)
             {

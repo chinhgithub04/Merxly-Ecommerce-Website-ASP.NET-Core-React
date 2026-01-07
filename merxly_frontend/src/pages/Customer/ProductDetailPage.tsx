@@ -7,6 +7,7 @@ import {
   ProductRating,
   ProductVariantSelector,
   ProductActions,
+  ProductReviewSection,
 } from '../../components/customer/productDetail';
 import { AddToCartModal } from '../../components/cart';
 import { useCart } from '../../hooks/useCart';
@@ -187,6 +188,15 @@ export const ProductDetailPage = () => {
           </div>
         </div>
       </div>
+
+      {/* Customer Reviews Section */}
+      {product.reviewCount > 0 && (
+        <ProductReviewSection
+          productId={product.id}
+          averageRating={product.averageRating}
+          reviewCount={product.reviewCount}
+        />
+      )}
 
       {/* Add to Cart Modal */}
       {selectedVariant && product && (

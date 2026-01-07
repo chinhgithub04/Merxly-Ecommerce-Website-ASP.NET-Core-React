@@ -275,7 +275,8 @@ namespace merxly.Application.Mappings
                     $"{src.User.FirstName} {src.User.LastName}"))
                 .ForMember(dest => dest.ProductVariantSelected, opt => opt.MapFrom(src =>
                     string.Join(", ", src.ProductVariant.VariantAttributeValues.Select(vav =>
-                            $"{vav.ProductAttributeValue.ProductAttribute.Name}: {vav.ProductAttributeValue.Value}"))));
+                            $"{vav.ProductAttributeValue.ProductAttribute.Name}: {vav.ProductAttributeValue.Value}"))))
+                .ForMember(dest => dest.UserAvatarPublicId, opt => opt.MapFrom(src => src.User.AvatarPublicId));
 
             CreateMap<CreateReviewDto, Review>();
             CreateMap<CreateReviewMediaDto, ReviewMedia>();

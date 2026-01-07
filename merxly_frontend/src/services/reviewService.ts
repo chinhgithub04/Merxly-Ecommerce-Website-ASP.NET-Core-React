@@ -4,7 +4,24 @@ import type {
   CreateReviewDto,
   ReviewDto,
   SubOrderReviewStatusDto,
+  ReviewQueryParameters,
+  PaginatedReviewsDto,
 } from '../types/models/review';
+
+/**
+ * Get reviews with filtering and pagination
+ * @param params - ReviewQueryParameters for filtering
+ * @returns Paginated list of reviews
+ */
+export const getReviews = async (
+  params: ReviewQueryParameters
+): Promise<Response<PaginatedReviewsDto>> => {
+  const response = await apiClient.get<Response<PaginatedReviewsDto>>(
+    '/Reviews',
+    { params }
+  );
+  return response.data;
+};
 
 /**
  * Get review status for a SubOrder including all OrderItems and their reviews

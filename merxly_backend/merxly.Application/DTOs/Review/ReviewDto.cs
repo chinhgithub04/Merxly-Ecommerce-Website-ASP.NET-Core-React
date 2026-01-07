@@ -12,6 +12,7 @@ namespace merxly.Application.DTOs.Review
         // User info
         public string UserId { get; init; }
         public string UserName { get; init; }
+        public string? UserAvatarPublicId { get; init; }
 
         // Product info
         public Guid ProductId { get; init; }

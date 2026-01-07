@@ -104,6 +104,20 @@ namespace merxly.Application.Services
             if (dto.Status == OrderStatus.Completed)
             {
                 subOrder.CompletedAt = DateTime.UtcNow;
+
+                // Update product total sold for each product in the order
+                var productQuantities = subOrder.OrderItems
+                    .GroupBy(oi => oi.ProductVariant!.ProductId)
+                    .Select(g => new { ProductId = g.Key, TotalQuantity = g.Sum(oi => oi.Quantity) });
+
+                foreach (var pq in productQuantities)
+                {
+                    var product = subOrder.OrderItems
+                        .First(oi => oi.ProductVariant!.ProductId == pq.ProductId)
+                        .ProductVariant!.Product;
+
+                    product.TotalSold += pq.TotalQuantity;
+                }
             }
 
             // Record status change in history
