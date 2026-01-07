@@ -50,7 +50,9 @@ namespace merxly.Infrastructure.Persistence.Configurations
             builder.HasIndex(r => new { r.ProductId, r.CreatedAt });
             builder.HasIndex(r => r.StoreId);
             builder.HasIndex(r => r.UserId);
-            builder.HasIndex(r => r.OrderItemId).IsUnique();
+            builder.HasIndex(r => r.OrderItemId)
+                .IsUnique()
+                .HasDatabaseName("IX_Reviews_OrderItemId");
         }
     }
 }

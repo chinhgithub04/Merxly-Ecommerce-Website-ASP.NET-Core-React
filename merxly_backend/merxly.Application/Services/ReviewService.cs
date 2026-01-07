@@ -76,26 +76,17 @@ namespace merxly.Application.Services
 
             // Create review
             var review = _mapper.Map<Review>(dto);
-            {
-                var reviewMedias = dto.Medias.Select(m => new ReviewMedia
-                {
-                    Id = Guid.NewGuid(),
-                    MediaPublicId = m.MediaPublicId,
-                    DisplayOrder = m.DisplayOrder,
-                    MediaType = (MediaType)m.MediaType,
-                    ReviewId = review.Id,
-                    CreatedAt = DateTime.UtcNow
-                }).ToList();
-
-                review.Medias = reviewMedias;
-            }
+            review.UserId = userId;
+            review.ProductId = productVariant.ProductId;
+            review.ProductVariantId = productVariant.Id;
+            review.StoreId = productVariant.Product.StoreId;
 
             await _unitOfWork.Review.AddAsync(review, cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             // Update product rating and review count
             await UpdateProductRatingAsync(productVariant.ProductId, cancellationToken);
 
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             _logger.LogInformation("Review created successfully with ID: {ReviewId}", review.Id);
 
@@ -310,6 +301,7 @@ namespace merxly.Application.Services
                 product.AverageRating = paginatedReviews.Items.Average(r => r.Rating);
                 product.ReviewCount = paginatedReviews.TotalCount;
                 _unitOfWork.Product.Update(product);
+                await _unitOfWork.SaveChangesAsync(cancellationToken);
             }
         }
     }

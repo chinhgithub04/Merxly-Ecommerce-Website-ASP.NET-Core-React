@@ -1,9 +1,12 @@
+import { useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 import { OrderStatus } from '../../types/enums/Status';
 import {
   useCustomerOrderDetail,
   useUpdateCustomerSubOrderStatus,
 } from '../../hooks/useCustomerOrders';
+import { useSubOrderReviewStatus } from '../../hooks/useReviews';
 import { CustomerOrderDetailHeader } from '../../components/customer/orders/detail/CustomerOrderDetailHeader';
 import { OrderBasicInfo } from '../../components/store/orders/detail/OrderBasicInfo';
 import { CustomerOrderProgressBar } from '../../components/customer/orders/detail/CustomerOrderProgressBar';
@@ -14,13 +17,17 @@ import { CustomerOrderShippingInfo } from '../../components/customer/orders/deta
 import { CustomerOrderItemsTable } from '../../components/customer/orders/detail/CustomerOrderItemsTable';
 import { OrderSummarySection } from '../../components/store/orders/detail/OrderSummarySection';
 import { OrderNotesSection } from '../../components/store/orders/detail/OrderNotesSection';
+import { ReviewModal } from '../../components/customer/reviews/ReviewModal';
 
 export const CustomerOrderDetailPage = () => {
   const { subOrderId } = useParams<{ subOrderId: string }>();
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const queryClient = useQueryClient();
 
   const { data: order, isLoading, error } = useCustomerOrderDetail(subOrderId!);
   const { mutate: updateStatus, isPending: isUpdating } =
     useUpdateCustomerSubOrderStatus();
+  const { data: reviewStatus } = useSubOrderReviewStatus(subOrderId);
 
   const handleStatusUpdate = (newStatus: OrderStatus, notes?: string) => {
     if (!subOrderId) return;
@@ -30,6 +37,10 @@ export const CustomerOrderDetailPage = () => {
       {
         onSuccess: () => {
           alert('Order status updated successfully');
+          // Invalidate review status to fetch new data when order becomes Completed
+          queryClient.invalidateQueries({
+            queryKey: ['subOrderReviewStatus', subOrderId],
+          });
         },
         onError: (error: Error) => {
           alert(error.message || 'Failed to update order status');
@@ -42,7 +53,11 @@ export const CustomerOrderDetailPage = () => {
   if (isLoading) {
     return (
       <div className='space-y-6'>
-        <CustomerOrderDetailHeader />
+        <CustomerOrderDetailHeader
+          subOrderId={subOrderId}
+          canLeaveReview={false}
+          isWithinReviewWindow={false}
+        />
         <div className='bg-white rounded-xl shadow-sm border border-neutral-200 p-6'>
           <div className='flex items-center justify-center py-12'>
             <div className='text-center'>
@@ -59,7 +74,11 @@ export const CustomerOrderDetailPage = () => {
   if (error || !order) {
     return (
       <div className='space-y-6'>
-        <CustomerOrderDetailHeader />
+        <CustomerOrderDetailHeader
+          subOrderId={subOrderId}
+          canLeaveReview={false}
+          isWithinReviewWindow={false}
+        />
         <div className='bg-white rounded-xl shadow-sm border border-neutral-200 p-6'>
           <div className='text-center py-12'>
             <div className='mx-auto h-12 w-12 text-red-400'>
@@ -104,7 +123,12 @@ export const CustomerOrderDetailPage = () => {
   return (
     <div className='space-y-6'>
       {/* Header */}
-      <CustomerOrderDetailHeader />
+      <CustomerOrderDetailHeader
+        subOrderId={subOrderId}
+        onReviewClick={() => setIsReviewModalOpen(true)}
+        canLeaveReview={reviewStatus?.data?.canLeaveReview}
+        isWithinReviewWindow={reviewStatus?.data?.isWithinReviewWindow}
+      />
 
       {/* Main Content Wrapper */}
       <div className='bg-white rounded-xl shadow-sm border border-neutral-200'>
@@ -208,6 +232,15 @@ export const CustomerOrderDetailPage = () => {
           )}
         </div>
       </div>
+
+      {/* Review Modal */}
+      {reviewStatus?.data && (
+        <ReviewModal
+          isOpen={isReviewModalOpen}
+          onClose={() => setIsReviewModalOpen(false)}
+          reviewStatus={reviewStatus.data}
+        />
+      )}
     </div>
   );
 };

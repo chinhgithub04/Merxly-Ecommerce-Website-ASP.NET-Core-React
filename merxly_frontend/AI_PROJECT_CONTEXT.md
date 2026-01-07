@@ -63,11 +63,11 @@ src/
 │   └── ThemeContext.tsx
 │
 ├── types/              # TypeScript definitions
-│   └── models              
+│   └── models
 │       ├── product.ts      # Product-related types
 │       ├── order.ts        # Order-related types
-│   └── enums              
-│   └── api              
+│   └── enums
+│   └── api
 │       ├── common.ts         # Auth-related types
 │       ├── upload.ts     # Campaign & pricing tier types
 │       ├── auth.ts      # Product-related types
@@ -77,7 +77,7 @@ src/
 │
 ├── utils/                    # Utility functions
 │   ├── cloudinaryHelper.ts   # Get image, video url from cloudinary
-│   ├── regex.ts         
+│   ├── regex.ts
 │
 ├── App.tsx             # Root component with routing
 ├── main.tsx            # Entry point
@@ -112,7 +112,7 @@ export const getCampaigns = async (): Promise<Response<Campaign[]>> => {
 };
 ```
 
-**Bước 3: Create React Query Hooks** (`src/hooks/useCampaigns.ts`)
+**Step 3: Create React Query Hooks** (`src/hooks/useCampaigns.ts`)
 
 ```typescript
 export const useCampaigns = () => {
@@ -123,13 +123,13 @@ export const useCampaigns = () => {
 };
 ```
 
-**Bước 4: Create Components** (`src/components/features/campaigns/`)
+**Step 4: Create Components** (`src/components/features/campaigns/`)
 
 - `CampaignList.tsx` - Display list
 - `CampaignCard.tsx` - Card component
 - `CreateCampaignForm.tsx` - Form create new
 
-**Bước 5: Create Page** (`src/pages/CampaignsPage.tsx`)
+**Step 5: Create Page** (`src/pages/CampaignsPage.tsx`)
 
 ```typescript
 export default function CampaignsPage() {
