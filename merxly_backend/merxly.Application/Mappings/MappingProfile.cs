@@ -19,6 +19,7 @@ using merxly.Application.DTOs.ProductVariantMedia.Update;
 using merxly.Application.DTOs.Review;
 using merxly.Application.DTOs.Store;
 using merxly.Application.DTOs.StorePayment;
+using merxly.Application.DTOs.UserProfile;
 using merxly.Application.Mappings.ValueResolvers;
 using merxly.Domain.Constants;
 using merxly.Domain.Entities;
@@ -280,6 +281,11 @@ namespace merxly.Application.Mappings
 
             CreateMap<CreateReviewDto, Review>();
             CreateMap<CreateReviewMediaDto, ReviewMedia>();
+
+            // User Profile Mappings
+            CreateMap<ApplicationUser, UserProfileDto>();
+            CreateMap<UpdateUserProfileDto, ApplicationUser>()
+                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
         }
     }
 }

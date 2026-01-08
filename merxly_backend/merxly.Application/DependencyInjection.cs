@@ -30,6 +30,7 @@ namespace merxly.Application
             services.AddScoped<IStoreOrderService, StoreOrderService>();
             services.AddScoped<ICustomerOrderService, CustomerOrderService>();
             services.AddScoped<IReviewService, ReviewService>();
+            services.AddScoped<IUserProfileService, UserProfileService>();
 
             // AutoMapper Configuration
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
