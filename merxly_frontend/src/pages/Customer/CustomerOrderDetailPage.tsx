@@ -121,7 +121,7 @@ export const CustomerOrderDetailPage = () => {
   );
 
   return (
-    <div className='space-y-6'>
+    <div className='p-10'>
       {/* Header */}
       <CustomerOrderDetailHeader
         subOrderId={subOrderId}
@@ -131,22 +131,23 @@ export const CustomerOrderDetailPage = () => {
       />
 
       {/* Main Content Wrapper */}
-      <div className='bg-white rounded-xl shadow-sm border border-neutral-200'>
+      <div className='bg-white border-x border-b border-neutral-200'>
         <div className='p-6 space-y-8'>
           {/* Basic Info */}
           <OrderBasicInfo
             subOrderNumber={order.subOrderNumber}
             totalItems={totalItems}
             createdAt={order.createdAt}
+            totalAmount={order.totalAmount}
           />
 
           {/* Progress Bar (5 steps) */}
-          <div className='border-t border-neutral-200 pt-6'>
+          <div className='pt-6'>
             <CustomerOrderProgressBar status={order.status} />
           </div>
 
           {/* Action Buttons */}
-          <div className='pt-6'>
+          <div>
             <CustomerOrderActionButtons
               status={order.status}
               isUpdating={isUpdating}

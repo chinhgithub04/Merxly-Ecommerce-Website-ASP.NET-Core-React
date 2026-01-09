@@ -71,7 +71,7 @@ export const AddressesSection = () => {
         {hasAddresses && (
           <button
             onClick={handleAddAddress}
-            className='cursor-pointer flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 transition-colors'
+            className='cursor-pointer flex items-center gap-2 text-primary-600 font-medium hover:text-primary-700 transition-colors'
           >
             <PlusIcon className='h-5 w-5' />
             <span>Add Address</span>

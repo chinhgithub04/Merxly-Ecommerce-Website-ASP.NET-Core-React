@@ -130,7 +130,7 @@ export const OrderActivityTimeline = ({
 
               {/* Icon */}
               <div
-                className={`relative z-10 flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${getStatusColor(
+                className={`relative z-10 shrink-0 w-10 h-10 rounded-lg flex items-center justify-center ${getStatusColor(
                   entry.status
                 )}`}
               >

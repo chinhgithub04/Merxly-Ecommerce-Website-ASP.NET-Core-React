@@ -1,10 +1,5 @@
-import {
-  ShoppingBagIcon,
-  CubeIcon,
-  TruckIcon,
-  HomeIcon,
-  XCircleIcon,
-} from '@heroicons/react/24/solid';
+import { TruckIcon, XCircleIcon } from '@heroicons/react/24/outline';
+import { Book, Check, Handshake, Package } from 'lucide-react';
 import { OrderStatus } from '../../../../types/enums';
 
 interface OrderProgressBarProps {
@@ -51,7 +46,7 @@ export const OrderProgressBar = ({ status }: OrderProgressBarProps) => {
       return [
         {
           label: 'Order Placed',
-          icon: ShoppingBagIcon,
+          icon: Book,
           status: 'completed',
         },
         {
@@ -71,12 +66,12 @@ export const OrderProgressBar = ({ status }: OrderProgressBarProps) => {
     const steps: ProgressStep[] = [
       {
         label: 'Order Placed',
-        icon: ShoppingBagIcon,
+        icon: Book,
         status: currentIndex > 0 ? 'completed' : 'current',
       },
       {
         label: 'Packaging',
-        icon: CubeIcon,
+        icon: Package,
         status:
           currentIndex > 1
             ? 'completed'
@@ -96,7 +91,7 @@ export const OrderProgressBar = ({ status }: OrderProgressBarProps) => {
       },
       {
         label: 'Shipped',
-        icon: HomeIcon,
+        icon: Handshake,
         status: currentIndex >= 3 ? 'current' : 'upcoming',
       },
     ];
@@ -110,46 +105,52 @@ export const OrderProgressBar = ({ status }: OrderProgressBarProps) => {
     switch (stepStatus) {
       case 'completed':
         return {
-          circle: 'bg-green-500 text-white',
-          line: 'bg-green-500',
-          label: 'text-green-600 font-medium',
+          circle: 'bg-orange-500',
+          line: 'bg-orange-500',
+          icon: 'text-green-500',
+          label: 'opacity-100',
+          checked: 'block text-white h-3.5 w-3.5',
         };
       case 'current':
         return {
-          circle: 'bg-primary-500 text-white ring-4 ring-primary-100',
-          line: 'bg-neutral-200',
-          label: 'text-primary-600 font-semibold',
+          circle: 'bg-orange-500',
+          line: 'bg-orange-200',
+          icon: 'text-orange-500',
+          label: 'opacity-100',
+          checked: 'hidden',
         };
       case 'cancelled':
         return {
-          circle: 'bg-red-500 text-white',
-          line: 'bg-red-500',
+          circle: 'bg-orange-500',
+          line: 'bg-orange-500',
+          icon: 'text-red-600',
           label: 'text-red-600 font-medium',
+          checked: 'hidden',
         };
       default:
         return {
-          circle: 'bg-neutral-200 text-neutral-400',
-          line: 'bg-neutral-200',
-          label: 'text-neutral-400',
+          circle: 'border-2 border-orange-500 bg-white',
+          line: 'bg-orange-200',
+          icon: 'text-orange-500 opacity-50',
+          label: 'opacity-50',
+          checked: 'hidden',
         };
     }
   };
 
   return (
-    <div className='py-8 px-4'>
+    <div className='py-2 px-12'>
       <div className='relative'>
         {/* Background Line */}
-        <div className='absolute top-4 left-5 right-5 h-2 bg-neutral-200 rounded-full' />
+        <div className='absolute top-2 left-9 right-9 h-2 bg-orange-200 rounded-full' />
 
         {/* Active Progress Bar */}
         <div
-          className={`absolute top-4 left-5 h-2 rounded-full transition-all duration-500 ${
-            isCancelled ? 'bg-red-500' : 'bg-green-500'
-          }`}
+          className={`absolute top-2 left-9 h-2 rounded-full transition-all duration-500 bg-orange-500`}
           style={{
             width: isCancelled
-              ? 'calc(100% - 40px)'
-              : `calc((100% - 40px) * ${currentIndex / (steps.length - 1)})`,
+              ? 'calc(100% - 60px)'
+              : `calc((100% - 60px) * ${currentIndex / (steps.length - 1)})`,
           }}
         />
 
@@ -160,17 +161,17 @@ export const OrderProgressBar = ({ status }: OrderProgressBarProps) => {
             const Icon = step.icon;
 
             return (
-              <div
-                key={index}
-                className='relative flex flex-col items-center w-10'
-              >
+              <div key={index} className='flex flex-col items-center relative'>
+                {/* Circle */}
                 <div
-                  className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 ring-4 ring-white ${styles.circle}`}
+                  className={`w-6 h-6 rounded-full flex items-center justify-center transition-all duration-300 ${styles.circle}`}
                 >
-                  <Icon className='h-5 w-5' />
+                  <Check strokeWidth={2.75} className={`${styles.checked}`} />
                 </div>
+                <Icon className={`mt-5 h-7 w-7 ${styles.icon}`} />
+                {/* Label */}
                 <span
-                  className={`absolute top-12 w-32 text-center text-xs font-medium ${styles.label}`}
+                  className={`mt-3 text-xs font-semibold text-center transition-colors duration-300 ${styles.label}`}
                 >
                   {step.label}
                 </span>

@@ -8,12 +8,14 @@ interface OrderBasicInfoProps {
   subOrderNumber: string;
   totalItems: number;
   createdAt: string;
+  totalAmount?: number;
 }
 
 export const OrderBasicInfo = ({
   subOrderNumber,
   totalItems,
   createdAt,
+  totalAmount,
 }: OrderBasicInfoProps) => {
   const formatDateTime = (dateString: string) => {
     const date = new Date(dateString);
@@ -30,26 +32,34 @@ export const OrderBasicInfo = ({
     };
   };
 
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('vi-VN', {
+      style: 'currency',
+      currency: 'VND',
+    }).format(amount);
+  };
+
   const { date, time } = formatDateTime(createdAt);
 
   return (
-    <div className='flex flex-wrap items-center gap-6'>
-      <div className='flex items-center gap-2'>
-        <ClipboardDocumentListIcon className='h-5 w-5 text-neutral-400' />
-        <span className='font-medium text-neutral-900'>{subOrderNumber}</span>
+    <div className='flex items-center justify-between bg-warning-50 p-8 border border-warning-300'>
+      <div>
+        <h2 className='text-lg font-semibold text-neutral-900'>
+          #{subOrderNumber}
+        </h2>
+        <div className='flex items-center gap-2 mt-2 text-neutral-600'>
+          <p>
+            {totalItems} {totalItems === 1 ? 'product' : 'products'}
+          </p>
+          <span>•</span>
+          <p>
+            Order Placed in {date} at {time}
+          </p>
+        </div>
       </div>
-      <div className='flex items-center gap-2'>
-        <ShoppingCartIcon className='h-5 w-5 text-neutral-400' />
-        <span className='text-neutral-600'>
-          {totalItems} {totalItems === 1 ? 'item' : 'items'}
-        </span>
-      </div>
-      <div className='flex items-center gap-2'>
-        <CalendarDaysIcon className='h-5 w-5 text-neutral-400' />
-        <span className='text-neutral-600'>
-          {date} at {time}
-        </span>
-      </div>
+      <h1 className='text-2xl font-bold text-primary-600'>
+        {totalAmount !== undefined ? formatCurrency(totalAmount) : ''}
+      </h1>
     </div>
   );
 };

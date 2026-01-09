@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { ChevronDownIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -34,6 +34,9 @@ export const CityWardSelector = ({
   const [wardSearchTerm, setWardSearchTerm] = useState('');
   const [isWardOpen, setIsWardOpen] = useState(false);
 
+  // Track previous city code to detect actual changes
+  const prevCityCodeRef = useRef<number | null>(null);
+
   // Fetch cities based on search
   const { data: cities = [], isLoading: isLoadingCities } = useQuery({
     queryKey: ['cities', citySearchTerm],
@@ -55,12 +58,17 @@ export const CityWardSelector = ({
     enabled: isWardOpen && !!selectedCityCode,
   });
 
-  // Reset ward when city changes
+  // Reset ward when city changes (but not on initial load)
   useEffect(() => {
-    if (selectedCityCode) {
-      // When city changes, clear ward selection
+    // Only clear ward if city code changed to a different non-zero value
+    if (
+      selectedCityCode &&
+      prevCityCodeRef.current !== null &&
+      prevCityCodeRef.current !== selectedCityCode
+    ) {
       onWardChange(0, '');
     }
+    prevCityCodeRef.current = selectedCityCode;
   }, [selectedCityCode]);
 
   const handleCitySelect = (city: CityDto) => {

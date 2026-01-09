@@ -133,8 +133,8 @@ export const UserProfilePage = () => {
   };
 
   return (
-    <div className='px-20 py-12'>
-      <div className='max-w-5xl mx-auto space-y-8'>
+    <div className='p-10'>
+      <div className='max-w-7xl mx-auto space-y-8'>
         {/* Account Info Section */}
         <div>
           <div className='bg-white border-t border-x border-neutral-200 rounded-t-lg px-6 py-4'>

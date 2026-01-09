@@ -36,7 +36,7 @@ export const OrderFilters = ({
   const [showFilters, setShowFilters] = useState(false);
 
   return (
-    <div className='bg-white rounded-lg border border-neutral-200 p-4 space-y-4'>
+    <div className='bg-white border border-neutral-200 p-4 space-y-4'>
       <div className='flex flex-col md:flex-row gap-4'>
         {/* Search */}
         <div className='flex-1 relative'>

@@ -16,7 +16,7 @@ export const AccountInfoSection = () => {
       <div>
         <div className='bg-white border-t border-x border-neutral-200 rounded-t-lg px-6 py-4'>
           <h2 className='text-xl font-semibold text-neutral-900'>
-            Account Info
+            Account Information
           </h2>
         </div>
         <div className='bg-white border border-neutral-200 rounded-b-lg p-6'>
@@ -35,7 +35,7 @@ export const AccountInfoSection = () => {
       <div>
         <div className='bg-white border-t border-x border-neutral-200 rounded-t-lg px-6 py-4'>
           <h2 className='text-xl font-semibold text-neutral-900'>
-            Account Info
+            Account Information
           </h2>
         </div>
         <div className='bg-white border border-neutral-200 rounded-b-lg p-6'>
@@ -70,7 +70,9 @@ export const AccountInfoSection = () => {
     <div>
       {/* Header */}
       <div className='bg-white border-t border-x border-neutral-200 rounded-t-lg px-6 py-4'>
-        <h2 className='text-xl font-semibold text-neutral-900'>Account Info</h2>
+        <h2 className='text-xl font-semibold text-neutral-900'>
+          Account Information
+        </h2>
       </div>
 
       {/* Body */}

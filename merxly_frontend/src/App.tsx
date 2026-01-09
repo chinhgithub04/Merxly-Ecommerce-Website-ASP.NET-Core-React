@@ -22,7 +22,10 @@ import {
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { StoreOwnerLayout } from './components/layout';
 import { AdminLayout } from './components/layout/admin';
-import { CustomerLayout } from './components/layout/customer';
+import {
+  CustomerLayout,
+  UserAccountLayout,
+} from './components/layout/customer';
 import {
   StoreHomePage,
   StoreOrdersPage,
@@ -131,54 +134,26 @@ function App() {
               </Elements>
             }
           />
+
+          {/* User Account Routes with Sidebar Layout */}
           <Route
-            path='user-account/dashboard'
+            path='user-account'
             element={
               <ProtectedRoute>
-                <DashboardPage />
+                <UserAccountLayout />
               </ProtectedRoute>
             }
-          />
-          <Route
-            path='user-account/profile'
-            element={
-              <ProtectedRoute>
-                <UserProfilePage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path='user-account/addresses'
-            element={
-              <ProtectedRoute>
-                <AddressesPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path='user-account/payment-methods'
-            element={
-              <ProtectedRoute>
-                <PaymentMethodsPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path='user-account/order-history'
-            element={
-              <ProtectedRoute>
-                <OrderHistoryPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path='user-account/order-history/:subOrderId'
-            element={
-              <ProtectedRoute>
-                <CustomerOrderDetailPage />
-              </ProtectedRoute>
-            }
-          />
+          >
+            <Route path='dashboard' element={<DashboardPage />} />
+            <Route path='profile' element={<UserProfilePage />} />
+            <Route path='addresses' element={<AddressesPage />} />
+            <Route path='payment-methods' element={<PaymentMethodsPage />} />
+            <Route path='order-history' element={<OrderHistoryPage />} />
+            <Route
+              path='order-history/:subOrderId'
+              element={<CustomerOrderDetailPage />}
+            />
+          </Route>
         </Route>
 
         {/* Redirect unknown routes to home */}

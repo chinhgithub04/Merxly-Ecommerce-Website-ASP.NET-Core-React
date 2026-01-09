@@ -1,13 +1,8 @@
 import { useState } from 'react';
-import {
-  CheckIcon,
-  CubeIcon,
-  TruckIcon,
-  HomeIcon,
-  XMarkIcon,
-} from '@heroicons/react/24/outline';
+import { CheckIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { OrderStatus } from '../../../../types/enums';
 import { Modal } from '../../../ui/Modal';
+import { Book, Handshake, Package } from 'lucide-react';
 
 interface OrderActionButtonsProps {
   status: OrderStatus;
@@ -52,7 +47,7 @@ export const OrderActionButtons = ({
         return [
           {
             label: 'Start Packaging',
-            icon: CubeIcon,
+            icon: Book,
             newStatus: OrderStatus.Processing,
             variant: 'primary',
           },
@@ -67,7 +62,7 @@ export const OrderActionButtons = ({
         return [
           {
             label: 'Mark as Delivering',
-            icon: TruckIcon,
+            icon: Package,
             newStatus: OrderStatus.Delivering,
             variant: 'primary',
           },
@@ -76,7 +71,7 @@ export const OrderActionButtons = ({
         return [
           {
             label: 'Mark as Shipped',
-            icon: HomeIcon,
+            icon: Handshake,
             newStatus: OrderStatus.Shipped,
             variant: 'primary',
           },
@@ -131,7 +126,7 @@ export const OrderActionButtons = ({
             key={index}
             onClick={() => handleActionClick(action)}
             disabled={isUpdating}
-            className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${getButtonStyles(
+            className={`cursor-pointer inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${getButtonStyles(
               action.variant
             )}`}
           >

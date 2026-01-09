@@ -70,10 +70,12 @@ export const OrderHistoryPage = () => {
   }, [data]);
 
   return (
-    <div className='space-y-6'>
+    <div className='p-10'>
       {/* Page Header */}
-      <div>
-        <h1 className='text-3xl font-bold text-neutral-900'>Order History</h1>
+      <div className='bg-white border-t border-x border-neutral-200 rounded-t-lg px-6 py-4'>
+        <h2 className='text-xl font-semibold text-neutral-900'>
+          Order History
+        </h2>
       </div>
 
       {/* Filters */}
@@ -107,7 +109,7 @@ export const OrderHistoryPage = () => {
 
           {/* Pagination Info */}
           {data && (
-            <div className='flex items-center justify-between text-sm text-neutral-600'>
+            <div className='flex mt-2 items-center justify-between text-sm text-neutral-600'>
               <span>
                 Showing {orders.length} of {data.totalCount} orders
               </span>
@@ -119,14 +121,14 @@ export const OrderHistoryPage = () => {
                   <button
                     onClick={() => setPageNumber((p) => Math.max(1, p - 1))}
                     disabled={data.pageNumber === 1}
-                    className='px-3 py-1 border border-neutral-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-neutral-50'
+                    className='px-3 py-1 border border-neutral-300 rounded-lg cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed hover:bg-neutral-50'
                   >
                     Previous
                   </button>
                   <button
                     onClick={() => setPageNumber((p) => p + 1)}
                     disabled={data.pageNumber >= data.totalPages}
-                    className='px-3 py-1 border border-neutral-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-neutral-50'
+                    className='px-3 py-1 border border-neutral-300 rounded-lg cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed hover:bg-neutral-50'
                   >
                     Next
                   </button>

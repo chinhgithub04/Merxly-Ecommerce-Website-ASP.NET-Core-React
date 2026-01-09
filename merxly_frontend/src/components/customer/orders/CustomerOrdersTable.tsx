@@ -68,7 +68,7 @@ export const CustomerOrdersTable = ({ orders }: CustomerOrdersTableProps) => {
   };
 
   return (
-    <div className='bg-white rounded-lg border border-neutral-200 overflow-hidden'>
+    <div className='bg-white border border-neutral-200 overflow-hidden'>
       <div className='overflow-x-auto'>
         <table className='w-full'>
           <thead className='bg-neutral-50 border-b border-neutral-200'>

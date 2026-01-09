@@ -1,6 +1,5 @@
-import { ArrowLeftIcon, StarIcon } from '@heroicons/react/24/outline';
+import { ArrowLeftIcon, PlusIcon, StarIcon } from '@heroicons/react/24/outline';
 import { useNavigate } from 'react-router-dom';
-import { Button } from '../../../ui/Button';
 
 interface CustomerOrderDetailHeaderProps {
   subOrderId?: string;
@@ -20,26 +19,32 @@ export const CustomerOrderDetailHeader = ({
   const showReviewButton = subOrderId && isWithinReviewWindow;
 
   return (
-    <div className='flex items-center justify-between gap-4'>
+    <div className='flex bg-white border border-neutral-200 rounded-t-lg px-6 py-3 items-center justify-between gap-4'>
       <div className='flex items-center gap-4'>
         <button
-          onClick={() => navigate('/dashboard/order-history')}
+          onClick={() => navigate('/user-account/order-history')}
           className='cursor-pointer p-2 rounded-lg hover:bg-neutral-100 transition-colors'
           aria-label='Back to order history'
         >
           <ArrowLeftIcon className='h-5 w-5 text-neutral-600' />
         </button>
-        <h1 className='text-2xl font-bold text-neutral-900'>Order Details</h1>
+        <h2 className='text-xl font-semibold text-neutral-900'>
+          Order Details
+        </h2>
       </div>
 
       {showReviewButton && (
-        <Button
-          variant={canLeaveReview ? 'primary' : 'outline'}
+        <button
           onClick={onReviewClick}
+          className='cursor-pointer flex items-center gap-2 text-primary-600 font-medium hover:text-primary-700 transition-colors'
         >
-          <StarIcon className='h-5 w-5 mr-2' />
-          {canLeaveReview ? 'Leave a Rating' : 'See your Review'}
-        </Button>
+          {canLeaveReview ? (
+            <PlusIcon className='h-5 w-5' />
+          ) : (
+            <StarIcon className='h-5 w-5' />
+          )}
+          <span>{canLeaveReview ? 'Leave a Rating' : 'See your Review'}</span>
+        </button>
       )}
     </div>
   );

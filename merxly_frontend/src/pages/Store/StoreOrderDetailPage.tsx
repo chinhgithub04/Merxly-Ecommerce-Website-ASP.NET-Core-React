@@ -121,12 +121,12 @@ export const StoreOrderDetailPage = () => {
           />
 
           {/* Progress Bar */}
-          <div className='border-t border-neutral-200 pt-6'>
+          <div className='pt-6'>
             <OrderProgressBar status={order.status} />
           </div>
 
           {/* Action Buttons */}
-          <div className='pt-6'>
+          <div>
             <OrderActionButtons
               status={order.status}
               isUpdating={isUpdating}
