@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useSearchParams } from 'react-router-dom';
 import { ProductCard } from '../../components/home/ProductCard';
@@ -29,6 +29,24 @@ export const SearchProductPage = () => {
       ProductSortBy.PlatformFeatured,
     searchTerm: searchParams.get('q') || undefined,
   });
+
+  // Sync filters with URL changes (e.g., when navigating from HomeHeader search)
+  useEffect(() => {
+    setFilters({
+      pageNumber: Number(searchParams.get('page')) || 1,
+      pageSize: PRODUCTS_PER_PAGE,
+      categoryId: searchParams.get('categoryId') || undefined,
+      minPrice: Number(searchParams.get('minPrice')) || 0,
+      maxPrice: searchParams.get('maxPrice')
+        ? Number(searchParams.get('maxPrice'))
+        : undefined,
+      minRating: Number(searchParams.get('minRating')) || 0,
+      sortBy:
+        (Number(searchParams.get('sortBy')) as ProductSortBy) ||
+        ProductSortBy.PlatformFeatured,
+      searchTerm: searchParams.get('q') || undefined,
+    });
+  }, [searchParams]);
 
   // Fetch categories for filter labels
   const { data: categoriesData } = useQuery({

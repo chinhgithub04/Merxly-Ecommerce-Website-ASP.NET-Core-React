@@ -4,11 +4,21 @@ import {
   HeartIcon,
   UserCircleIcon,
 } from '@heroicons/react/24/outline';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import { useCart } from '../../../hooks/useCart';
 
 export const HomeHeader = () => {
   const { cart } = useCart();
+  const navigate = useNavigate();
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchTerm.trim()) {
+      navigate(`/search?q=${encodeURIComponent(searchTerm.trim())}`);
+    }
+  };
 
   return (
     <header className='fixed top-0 left-0 right-0 h-20 bg-white border-b border-neutral-200 z-30'>
@@ -22,16 +32,18 @@ export const HomeHeader = () => {
 
         {/* Search Bar */}
         <div className='flex-1 max-w-3xl mx-12'>
-          <div className='relative'>
+          <form onSubmit={handleSearch} className='relative'>
             <div className='absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none'>
               <MagnifyingGlassIcon className='h-6 w-6 text-neutral-400' />
             </div>
             <input
               type='text'
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
               placeholder='Search products...'
               className='w-full pl-12 pr-6 py-2 border border-neutral-300 rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-transparent transition-colors'
             />
-          </div>
+          </form>
         </div>
 
         {/* Action Buttons */}

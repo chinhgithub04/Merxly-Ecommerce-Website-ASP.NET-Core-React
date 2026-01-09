@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 import {
   ChevronDownIcon,
   ChevronUpIcon,
@@ -13,10 +14,16 @@ import { getCategoryTree } from '../../../services/categoryService';
 import type { CategoryDto } from '../../../types/models/category';
 
 export const HomeActionBar = () => {
+  const navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [hoveredCategoryId, setHoveredCategoryId] = useState<string | null>(
     null
   );
+
+  const handleCategoryClick = (categoryId: string) => {
+    setIsDropdownOpen(false);
+    navigate(`/search?categoryId=${categoryId}`);
+  };
 
   const { data: categoriesData } = useQuery({
     queryKey: ['categories-tree'],
@@ -38,7 +45,10 @@ export const HomeActionBar = () => {
         onMouseEnter={() => setHoveredCategoryId(category.id)}
         onMouseLeave={() => setHoveredCategoryId(null)}
       >
-        <button className='w-full flex items-center justify-between px-4 py-2.5 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors cursor-pointer text-left'>
+        <button
+          onClick={() => handleCategoryClick(category.id)}
+          className='w-full flex items-center justify-between px-4 py-2.5 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors cursor-pointer text-left'
+        >
           <span>{category.name}</span>
           {hasChildren && (
             <ChevronRightIcon className='h-4 w-4 text-neutral-400' />

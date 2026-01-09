@@ -121,7 +121,7 @@ function App() {
         {/* Customer Routes with Layout */}
         <Route path='/' element={<CustomerLayout />}>
           <Route index element={<HomePage />} />
-          <Route path='products' element={<SearchProductPage />} />
+          <Route path='search' element={<SearchProductPage />} />
           <Route path='products/:id' element={<ProductDetailPage />} />
           <Route path='cart' element={<CartPage />} />
           <Route

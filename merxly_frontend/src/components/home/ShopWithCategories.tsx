@@ -1,10 +1,12 @@
 import { useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 import { getParentCategories } from '../../services/categoryService';
 import { getCategoryImageUrl } from '../../utils/cloudinaryHelpers';
 
 export const ShopWithCategories = () => {
+  const navigate = useNavigate();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const { data: categoriesData } = useQuery({
@@ -56,6 +58,7 @@ export const ShopWithCategories = () => {
             {categories.map((category) => (
               <div
                 key={category.id}
+                onClick={() => navigate(`/search?categoryId=${category.id}`)}
                 className='shrink-0 w-50 h-55 border-2 border-neutral-200 rounded-lg hover:border-primary-600 transition-colors cursor-pointer'
               >
                 <div className='flex flex-col items-center justify-center h-full p-4'>

@@ -4,8 +4,11 @@ import { ChevronRightIcon } from '@heroicons/react/24/outline';
 import { getTop10FeaturedProducts } from '../../services/productService';
 import { getParentCategories } from '../../services/categoryService';
 import { ProductCard } from './ProductCard';
+import { useNavigate } from 'react-router-dom';
 
 export const FeaturedProduct = () => {
+  const navigate = useNavigate();
+
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(
     null
   );
@@ -32,6 +35,10 @@ export const FeaturedProduct = () => {
     const row2 = products.slice(5, 10);
     return [row1, row2];
   }, [products]);
+
+  const handleBrowseAllClick = () => {
+    navigate('/search');
+  };
 
   return (
     <div className='bg-neutral-50 py-12 px-20'>
@@ -72,7 +79,10 @@ export const FeaturedProduct = () => {
           ))}
 
           {/* Browse All Product */}
-          <button className='flex items-center gap-1 text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors cursor-pointer'>
+          <button
+            onClick={handleBrowseAllClick}
+            className='flex items-center gap-1 text-sm font-medium pb-2 text-primary-600 hover:text-primary-700 transition-colors cursor-pointer'
+          >
             <span>Browse All Product</span>
             <ChevronRightIcon className='h-4 w-4' />
           </button>
