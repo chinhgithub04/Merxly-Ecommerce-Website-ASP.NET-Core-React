@@ -22,7 +22,7 @@ export const CheckoutPage = () => {
   const { paymentMethods, isLoading: isLoadingPaymentMethods } =
     usePaymentMethods();
   const { processCheckout, isProcessing } = useCheckout();
-  const { clearCart } = useCart();
+  const { removeCartItem } = useCart();
 
   // Get selected items from navigation state
   const selectedItems = (location.state?.selectedItems as CartItemDto[]) || [];
@@ -102,8 +102,8 @@ export const CheckoutPage = () => {
         return;
       }
 
-      // Clear cart after successful payment
-      await clearCart();
+      // Remove only the checked out items from cart
+      await Promise.all(selectedItems.map((item) => removeCartItem(item.id)));
 
       // Navigate to order confirmation
       navigate('/order-confirmation', {

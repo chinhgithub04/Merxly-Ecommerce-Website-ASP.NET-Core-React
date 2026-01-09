@@ -5,8 +5,11 @@ import {
   UserCircleIcon,
 } from '@heroicons/react/24/outline';
 import { Link } from 'react-router-dom';
+import { useCart } from '../../../hooks/useCart';
 
 export const HomeHeader = () => {
+  const { cart } = useCart();
+
   return (
     <header className='fixed top-0 left-0 right-0 h-20 bg-white border-b border-neutral-200 z-30'>
       <div className='flex items-center justify-between h-full px-20'>
@@ -34,11 +37,18 @@ export const HomeHeader = () => {
         {/* Action Buttons */}
         <div className='flex items-center gap-3'>
           {/* Cart */}
-          <button className='relative p-3 text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 rounded-lg transition-colors cursor-pointer'>
+          <Link
+            to='/cart'
+            className='relative p-3 text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 rounded-lg transition-colors cursor-pointer'
+          >
             <ShoppingCartIcon className='h-7 w-7' />
             {/* Cart Badge */}
-            <span className='absolute top-1.5 right-1.5 h-2.5 w-2.5 bg-primary-600 rounded-full'></span>
-          </button>
+            {cart && cart.totalItems > 0 && (
+              <span className='absolute top-1 right-1 min-w-5 h-5 flex items-center justify-center bg-primary-600 text-white text-xs font-semibold rounded-full px-1.5'>
+                {cart.totalItems > 99 ? '99+' : cart.totalItems}
+              </span>
+            )}
+          </Link>
 
           {/* Favorites */}
           <button className='relative p-3 text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 rounded-lg transition-colors cursor-pointer'>
