@@ -67,9 +67,9 @@ namespace merxly.Application.Services
             return paymentMethods;
         }
 
-        public async Task<PaymentMethodDto> AddPaymentMethodAsync(string userId, AddPaymentMethodDto dto, CancellationToken cancellationToken = default)
+        public async Task<string> CreateSetupIntentAsync(string userId, CancellationToken cancellationToken = default)
         {
-            _logger.LogInformation("Adding payment method for user: {UserId}", userId);
+            _logger.LogInformation("Creating setup intent for user: {UserId}", userId);
 
             var user = await _unitOfWork.ApplicationUser.GetByIdAsync(userId, cancellationToken);
             if (user == null)
@@ -92,11 +92,53 @@ namespace merxly.Application.Services
                 await _unitOfWork.SaveChangesAsync(cancellationToken);
             }
 
-            // Attach payment method to customer
-            var paymentMethod = await _stripeService.AttachPaymentMethodAsync(
-                dto.PaymentMethodId,
-                user.StripeCustomerId,
-                cancellationToken);
+            // Create setup intent
+            var setupIntent = await _stripeService.CreateSetupIntentAsync(user.StripeCustomerId, cancellationToken);
+
+            _logger.LogInformation("Setup intent created successfully for user: {UserId}", userId);
+            return setupIntent.ClientSecret;
+        }
+
+        public async Task<PaymentMethodDto> AddPaymentMethodAsync(string userId, AddPaymentMethodDto dto, CancellationToken cancellationToken = default)
+        {
+            _logger.LogInformation("Adding payment method for user: {UserId}", userId);
+
+            var user = await _unitOfWork.ApplicationUser.GetByIdAsync(userId, cancellationToken);
+            if (user == null)
+            {
+                _logger.LogWarning("User not found: {UserId}", userId);
+                throw new NotFoundException($"User with ID {userId} not found");
+            }
+
+            if (string.IsNullOrEmpty(user.StripeCustomerId))
+            {
+                _logger.LogWarning("User {UserId} has no Stripe customer ID", userId);
+                throw new InvalidOperationException("User must have a Stripe customer ID");
+            }
+
+            // Get payment method from setup intent if provided, otherwise use payment method ID directly
+            var paymentMethodId = dto.PaymentMethodId;
+
+            // If the ID looks like a setup intent (starts with seti_), get the payment method from it
+            if (paymentMethodId.StartsWith("seti_"))
+            {
+                var setupIntent = await _stripeService.GetSetupIntentAsync(paymentMethodId, cancellationToken);
+                if (string.IsNullOrEmpty(setupIntent.PaymentMethodId))
+                {
+                    throw new InvalidOperationException("Setup intent has no payment method attached");
+                }
+                paymentMethodId = setupIntent.PaymentMethodId;
+            }
+
+            // Attach payment method to customer (if not already attached)
+            var paymentMethod = await _stripeService.GetPaymentMethodAsync(paymentMethodId, cancellationToken);
+            if (paymentMethod.CustomerId != user.StripeCustomerId)
+            {
+                paymentMethod = await _stripeService.AttachPaymentMethodAsync(
+                    paymentMethodId,
+                    user.StripeCustomerId,
+                    cancellationToken);
+            }
 
             // If this is the first payment method, set it as default
             var existingPaymentMethods = await _stripeService.ListPaymentMethodsAsync(user.StripeCustomerId, cancellationToken);

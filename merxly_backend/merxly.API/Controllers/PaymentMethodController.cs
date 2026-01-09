@@ -31,6 +31,18 @@ namespace merxly.API.Controllers
         }
 
         /// <summary>
+        /// Create a setup intent for adding payment method
+        /// </summary>
+        [HttpPost("setup-intent")]
+        public async Task<ActionResult<ResponseDto<string>>> CreateSetupIntent(CancellationToken cancellationToken)
+        {
+            var userId = GetUserIdFromClaims();
+            var clientSecret = await _paymentMethodService.CreateSetupIntentAsync(userId, cancellationToken);
+
+            return OkResponse(clientSecret, "Setup intent created successfully");
+        }
+
+        /// <summary>
         /// Add a new payment method for the current user
         /// </summary>
         [HttpPost]

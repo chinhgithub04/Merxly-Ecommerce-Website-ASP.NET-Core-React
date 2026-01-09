@@ -9,7 +9,8 @@ namespace merxly.Application.Validators.PaymentMethod
         {
             RuleFor(x => x.PaymentMethodId)
                 .NotEmpty().WithMessage("Payment method ID is required")
-                .Must(id => id.StartsWith("pm_")).WithMessage("Invalid payment method ID format");
+                .Must(id => id.StartsWith("pm_") || id.StartsWith("seti_"))
+                .WithMessage("Invalid payment method ID format. Must be a payment method ID (pm_) or setup intent ID (seti_)");
         }
     }
 }

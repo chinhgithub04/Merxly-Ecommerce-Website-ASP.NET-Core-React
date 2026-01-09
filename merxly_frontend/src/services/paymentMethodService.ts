@@ -13,7 +13,12 @@ export const getPaymentMethods = async (): Promise<
   );
   return response.data;
 };
-
+export const createSetupIntent = async (): Promise<Response<string>> => {
+  const response = await apiClient.post<Response<string>>(
+    '/payment-methods/setup-intent'
+  );
+  return response.data;
+};
 export const addPaymentMethod = async (
   dto: AddPaymentMethodDto
 ): Promise<Response<PaymentMethodDto>> => {

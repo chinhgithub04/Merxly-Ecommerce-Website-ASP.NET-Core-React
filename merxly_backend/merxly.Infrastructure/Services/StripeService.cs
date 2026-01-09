@@ -103,6 +103,33 @@ namespace merxly.Infrastructure.Services
             return paymentMethod;
         }
 
+        public async Task<SetupIntent> CreateSetupIntentAsync(string customerId, CancellationToken cancellationToken = default)
+        {
+            _logger.LogInformation("Creating setup intent for customer {CustomerId}", customerId);
+
+            var options = new SetupIntentCreateOptions
+            {
+                Customer = customerId,
+                PaymentMethodTypes = new List<string> { "card" },
+            };
+
+            var service = new SetupIntentService();
+            var setupIntent = await service.CreateAsync(options, null, cancellationToken);
+
+            _logger.LogInformation("Setup intent created with ID: {SetupIntentId}", setupIntent.Id);
+            return setupIntent;
+        }
+
+        public async Task<SetupIntent> GetSetupIntentAsync(string setupIntentId, CancellationToken cancellationToken = default)
+        {
+            _logger.LogInformation("Retrieving setup intent {SetupIntentId}", setupIntentId);
+
+            var service = new SetupIntentService();
+            var setupIntent = await service.GetAsync(setupIntentId, null, null, cancellationToken);
+
+            return setupIntent;
+        }
+
         public async Task<PaymentIntent> CreatePaymentIntentAsync(
             string customerId,
             decimal amount,

@@ -10,6 +10,11 @@ namespace merxly.Application.Interfaces.Services
         Task<List<PaymentMethodDto>> GetUserPaymentMethodsAsync(string userId, CancellationToken cancellationToken = default);
 
         /// <summary>
+        /// Creates a setup intent for adding a payment method
+        /// </summary>
+        Task<string> CreateSetupIntentAsync(string userId, CancellationToken cancellationToken = default);
+
+        /// <summary>
         /// Adds a new payment method for the user
         /// </summary>
         Task<PaymentMethodDto> AddPaymentMethodAsync(string userId, AddPaymentMethodDto dto, CancellationToken cancellationToken = default);

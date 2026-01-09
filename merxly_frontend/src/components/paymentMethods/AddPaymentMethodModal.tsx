@@ -1,12 +1,13 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 import {
   Elements,
-  CardElement,
+  PaymentElement,
   useStripe,
   useElements,
 } from '@stripe/react-stripe-js';
 import { XMarkIcon } from '@heroicons/react/24/outline';
+import { createSetupIntent } from '../../services/paymentMethodService';
 
 const stripePromise = loadStripe(
   import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || ''
@@ -15,31 +16,14 @@ const stripePromise = loadStripe(
 interface AddPaymentMethodModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSuccess: (paymentMethodId: string) => void;
+  onSuccess: (paymentMethodId: string) => Promise<void>;
 }
-
-const CARD_ELEMENT_OPTIONS = {
-  style: {
-    base: {
-      fontSize: '16px',
-      color: '#1f2937',
-      fontFamily: 'system-ui, -apple-system, sans-serif',
-      '::placeholder': {
-        color: '#9ca3af',
-      },
-    },
-    invalid: {
-      color: '#ef4444',
-      iconColor: '#ef4444',
-    },
-  },
-};
 
 const PaymentMethodForm = ({
   onSuccess,
   onClose,
 }: {
-  onSuccess: (paymentMethodId: string) => void;
+  onSuccess: (paymentMethodId: string) => Promise<void>;
   onClose: () => void;
 }) => {
   const stripe = useStripe();
@@ -58,16 +42,19 @@ const PaymentMethodForm = ({
     setError(null);
 
     try {
-      const cardElement = elements.getElement(CardElement);
-      if (!cardElement) {
-        throw new Error('Card element not found');
+      // Validate and submit the form
+      const { error: submitError } = await elements.submit();
+      if (submitError) {
+        setError(submitError.message || 'Validation failed');
+        setIsProcessing(false);
+        return;
       }
 
-      const { error: stripeError, paymentMethod } =
-        await stripe.createPaymentMethod({
-          type: 'card',
-          card: cardElement,
-        });
+      // Confirm the setup intent
+      const { error: stripeError, setupIntent } = await stripe.confirmSetup({
+        elements,
+        redirect: 'if_required',
+      });
 
       if (stripeError) {
         setError(stripeError.message || 'An error occurred');
@@ -75,11 +62,14 @@ const PaymentMethodForm = ({
         return;
       }
 
-      if (paymentMethod) {
-        onSuccess(paymentMethod.id);
+      if (setupIntent && setupIntent.payment_method) {
+        // Pass the setup intent ID to backend (it will extract payment method)
+        await onSuccess(setupIntent.id);
+        // Success - modal will be closed by parent component
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
+    } finally {
       setIsProcessing(false);
     }
   };
@@ -88,10 +78,10 @@ const PaymentMethodForm = ({
     <form onSubmit={handleSubmit} className='space-y-6'>
       <div>
         <label className='block text-sm font-medium text-neutral-700 mb-2'>
-          Card Information
+          Payment Information
         </label>
         <div className='border border-neutral-300 rounded-lg p-4 bg-white'>
-          <CardElement options={CARD_ELEMENT_OPTIONS} />
+          <PaymentElement />
         </div>
       </div>
 
@@ -126,8 +116,37 @@ export const AddPaymentMethodModal = ({
   onClose,
   onSuccess,
 }: AddPaymentMethodModalProps) => {
-  const handleSuccess = (paymentMethodId: string) => {
-    onSuccess(paymentMethodId);
+  const [clientSecret, setClientSecret] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (isOpen) {
+      // Fetch setup intent when modal opens
+      const fetchSetupIntent = async () => {
+        setIsLoading(true);
+        setError(null);
+        try {
+          const response = await createSetupIntent();
+          setClientSecret(response.data);
+        } catch (err) {
+          setError('Failed to initialize payment form. Please try again.');
+          console.error('Failed to create setup intent:', err);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+
+      fetchSetupIntent();
+    } else {
+      // Reset state when modal closes
+      setClientSecret(null);
+      setError(null);
+    }
+  }, [isOpen]);
+
+  const handleSuccess = async (setupIntentId: string) => {
+    await onSuccess(setupIntentId);
   };
 
   if (!isOpen) return null;
@@ -143,7 +162,7 @@ export const AddPaymentMethodModal = ({
       {/* Modal Container */}
       <div className='fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none'>
         <div
-          className='bg-white rounded-lg shadow-xl max-w-md w-full pointer-events-auto'
+          className='bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] flex flex-col pointer-events-auto'
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
@@ -161,10 +180,33 @@ export const AddPaymentMethodModal = ({
           </div>
 
           {/* Body */}
-          <div className='px-6 py-4'>
-            <Elements stripe={stripePromise}>
-              <PaymentMethodForm onSuccess={handleSuccess} onClose={onClose} />
-            </Elements>
+          <div className='px-6 py-4 overflow-y-auto flex-1'>
+            {error && (
+              <div className='bg-red-50 border border-red-200 rounded-lg p-3 mb-4'>
+                <p className='text-sm text-red-600'>{error}</p>
+              </div>
+            )}
+            {isLoading && (
+              <div className='flex items-center justify-center py-8'>
+                <div className='text-sm text-neutral-500'>Loading...</div>
+              </div>
+            )}
+            {clientSecret && !isLoading && (
+              <Elements
+                stripe={stripePromise}
+                options={{
+                  clientSecret,
+                  appearance: {
+                    theme: 'stripe',
+                  },
+                }}
+              >
+                <PaymentMethodForm
+                  onSuccess={handleSuccess}
+                  onClose={onClose}
+                />
+              </Elements>
+            )}
           </div>
         </div>
       </div>
