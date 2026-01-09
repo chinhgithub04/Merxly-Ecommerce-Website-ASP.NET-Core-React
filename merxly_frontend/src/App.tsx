@@ -13,7 +13,12 @@ import {
   OrderHistoryPage,
   CustomerOrderDetailPage,
 } from './pages/Customer';
-import { DashboardPage, UserProfilePage } from './pages/User';
+import {
+  DashboardPage,
+  UserProfilePage,
+  PaymentMethodsPage,
+  AddressesPage,
+} from './pages/User';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { StoreOwnerLayout } from './components/layout';
 import { AdminLayout } from './components/layout/admin';
@@ -127,7 +132,7 @@ function App() {
             }
           />
           <Route
-            path='dashboard'
+            path='user-account/dashboard'
             element={
               <ProtectedRoute>
                 <DashboardPage />
@@ -135,7 +140,7 @@ function App() {
             }
           />
           <Route
-            path='dashboard/profile'
+            path='user-account/profile'
             element={
               <ProtectedRoute>
                 <UserProfilePage />
@@ -143,7 +148,23 @@ function App() {
             }
           />
           <Route
-            path='dashboard/order-history'
+            path='user-account/addresses'
+            element={
+              <ProtectedRoute>
+                <AddressesPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path='user-account/payment-methods'
+            element={
+              <ProtectedRoute>
+                <PaymentMethodsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path='user-account/order-history'
             element={
               <ProtectedRoute>
                 <OrderHistoryPage />
@@ -151,7 +172,7 @@ function App() {
             }
           />
           <Route
-            path='dashboard/order-history/:subOrderId'
+            path='user-account/order-history/:subOrderId'
             element={
               <ProtectedRoute>
                 <CustomerOrderDetailPage />

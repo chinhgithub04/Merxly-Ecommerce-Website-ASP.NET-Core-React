@@ -126,7 +126,7 @@ export const AccountInfoSection = () => {
 
             {/* Edit Button */}
             <button
-              onClick={() => navigate('/dashboard/profile')}
+              onClick={() => navigate('/user-account/profile')}
               className='cursor-pointer text-primary-500 flex items-center gap-2 border-3 border-primary-300 px-6 py-3 font-bold hover:border-primary-500 transition-colors shadow-md'
             >
               <span className='uppercase'>Edit Account</span>

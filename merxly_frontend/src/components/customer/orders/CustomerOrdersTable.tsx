@@ -64,7 +64,7 @@ export const CustomerOrdersTable = ({ orders }: CustomerOrdersTableProps) => {
   const navigate = useNavigate();
 
   const handleViewOrder = (orderId: string) => {
-    navigate(`/dashboard/order-history/${orderId}`);
+    navigate(`/user-account/order-history/${orderId}`);
   };
 
   return (
