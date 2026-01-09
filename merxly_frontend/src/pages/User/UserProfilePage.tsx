@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import {
   useUserProfile,
@@ -6,6 +6,8 @@ import {
   useChangePassword,
 } from '../../hooks/useUserProfile';
 import { getProductImageUrl } from '../../utils/cloudinaryHelpers';
+import { uploadImage } from '../../services/uploadService';
+import { ImageType } from '../../types/enums';
 import { Input } from '../../components/ui/Input';
 import type {
   UpdateUserProfileDto,
@@ -38,6 +40,8 @@ export const UserProfilePage = () => {
   } = useForm<ChangePasswordDto>();
 
   const [isPasswordDirty, setIsPasswordDirty] = useState(false);
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Reset profile form when data loads
   useEffect(() => {
@@ -61,6 +65,53 @@ export const UserProfilePage = () => {
       passwordFields.confirmNewPassword;
     setIsPasswordDirty(!!hasPasswordInput);
   }, [passwordFields]);
+
+  const handleAvatarUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      alert('Please select an image file');
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      alert('Image size should not exceed 5MB');
+      return;
+    }
+
+    setIsUploadingAvatar(true);
+    try {
+      const result = await uploadImage(file, 'avatars', ImageType.Avatar);
+      const newAvatarPublicId = result.data?.publicId;
+
+      // Update form value
+      resetProfile({
+        ...watchProfile(),
+        avatarPublicId: newAvatarPublicId,
+      });
+
+      // Submit the profile update
+      await updateProfileMutation.mutateAsync({
+        ...watchProfile(),
+        avatarPublicId: newAvatarPublicId,
+      });
+
+      alert('Avatar updated successfully!');
+    } catch (error: any) {
+      alert(error.response?.data?.message || 'Failed to upload avatar');
+    } finally {
+      setIsUploadingAvatar(false);
+      // Reset file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
 
   const onSubmitProfile = async (data: UpdateUserProfileDto) => {
     try {
@@ -150,6 +201,21 @@ export const UserProfilePage = () => {
                   <div className='w-40 h-40 rounded-full overflow-hidden border-4 border-neutral-200 shadow-lg'>
                     {getAvatarContent()}
                   </div>
+                  <input
+                    ref={fileInputRef}
+                    type='file'
+                    accept='image/*'
+                    onChange={handleAvatarUpload}
+                    className='hidden'
+                  />
+                  <button
+                    type='button'
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={isUploadingAvatar}
+                    className='cursor-pointer w-40 mt-4 px-4 py-2 bg-neutral-100 text-neutral-700 rounded-lg font-medium hover:bg-neutral-200 transition-colors disabled:bg-neutral-50 disabled:text-neutral-400 disabled:cursor-not-allowed text-sm'
+                  >
+                    {isUploadingAvatar ? 'Uploading...' : 'Change Photo'}
+                  </button>
                 </div>
 
                 {/* Right side - Form Fields */}
