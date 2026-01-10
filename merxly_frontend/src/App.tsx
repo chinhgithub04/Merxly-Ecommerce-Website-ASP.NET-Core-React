@@ -72,7 +72,7 @@ function App() {
         >
           <Route index element={<AdminDashboardPage />} />
           <Route path='categories' element={<AdminCategoriesPage />} />
-          <Route path='stores' element={<AdminStoresPage />} />
+          <Route path='stores/all' element={<AdminStoresPage />} />
           <Route
             path='stores/verification'
             element={<AdminStoreVerificationPage />}

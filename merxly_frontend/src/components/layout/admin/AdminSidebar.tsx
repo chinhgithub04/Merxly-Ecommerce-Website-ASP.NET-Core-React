@@ -65,7 +65,7 @@ const navigationItems: NavItem[] = [
     subItems: [
       {
         name: 'All Stores',
-        path: '/admin/stores',
+        path: '/admin/stores/all',
         icon: BuildingStorefrontIcon,
       },
       {
@@ -145,7 +145,7 @@ export const AdminSidebar = () => {
                     {/* Parent Item with SubItems */}
                     <button
                       onClick={() => toggleExpand(item.name)}
-                      className='flex items-center justify-between w-full px-4 py-3 text-sm font-medium rounded-lg transition-colors text-neutral-700 hover:bg-neutral-100 hover:text-neutral-900'
+                      className='cursor-pointer flex items-center justify-between w-full px-4 py-3 text-sm font-medium rounded-lg transition-colors text-neutral-700 hover:bg-neutral-100 hover:text-neutral-900'
                     >
                       <div className='flex items-center'>
                         <item.icon className='h-5 w-5 mr-3' />

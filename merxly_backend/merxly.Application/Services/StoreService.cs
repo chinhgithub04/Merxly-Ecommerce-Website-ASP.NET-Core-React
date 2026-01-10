@@ -116,5 +116,99 @@ namespace merxly.Application.Services
             var detailStoreDto = _mapper.Map<DetailStoreDto>(store);
             return detailStoreDto;
         }
+
+        public async Task<List<StoreListItemDto>> GetAllStoresAsync(CancellationToken cancellationToken)
+        {
+            _logger.LogInformation("Retrieving all stores for admin");
+
+            var stores = await _unitOfWork.Store.GetAllAsync(cancellationToken);
+
+            var storeListItemDtos = _mapper.Map<List<StoreListItemDto>>(stores);
+
+            _logger.LogInformation("Retrieved {Count} stores", storeListItemDtos.Count);
+
+            return storeListItemDtos;
+        }
+
+        public async Task<AdminStoreDetailDto> GetStoreDetailForAdminAsync(Guid storeId, CancellationToken cancellationToken)
+        {
+            _logger.LogInformation("Retrieving store detail for admin: {StoreId}", storeId);
+
+            var store = await _unitOfWork.Store.GetByIdAsync(storeId, cancellationToken);
+
+            if (store == null)
+            {
+                _logger.LogWarning("Store not found: {StoreId}", storeId);
+                throw new NotFoundException("Store not found.");
+            }
+
+            var adminStoreDetailDto = _mapper.Map<AdminStoreDetailDto>(store);
+            return adminStoreDetailDto;
+        }
+
+        public async Task<AdminStoreDetailDto> ApproveStoreAsync(Guid storeId, ApproveStoreDto approveStoreDto, CancellationToken cancellationToken)
+        {
+            _logger.LogInformation("Approving store: {StoreId}", storeId);
+
+            var store = await _unitOfWork.Store.GetByIdAsync(storeId, cancellationToken);
+
+            if (store == null)
+            {
+                _logger.LogWarning("Store not found: {StoreId}", storeId);
+                throw new NotFoundException("Store not found.");
+            }
+
+            if (store.IsVerified)
+            {
+                _logger.LogWarning("Store already approved: {StoreId}", storeId);
+                throw new InvalidOperationException("Store is already approved.");
+            }
+
+            store.IsVerified = true;
+            store.RejectionReason = null;
+
+            if (approveStoreDto.CommissionRate.HasValue)
+            {
+                store.CommissionRate = approveStoreDto.CommissionRate.Value;
+            }
+
+            _unitOfWork.Store.Update(store);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            _logger.LogInformation("Store approved successfully: {StoreId}", storeId);
+
+            var adminStoreDetailDto = _mapper.Map<AdminStoreDetailDto>(store);
+            return adminStoreDetailDto;
+        }
+
+        public async Task<AdminStoreDetailDto> RejectStoreAsync(Guid storeId, RejectStoreDto rejectStoreDto, CancellationToken cancellationToken)
+        {
+            _logger.LogInformation("Rejecting store: {StoreId}", storeId);
+
+            var store = await _unitOfWork.Store.GetByIdAsync(storeId, cancellationToken);
+
+            if (store == null)
+            {
+                _logger.LogWarning("Store not found: {StoreId}", storeId);
+                throw new NotFoundException("Store not found.");
+            }
+
+            if (store.IsVerified)
+            {
+                _logger.LogWarning("Cannot reject approved store: {StoreId}", storeId);
+                throw new InvalidOperationException("Cannot reject an approved store.");
+            }
+
+            store.IsVerified = false;
+            store.RejectionReason = rejectStoreDto.RejectionReason;
+
+            _unitOfWork.Store.Update(store);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            _logger.LogInformation("Store rejected successfully: {StoreId}, Reason: {Reason}", storeId, rejectStoreDto.RejectionReason);
+
+            var adminStoreDetailDto = _mapper.Map<AdminStoreDetailDto>(store);
+            return adminStoreDetailDto;
+        }
     }
 }

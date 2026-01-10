@@ -2,35 +2,16 @@ import {
   BuildingStorefrontIcon,
   EnvelopeIcon,
   PhoneIcon,
-  MapPinIcon,
   CalendarIcon,
   ClockIcon,
+  GlobeAltIcon,
 } from '@heroicons/react/24/outline';
-
-export interface StoreApplication {
-  id: string;
-  storeName: string;
-  ownerName: string;
-  email: string;
-  phoneNumber: string;
-  description?: string;
-  website?: string;
-  logoImageUrl?: string;
-  bannerImageUrl?: string;
-  address: {
-    street: string;
-    city: string;
-    state: string;
-    postalCode: string;
-    country: string;
-  };
-  submittedAt: string;
-  status: 'pending' | 'approved' | 'rejected';
-}
+import type { StoreListItemDto } from '../../../types/models/store';
+import { getProductImageUrl } from '../../../utils/cloudinaryHelpers';
 
 interface StoreApplicationCardProps {
-  application: StoreApplication;
-  onReview: (application: StoreApplication) => void;
+  application: StoreListItemDto;
+  onReview: (application: StoreListItemDto) => void;
 }
 
 export const StoreApplicationCard = ({
@@ -39,20 +20,20 @@ export const StoreApplicationCard = ({
 }: StoreApplicationCardProps) => {
   const getStatusBadge = () => {
     switch (application.status) {
-      case 'pending':
+      case 'Pending':
         return (
           <span className='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-warning-100 text-warning-800'>
             <ClockIcon className='h-3 w-3 mr-1' />
             Pending Review
           </span>
         );
-      case 'approved':
+      case 'Approved':
         return (
           <span className='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-success-100 text-success-800'>
             Approved
           </span>
         );
-      case 'rejected':
+      case 'Rejected':
         return (
           <span className='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-error-100 text-error-800'>
             Rejected
@@ -71,15 +52,19 @@ export const StoreApplicationCard = ({
     });
   };
 
+  const logoUrl = application.logoImagePublicId
+    ? getProductImageUrl(application.logoImagePublicId, 'logo')
+    : null;
+
   return (
     <div className='bg-white rounded-lg border border-neutral-200 p-6 hover:shadow-md transition-shadow'>
       {/* Header */}
       <div className='flex items-start justify-between mb-4'>
         <div className='flex items-start gap-4'>
           {/* Logo */}
-          {application.logoImageUrl ? (
+          {logoUrl ? (
             <img
-              src={application.logoImageUrl}
+              src={logoUrl}
               alt={application.storeName}
               className='h-16 w-16 rounded-lg object-cover border border-neutral-200'
             />
@@ -102,12 +87,19 @@ export const StoreApplicationCard = ({
         </div>
 
         {/* Action Button */}
-        {application.status === 'pending' && (
+        {application.status === 'Pending' ? (
           <button
             onClick={() => onReview(application)}
-            className='px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700 transition-colors'
+            className='cursor-pointer px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700 transition-colors'
           >
             Review Application
+          </button>
+        ) : (
+          <button
+            onClick={() => onReview(application)}
+            className='cursor-pointer px-4 py-2 bg-neutral-100 text-neutral-700 text-sm font-medium rounded-lg hover:bg-neutral-200 transition-colors border border-neutral-300'
+          >
+            View Details
           </button>
         )}
       </div>
@@ -129,13 +121,15 @@ export const StoreApplicationCard = ({
           <PhoneIcon className='h-4 w-4 text-neutral-400' />
           {application.phoneNumber}
         </div>
-        <div className='flex items-center gap-2 text-sm text-neutral-600'>
-          <MapPinIcon className='h-4 w-4 text-neutral-400' />
-          {application.address.city}, {application.address.state}
-        </div>
+        {application.taxCode && (
+          <div className='flex items-center gap-2 text-sm text-neutral-600'>
+            <BuildingStorefrontIcon className='h-4 w-4 text-neutral-400' />
+            Tax Code: {application.taxCode}
+          </div>
+        )}
         <div className='flex items-center gap-2 text-sm text-neutral-600'>
           <CalendarIcon className='h-4 w-4 text-neutral-400' />
-          Submitted {formatDate(application.submittedAt)}
+          Submitted {formatDate(application.createdAt)}
         </div>
       </div>
 
@@ -145,8 +139,9 @@ export const StoreApplicationCard = ({
           href={application.website}
           target='_blank'
           rel='noopener noreferrer'
-          className='text-sm text-primary-600 hover:text-primary-700 hover:underline'
+          className='inline-flex items-center gap-2 text-sm text-primary-600 hover:text-primary-700 hover:underline'
         >
+          <GlobeAltIcon className='h-4 w-4' />
           {application.website}
         </a>
       )}

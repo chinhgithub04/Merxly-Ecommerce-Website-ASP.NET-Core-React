@@ -54,6 +54,17 @@ namespace merxly.Application.Mappings
             CreateMap<Store, DetailStoreDto>()
                 .ForMember(dest => dest.OwnerName, opt => opt.MapFrom(src =>
                     $"{src.Owner.FirstName} {src.Owner.LastName}"));
+
+            CreateMap<Store, StoreListItemDto>()
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src =>
+                    src.IsVerified ? "Approved" :
+                    string.IsNullOrWhiteSpace(src.RejectionReason) ? "Pending" : "Rejected"));
+
+            CreateMap<Store, AdminStoreDetailDto>()
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src =>
+                    src.IsVerified ? "Approved" :
+                    string.IsNullOrWhiteSpace(src.RejectionReason) ? "Pending" : "Rejected"));
+
             CreateMap<CreateStoreDto, Store>();
             CreateMap<UpdateStoreDto, Store>()
                 .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
