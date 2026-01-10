@@ -1,17 +1,8 @@
 import { MapPinIcon } from '@heroicons/react/24/outline';
-
-interface StoreLocation {
-  id: string;
-  addressLine1: string;
-  addressLine2?: string;
-  city: string;
-  stateProvince: string;
-  postalCode: string;
-  createdAt: string;
-}
+import type { StoreAddressDto } from '../../../types/models/storeAddress';
 
 interface LocationCardProps {
-  location: StoreLocation;
+  location: StoreAddressDto;
   onEdit: () => void;
 }
 
@@ -32,19 +23,19 @@ export const LocationCard = ({ location, onEdit }: LocationCardProps) => {
       </div>
 
       <div className='space-y-2 mb-4'>
-        <p className='text-sm text-neutral-700'>{location.addressLine1}</p>
-        {location.addressLine2 && (
-          <p className='text-sm text-neutral-700'>{location.addressLine2}</p>
-        )}
+        <p className='text-sm text-neutral-700'>{location.addressLine}</p>
         <p className='text-sm text-neutral-700'>
-          {location.city}, {location.stateProvince} {location.postalCode}
+          {location.wardName}, {location.cityName}
+        </p>
+        <p className='text-sm text-neutral-700'>
+          Postal Code: {location.postalCode}
         </p>
       </div>
 
       <div className='flex items-center gap-2 pt-4 border-t border-neutral-200'>
         <button
           onClick={onEdit}
-          className='text-sm font-medium text-primary-600 hover:text-primary-700'
+          className='cursor-pointer text-sm font-medium text-primary-600 hover:text-primary-700'
         >
           Edit Address
         </button>

@@ -18,6 +18,7 @@ using merxly.Application.DTOs.ProductVariantMedia;
 using merxly.Application.DTOs.ProductVariantMedia.Update;
 using merxly.Application.DTOs.Review;
 using merxly.Application.DTOs.Store;
+using merxly.Application.DTOs.StoreAddress;
 using merxly.Application.DTOs.StorePayment;
 using merxly.Application.DTOs.UserProfile;
 using merxly.Application.DTOs.Wishlist;
@@ -208,6 +209,16 @@ namespace merxly.Application.Mappings
             CreateMap<CreateCustomerAddressDto, Address>();
 
             CreateMap<UpdateCustomerAddressDto, Address>()
+                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+
+            // Store Address Mappings
+            CreateMap<StoreAddress, StoreAddressDto>()
+                .ForMember(dest => dest.FullAddress, opt => opt.MapFrom(src =>
+                    $"{src.AddressLine}, {src.WardName}, {src.CityName}"));
+
+            CreateMap<CreateStoreAddressDto, StoreAddress>();
+
+            CreateMap<UpdateStoreAddressDto, StoreAddress>()
                 .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
 
             // Order Mappings

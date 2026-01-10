@@ -2,54 +2,44 @@ import { useState } from 'react';
 import { MapPinIcon, PlusIcon } from '@heroicons/react/24/outline';
 import { LocationCard } from '../../components/store/locations/LocationCard';
 import { AddLocationModal } from '../../components/store/locations/AddLocationModal';
-
-interface StoreLocation {
-  id: string;
-  addressLine1: string;
-  addressLine2?: string;
-  city: string;
-  stateProvince: string;
-  postalCode: string;
-  createdAt: string;
-}
-
-// Mock store address (null = no address set yet)
-const mockStoreAddress: StoreLocation | null = {
-  id: '1',
-  addressLine1: '123 Commerce Street',
-  addressLine2: 'Building A, Suite 200',
-  city: 'New York',
-  stateProvince: 'NY',
-  postalCode: '10001',
-  createdAt: '2024-01-15T10:00:00',
-};
+import { useStoreAddress } from '../../hooks/useStoreAddress';
+import type { CreateStoreAddressDto } from '../../types/models/storeAddress';
 
 export const StoreLocationsPage = () => {
-  const [storeAddress, setStoreAddress] = useState<StoreLocation | null>(
-    mockStoreAddress
-  );
+  const { storeAddress, isLoading, createAddress, updateAddress } =
+    useStoreAddress();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleSaveAddress = (data: any) => {
-    if (storeAddress) {
-      // Update existing address
-      setStoreAddress({
-        ...storeAddress,
-        ...data,
-      });
-    } else {
-      // Create new address
-      setStoreAddress({
-        id: '1',
-        ...data,
-        createdAt: new Date().toISOString(),
-      });
+  const handleSaveAddress = async (data: CreateStoreAddressDto) => {
+    try {
+      if (storeAddress) {
+        // Update existing address
+        await updateAddress(data);
+      } else {
+        // Create new address
+        await createAddress(data);
+      }
+      setIsModalOpen(false);
+    } catch (error) {
+      console.error('Failed to save store address:', error);
+      throw error;
     }
   };
 
   const handleEditAddress = () => {
     setIsModalOpen(true);
   };
+
+  if (isLoading) {
+    return (
+      <div className='flex items-center justify-center min-h-[400px]'>
+        <div className='text-center'>
+          <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4'></div>
+          <p className='text-neutral-600'>Loading store address...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className='space-y-6'>
@@ -73,7 +63,7 @@ export const StoreLocationsPage = () => {
       {/* Info Card */}
       <div className='bg-blue-50 border border-blue-200 rounded-lg p-4'>
         <div className='flex items-start gap-3'>
-          <div className='flex-shrink-0'>
+          <div className='shrink-0'>
             <svg
               className='h-5 w-5 text-blue-600'
               fill='none'
@@ -102,11 +92,11 @@ export const StoreLocationsPage = () => {
 
       {/* Store Address */}
       {storeAddress ? (
-        <div className='max-w-2xl'>
+        <div>
           <LocationCard location={storeAddress} onEdit={handleEditAddress} />
         </div>
       ) : (
-        <div className='bg-white rounded-lg border border-neutral-200 p-12 text-center max-w-2xl'>
+        <div className='bg-white rounded-lg border border-neutral-200 p-12 text-center'>
           <MapPinIcon className='h-12 w-12 text-neutral-400 mx-auto mb-4' />
           <h3 className='text-lg font-semibold text-neutral-900 mb-2'>
             No address set
@@ -116,7 +106,7 @@ export const StoreLocationsPage = () => {
           </p>
           <button
             onClick={() => setIsModalOpen(true)}
-            className='inline-flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors'
+            className='cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors'
           >
             <PlusIcon className='h-5 w-5' />
             Add Address

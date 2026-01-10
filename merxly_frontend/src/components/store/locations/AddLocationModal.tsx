@@ -1,19 +1,17 @@
+import { useEffect } from 'react';
+import { useForm } from 'react-hook-form';
 import { XMarkIcon } from '@heroicons/react/24/outline';
-import { useState } from 'react';
-
-interface LocationFormData {
-  addressLine1: string;
-  addressLine2: string;
-  city: string;
-  stateProvince: string;
-  postalCode: string;
-}
+import { CityWardSelector } from '../../addresses/CityWardSelector';
+import type {
+  StoreAddressDto,
+  CreateStoreAddressDto,
+} from '../../../types/models/storeAddress';
 
 interface AddLocationModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: LocationFormData) => void;
-  initialData?: Partial<LocationFormData>;
+  onSubmit: (data: CreateStoreAddressDto) => Promise<void>;
+  initialData?: StoreAddressDto | null;
   isEdit?: boolean;
 }
 
@@ -24,28 +22,60 @@ export const AddLocationModal = ({
   initialData,
   isEdit = false,
 }: AddLocationModalProps) => {
-  const [formData, setFormData] = useState<LocationFormData>({
-    addressLine1: initialData?.addressLine1 || '',
-    addressLine2: initialData?.addressLine2 || '',
-    city: initialData?.city || '',
-    stateProvince: initialData?.stateProvince || '',
-    postalCode: initialData?.postalCode || '',
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    reset,
+    setValue,
+    watch,
+  } = useForm<CreateStoreAddressDto>({
+    defaultValues: {
+      addressLine: '',
+      cityCode: 0,
+      cityName: '',
+      wardCode: 0,
+      wardName: '',
+      postalCode: '',
+    },
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSubmit(formData);
-    onClose();
-  };
+  // Watch city and ward values
+  const cityCode = watch('cityCode');
+  const cityName = watch('cityName');
+  const wardCode = watch('wardCode');
+  const wardName = watch('wardName');
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+  // Reset form when modal opens/closes or initialData changes
+  useEffect(() => {
+    if (isOpen && initialData) {
+      reset({
+        addressLine: initialData.addressLine,
+        cityCode: initialData.cityCode,
+        cityName: initialData.cityName,
+        wardCode: initialData.wardCode,
+        wardName: initialData.wardName,
+        postalCode: initialData.postalCode,
+      });
+    } else if (isOpen && !initialData) {
+      reset({
+        addressLine: '',
+        cityCode: 0,
+        cityName: '',
+        wardCode: 0,
+        wardName: '',
+        postalCode: '',
+      });
+    }
+  }, [isOpen, initialData, reset]);
+
+  const handleFormSubmit = async (data: CreateStoreAddressDto) => {
+    try {
+      await onSubmit(data);
+      onClose();
+    } catch (error) {
+      console.error('Failed to save store address:', error);
+    }
   };
 
   if (!isOpen) return null;
@@ -66,84 +96,63 @@ export const AddLocationModal = ({
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className='p-6 space-y-6'>
-          {/* Address Line 1 */}
+        <form
+          onSubmit={handleSubmit(handleFormSubmit)}
+          className='p-6 space-y-6'
+        >
+          {/* City & Ward Selector */}
+          <CityWardSelector
+            selectedCityCode={cityCode}
+            selectedCityName={cityName}
+            selectedWardCode={wardCode}
+            selectedWardName={wardName}
+            onCityChange={(code, name) => {
+              setValue('cityCode', code);
+              setValue('cityName', name);
+            }}
+            onWardChange={(code, name) => {
+              setValue('wardCode', code);
+              setValue('wardName', name);
+            }}
+          />
+
+          {/* Address Line */}
           <div>
             <label className='block text-sm font-medium text-neutral-700 mb-2'>
-              Address Line 1 <span className='text-error-600'>*</span>
+              Street Address <span className='text-red-500'>*</span>
             </label>
             <input
               type='text'
-              name='addressLine1'
-              value={formData.addressLine1}
-              onChange={handleChange}
-              placeholder='Street address'
-              required
+              placeholder='House number, street name'
+              {...register('addressLine', {
+                required: 'Address line is required',
+              })}
               className='w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent'
             />
+            {errors.addressLine && (
+              <p className='mt-1 text-sm text-red-600'>
+                {errors.addressLine.message}
+              </p>
+            )}
           </div>
 
-          {/* Address Line 2 */}
+          {/* Postal Code */}
           <div>
             <label className='block text-sm font-medium text-neutral-700 mb-2'>
-              Address Line 2
+              Postal Code <span className='text-red-500'>*</span>
             </label>
             <input
               type='text'
-              name='addressLine2'
-              value={formData.addressLine2}
-              onChange={handleChange}
-              placeholder='Apartment, suite, unit, building, floor, etc.'
+              {...register('postalCode', {
+                required: 'Postal code is required',
+              })}
               className='w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent'
             />
-          </div>
-
-          {/* City, State, Postal Code */}
-          <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
-            <div>
-              <label className='block text-sm font-medium text-neutral-700 mb-2'>
-                City <span className='text-error-600'>*</span>
-              </label>
-              <input
-                type='text'
-                name='city'
-                value={formData.city}
-                onChange={handleChange}
-                placeholder='City'
-                required
-                className='w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent'
-              />
-            </div>
-
-            <div>
-              <label className='block text-sm font-medium text-neutral-700 mb-2'>
-                State/Province <span className='text-error-600'>*</span>
-              </label>
-              <input
-                type='text'
-                name='stateProvince'
-                value={formData.stateProvince}
-                onChange={handleChange}
-                placeholder='State'
-                required
-                className='w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent'
-              />
-            </div>
-
-            <div>
-              <label className='block text-sm font-medium text-neutral-700 mb-2'>
-                Postal Code <span className='text-error-600'>*</span>
-              </label>
-              <input
-                type='text'
-                name='postalCode'
-                value={formData.postalCode}
-                onChange={handleChange}
-                placeholder='ZIP code'
-                required
-                className='w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent'
-              />
-            </div>
+            {errors.postalCode && (
+              <p className='mt-1 text-sm text-red-600'>
+                {errors.postalCode.message}
+              </p>
+            )}
           </div>
 
           {/* Actions */}
@@ -151,15 +160,21 @@ export const AddLocationModal = ({
             <button
               type='button'
               onClick={onClose}
-              className='px-4 py-2 border border-neutral-300 rounded-lg text-neutral-700 hover:bg-neutral-50 transition-colors'
+              disabled={isSubmitting}
+              className='cursor-pointer px-4 py-2 border border-neutral-300 rounded-lg text-neutral-700 hover:bg-neutral-50 transition-colors disabled:opacity-50'
             >
               Cancel
             </button>
             <button
               type='submit'
-              className='px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors'
+              disabled={isSubmitting}
+              className='cursor-pointer px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50'
             >
-              {isEdit ? 'Save Changes' : 'Add Address'}
+              {isSubmitting
+                ? 'Saving...'
+                : isEdit
+                ? 'Save Changes'
+                : 'Add Address'}
             </button>
           </div>
         </form>
