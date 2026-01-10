@@ -20,6 +20,7 @@ using merxly.Application.DTOs.Review;
 using merxly.Application.DTOs.Store;
 using merxly.Application.DTOs.StorePayment;
 using merxly.Application.DTOs.UserProfile;
+using merxly.Application.DTOs.Wishlist;
 using merxly.Application.Mappings.ValueResolvers;
 using merxly.Domain.Constants;
 using merxly.Domain.Entities;
@@ -177,6 +178,27 @@ namespace merxly.Application.Mappings
             CreateMap<AddToCartDto, CartItem>();
 
             CreateMap<UpdateCartItemDto, CartItem>();
+
+            // Wishlist Mappings
+            CreateMap<Wishlist, WishlistDto>()
+                .ForMember(dest => dest.TotalItems, opt => opt.MapFrom(src => src.WishlistItems.Count));
+
+            CreateMap<WishlistItem, WishlistItemDto>()
+                .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.ProductVariant.Name))
+                .ForMember(dest => dest.Price, opt => opt.MapFrom(src =>
+                    src.ProductVariant.Price))
+                .ForMember(dest => dest.ProductImagePublicId, opt => opt.MapFrom(src =>
+                    src.ProductVariant.Media.Where(pm => pm.IsMain).Select(pm => pm.MediaPublicId).FirstOrDefault()))
+                .ForMember(dest => dest.SelectedAttributes, opt => opt.MapFrom(src =>
+                    src.ProductVariant != null
+                        ? src.ProductVariant.VariantAttributeValues.ToDictionary(
+                            pav => pav.ProductAttributeValue.ProductAttribute.Name,
+                            pav => pav.ProductAttributeValue.Value)
+                        : new Dictionary<string, string>()))
+                .ForMember(dest => dest.IsAvailable, opt => opt.MapFrom(src =>
+                    src.ProductVariant.IsActive && src.ProductVariant.StockQuantity > 0));
+
+            CreateMap<AddToWishlistDto, WishlistItem>();
 
             // Customer Address Mappings
             CreateMap<Address, CustomerAddressDto>()

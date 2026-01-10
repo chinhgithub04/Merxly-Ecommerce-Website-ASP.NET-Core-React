@@ -21,6 +21,7 @@ namespace merxly.Application
             services.AddScoped<IStoreService, StoreService>();
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<ICartService, CartService>();
+            services.AddScoped<IWishlistService, WishlistService>();
             services.AddScoped<IUserPaymentMethodService, UserPaymentMethodService>();
             services.AddScoped<ICustomerAddressService, CustomerAddressService>();
             services.AddScoped<ICheckoutService, CheckoutService>();
