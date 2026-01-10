@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { TrashIcon, MinusIcon, PlusIcon } from '@heroicons/react/24/outline';
 import type { CartItemDto } from '../../types/models/cart';
 import { getProductImageUrl } from '../../utils/cloudinaryHelpers';
@@ -47,13 +48,18 @@ export const CartItemRow = ({
   const subtotal = item.priceAtAdd * quantity;
 
   return (
-    <tr className='hover:bg-neutral-50 transition-colors'>
+    <tr
+      className={`hover:bg-neutral-50 transition-colors ${
+        !item.isAvailable ? 'opacity-50' : ''
+      }`}
+    >
       <td className='px-4 py-4 w-12'>
         <input
           type='checkbox'
           checked={isSelected}
           onChange={() => onSelect(item.id)}
-          className='w-4 h-4 rounded border-neutral-300 text-primary-600 focus:ring-2 focus:ring-primary-600 cursor-pointer'
+          disabled={!item.isAvailable}
+          className='w-4 h-4 rounded border-neutral-300 text-primary-600 focus:ring-2 focus:ring-primary-600 cursor-pointer disabled:cursor-not-allowed'
         />
       </td>
       <td className='px-4 py-4 w-96'>
@@ -72,9 +78,12 @@ export const CartItemRow = ({
             )}
           </div>
           <div className='flex flex-col gap-1 min-w-0 flex-1'>
-            <span className='text-sm font-medium text-neutral-900 line-clamp-2'>
+            <Link
+              to={`/products/${item.productId}`}
+              className='text-sm font-medium text-neutral-900 hover:text-primary-600 line-clamp-2 transition-colors'
+            >
               {item.productName}
-            </span>
+            </Link>
             {Object.entries(item.selectedAttributes).length > 0 && (
               <div className='text-xs text-neutral-600 space-y-0.5'>
                 {Object.entries(item.selectedAttributes).map(([key, value]) => (

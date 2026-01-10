@@ -6,27 +6,36 @@ import {
 } from '@heroicons/react/24/outline';
 
 interface ProductActionsProps {
+  price: number;
   stockQuantity: number;
   onAddToCart: (quantity: number) => void;
+  onBuyNow: (quantity: number) => void;
+  onQuantityChange?: (quantity: number) => void;
   isAddingToCart?: boolean;
 }
 
 export const ProductActions = ({
   stockQuantity,
   onAddToCart,
+  onBuyNow,
+  onQuantityChange,
   isAddingToCart,
 }: ProductActionsProps) => {
   const [quantity, setQuantity] = useState(1);
 
   const handleIncrement = () => {
     if (quantity < stockQuantity) {
-      setQuantity(quantity + 1);
+      const newQuantity = quantity + 1;
+      setQuantity(newQuantity);
+      onQuantityChange?.(newQuantity);
     }
   };
 
   const handleDecrement = () => {
     if (quantity > 1) {
-      setQuantity(quantity - 1);
+      const newQuantity = quantity - 1;
+      setQuantity(newQuantity);
+      onQuantityChange?.(newQuantity);
     }
   };
 
@@ -34,6 +43,7 @@ export const ProductActions = ({
     const value = parseInt(e.target.value);
     if (!isNaN(value) && value >= 1 && value <= stockQuantity) {
       setQuantity(value);
+      onQuantityChange?.(value);
     }
   };
 
@@ -41,9 +51,13 @@ export const ProductActions = ({
     <div className='space-y-4'>
       {/* Quantity Selector */}
       <div>
-        <p className='text-sm text-neutral-600 mb-2'>
-          Available: {stockQuantity.toLocaleString()} units
-        </p>
+        {stockQuantity === 0 ? (
+          <p className='text-sm text-red-600 font-medium mb-2'>Out of stock</p>
+        ) : (
+          <p className='text-sm text-neutral-600 mb-2'>
+            Available: {stockQuantity.toLocaleString()} units
+          </p>
+        )}
         <div className='flex items-center gap-3'>
           <div className='flex items-center border border-neutral-300 rounded-lg'>
             <button
@@ -73,7 +87,7 @@ export const ProductActions = ({
           {/* Add to Cart Button */}
           <button
             onClick={() => onAddToCart(quantity)}
-            disabled={isAddingToCart}
+            disabled={isAddingToCart || stockQuantity === 0}
             className='cursor-pointer flex items-center gap-2 px-6 py-3 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
           >
             <ShoppingCartIcon className='h-5 w-5' />
@@ -81,7 +95,11 @@ export const ProductActions = ({
           </button>
 
           {/* Buy Now Button */}
-          <button className='cursor-pointer px-6 py-3 border-2 border-primary-600 text-primary-600 rounded-lg font-medium hover:bg-primary-50 transition-colors'>
+          <button
+            onClick={() => onBuyNow(quantity)}
+            disabled={isAddingToCart || stockQuantity === 0}
+            className='cursor-pointer px-6 py-3 border-2 border-primary-600 text-primary-600 rounded-lg font-medium hover:bg-primary-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
+          >
             Buy now
           </button>
         </div>

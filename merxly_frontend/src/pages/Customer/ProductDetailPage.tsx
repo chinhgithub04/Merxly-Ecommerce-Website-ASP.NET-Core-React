@@ -35,6 +35,7 @@ export const ProductDetailPage = () => {
   // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [addedQuantity, setAddedQuantity] = useState(0);
+  const [currentQuantity, setCurrentQuantity] = useState(1);
 
   const handleAddToCart = async (quantity: number) => {
     if (!selectedVariant) return;
@@ -49,6 +50,50 @@ export const ProductDetailPage = () => {
     } catch (error) {
       console.error('Failed to add to cart:', error);
     }
+  };
+
+  const handleBuyNow = async (quantity: number) => {
+    if (!selectedVariant || !product) return;
+
+    // Construct a CartItemDto-like object for checkout display
+    const checkoutItem = {
+      id: '', // Temporary ID (not used in checkout backend call)
+      productVariantId: selectedVariant.id,
+      productId: product.id,
+      productName: product.name,
+      productImagePublicId:
+        selectedVariant.productVariantMedia.find((m) => m.isMain)
+          ?.mediaPublicId || null,
+      priceAtAdd: selectedVariant.price,
+      quantity,
+      stockQuantity: selectedVariant.stockQuantity,
+      isAvailable: true,
+      selectedAttributes: product.productAttributes.reduce((acc, attr) => {
+        const selectedAttrValue = selectedVariant.productAttributeValues.find(
+          (pav) =>
+            attr.productAttributeValues.some(
+              (av) => av.id === pav.productAttributeValueId
+            )
+        );
+        if (selectedAttrValue) {
+          const attrValue = attr.productAttributeValues.find(
+            (av) => av.id === selectedAttrValue.productAttributeValueId
+          );
+          if (attrValue) {
+            acc[attr.name] = attrValue.value;
+          }
+        }
+        return acc;
+      }, {} as Record<string, string>),
+      storeId: product.storeId,
+      storeName: product.storeName,
+      createdAt: new Date().toISOString(),
+    };
+
+    // Navigate to checkout with the constructed item
+    navigate('/checkout', {
+      state: { selectedItems: [checkoutItem] },
+    });
   };
 
   if (isLoading) {
@@ -121,7 +166,10 @@ export const ProductDetailPage = () => {
           {/* Price */}
           {selectedVariant && (
             <div className='text-3xl font-bold text-primary-600'>
-              ₫{selectedVariant.price.toLocaleString('vi-VN')}
+              ₫
+              {(selectedVariant.price * currentQuantity).toLocaleString(
+                'vi-VN'
+              )}
             </div>
           )}
 
@@ -143,8 +191,11 @@ export const ProductDetailPage = () => {
           {/* Action Buttons */}
           {selectedVariant && (
             <ProductActions
+              price={selectedVariant.price}
               stockQuantity={selectedVariant.stockQuantity}
               onAddToCart={handleAddToCart}
+              onBuyNow={handleBuyNow}
+              onQuantityChange={setCurrentQuantity}
               isAddingToCart={isAddingToCart}
             />
           )}
@@ -212,14 +263,19 @@ export const ProductDetailPage = () => {
             quantity: addedQuantity,
             selectedAttributes: product.productAttributes.reduce(
               (acc, attr) => {
-                const attrValue = selectedVariant.productAttributeValues.find(
-                  (pav) =>
+                const selectedAttrValue =
+                  selectedVariant.productAttributeValues.find((pav) =>
                     attr.productAttributeValues.some(
                       (av) => av.id === pav.productAttributeValueId
                     )
-                );
-                if (attrValue) {
-                  acc[attr.name] = attrValue.value;
+                  );
+                if (selectedAttrValue) {
+                  const attrValue = attr.productAttributeValues.find(
+                    (av) => av.id === selectedAttrValue.productAttributeValueId
+                  );
+                  if (attrValue) {
+                    acc[attr.name] = attrValue.value;
+                  }
                 }
                 return acc;
               },

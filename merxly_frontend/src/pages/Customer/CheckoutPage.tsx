@@ -102,8 +102,13 @@ export const CheckoutPage = () => {
         return;
       }
 
-      // Remove only the checked out items from cart
-      await Promise.all(selectedItems.map((item) => removeCartItem(item.id)));
+      // Remove only the checked out items from cart (skip items from Buy Now with empty IDs)
+      const cartItemsToRemove = selectedItems.filter((item) => item.id);
+      if (cartItemsToRemove.length > 0) {
+        await Promise.all(
+          cartItemsToRemove.map((item) => removeCartItem(item.id))
+        );
+      }
 
       // Navigate to order confirmation
       navigate('/order-confirmation', {

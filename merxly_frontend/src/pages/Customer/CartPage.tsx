@@ -17,7 +17,26 @@ export const CartPage = () => {
       cart.cartItems.length > 0 &&
       selectedItems.size === 0
     ) {
-      setSelectedItems(new Set(cart.cartItems.map((item) => item.id)));
+      // Only select available items
+      const availableItemIds = cart.cartItems
+        .filter((item) => item.isAvailable)
+        .map((item) => item.id);
+      setSelectedItems(new Set(availableItemIds));
+    }
+  }, [cart?.cartItems]);
+
+  // Auto-deselect items that become unavailable
+  useEffect(() => {
+    if (cart?.cartItems) {
+      const unavailableItemIds = cart.cartItems
+        .filter((item) => !item.isAvailable && selectedItems.has(item.id))
+        .map((item) => item.id);
+
+      if (unavailableItemIds.length > 0) {
+        const newSelected = new Set(selectedItems);
+        unavailableItemIds.forEach((id) => newSelected.delete(id));
+        setSelectedItems(newSelected);
+      }
     }
   }, [cart?.cartItems]);
 

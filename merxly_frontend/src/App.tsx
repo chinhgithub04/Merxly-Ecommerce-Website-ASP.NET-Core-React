@@ -10,6 +10,7 @@ import {
   ProductDetailPage,
   CartPage,
   CheckoutPage,
+  OrderConfirmationPage,
   OrderHistoryPage,
   CustomerOrderDetailPage,
 } from './pages/Customer';
@@ -132,6 +133,14 @@ function App() {
                   <CheckoutPage />
                 </ProtectedRoute>
               </Elements>
+            }
+          />
+          <Route
+            path='order-confirmation'
+            element={
+              <ProtectedRoute>
+                <OrderConfirmationPage />
+              </ProtectedRoute>
             }
           />
 
