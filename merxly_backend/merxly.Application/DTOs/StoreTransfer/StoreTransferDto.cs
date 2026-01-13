@@ -10,7 +10,7 @@ namespace merxly.Application.DTOs.StoreTransfer
         public decimal Commission { get; init; }
         public StoreTransferStatus Status { get; init; }
         public string SubOrderNumber { get; init; }
-        public string OrderNumber { get; init; }
+        public Guid SubOrderId { get; init; }
         public DateTime CreatedAt { get; init; }
         public DateTime? TransferredAt { get; init; }
     }

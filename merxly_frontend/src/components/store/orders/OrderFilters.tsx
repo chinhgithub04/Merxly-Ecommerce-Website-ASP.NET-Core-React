@@ -15,6 +15,10 @@ interface OrderFiltersProps {
   onStatusChange: (status: OrderStatusFilter) => void;
   searchTerm: string;
   onSearchChange: (term: string) => void;
+  fromDate: string;
+  onFromDateChange: (date: string) => void;
+  toDate: string;
+  onToDateChange: (date: string) => void;
 }
 
 const statuses: { value: OrderStatusFilter; label: string }[] = [
@@ -32,6 +36,10 @@ export const OrderFilters = ({
   onStatusChange,
   searchTerm,
   onSearchChange,
+  fromDate,
+  onFromDateChange,
+  toDate,
+  onToDateChange,
 }: OrderFiltersProps) => {
   const [showFilters, setShowFilters] = useState(false);
 
@@ -62,24 +70,57 @@ export const OrderFilters = ({
 
       {/* Status Filters */}
       {showFilters && (
-        <div className='pt-4 border-t border-neutral-200'>
-          <p className='text-sm font-medium text-neutral-700 mb-3'>
-            Order Status
-          </p>
-          <div className='flex flex-wrap gap-2'>
-            {statuses.map((status) => (
-              <button
-                key={status.value}
-                onClick={() => onStatusChange(status.value)}
-                className={`cursor-pointer px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  selectedStatus === status.value
-                    ? 'bg-primary-600 text-white'
-                    : 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200'
-                }`}
-              >
-                {status.label}
-              </button>
-            ))}
+        <div className='pt-4 border-t border-neutral-200 space-y-4'>
+          <div>
+            <p className='text-sm font-medium text-neutral-700 mb-3'>
+              Order Status
+            </p>
+            <div className='flex flex-wrap gap-2'>
+              {statuses.map((status) => (
+                <button
+                  key={status.value}
+                  onClick={() => onStatusChange(status.value)}
+                  className={`cursor-pointer px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    selectedStatus === status.value
+                      ? 'bg-primary-600 text-white'
+                      : 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200'
+                  }`}
+                >
+                  {status.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Date Range Filter */}
+          <div>
+            <p className='text-sm font-medium text-neutral-700 mb-3'>
+              Date Range
+            </p>
+            <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+              <div>
+                <label className='block text-sm text-neutral-600 mb-2'>
+                  From Date
+                </label>
+                <input
+                  type='date'
+                  value={fromDate}
+                  onChange={(e) => onFromDateChange(e.target.value)}
+                  className='w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent'
+                />
+              </div>
+              <div>
+                <label className='block text-sm text-neutral-600 mb-2'>
+                  To Date
+                </label>
+                <input
+                  type='date'
+                  value={toDate}
+                  onChange={(e) => onToDateChange(e.target.value)}
+                  className='w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent'
+                />
+              </div>
+            </div>
           </div>
         </div>
       )}

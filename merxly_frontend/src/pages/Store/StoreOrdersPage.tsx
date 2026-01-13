@@ -23,8 +23,10 @@ export const StoreOrdersPage = () => {
   const [selectedStatus, setSelectedStatus] =
     useState<OrderStatusFilter>('All');
   const [searchTerm, setSearchTerm] = useState('');
+  const [fromDate, setFromDate] = useState('');
+  const [toDate, setToDate] = useState('');
   const [pageNumber, setPageNumber] = useState(1);
-  const pageSize = 20;
+  const pageSize = 10;
 
   // Build filter for API
   const filter = useMemo<StoreSubOrderFilterDto>(() => {
@@ -51,8 +53,16 @@ export const StoreOrdersPage = () => {
       apiFilter.searchTerm = searchTerm.trim();
     }
 
+    if (fromDate) {
+      apiFilter.fromDate = fromDate;
+    }
+
+    if (toDate) {
+      apiFilter.toDate = toDate;
+    }
+
     return apiFilter;
-  }, [selectedStatus, searchTerm, pageNumber]);
+  }, [selectedStatus, searchTerm, fromDate, toDate, pageNumber]);
 
   // Fetch orders from API
   const { data, isLoading, error } = useStoreOrders(filter);
@@ -131,6 +141,10 @@ export const StoreOrdersPage = () => {
         onStatusChange={setSelectedStatus}
         searchTerm={searchTerm}
         onSearchChange={setSearchTerm}
+        fromDate={fromDate}
+        onFromDateChange={setFromDate}
+        toDate={toDate}
+        onToDateChange={setToDate}
       />
 
       {/* Loading State */}

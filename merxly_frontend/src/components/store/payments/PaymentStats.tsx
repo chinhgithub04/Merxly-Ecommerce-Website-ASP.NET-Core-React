@@ -8,6 +8,7 @@ interface PaymentStatsProps {
   pendingPayout: number;
   commissionPaid: number;
   availableBalance: number;
+  isLoading?: boolean;
 }
 
 export const PaymentStats = ({
@@ -15,7 +16,28 @@ export const PaymentStats = ({
   pendingPayout,
   commissionPaid,
   availableBalance,
+  isLoading,
 }: PaymentStatsProps) => {
+  const formatCurrency = (amount: number) => {
+    return amount.toLocaleString('vi-VN') + ' ₫';
+  };
+
+  if (isLoading) {
+    return (
+      <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6'>
+        {[1, 2, 3, 4].map((i) => (
+          <div
+            key={i}
+            className='bg-white rounded-lg border border-neutral-200 p-6 animate-pulse'
+          >
+            <div className='h-4 bg-neutral-200 rounded w-24 mb-4'></div>
+            <div className='h-8 bg-neutral-200 rounded w-32 mb-2'></div>
+            <div className='h-3 bg-neutral-200 rounded w-28'></div>
+          </div>
+        ))}
+      </div>
+    );
+  }
   return (
     <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6'>
       <div className='bg-white rounded-lg border border-neutral-200 p-6'>
@@ -27,7 +49,7 @@ export const PaymentStats = ({
           </div>
         </div>
         <p className='text-3xl font-bold text-neutral-900'>
-          ${totalEarnings.toLocaleString()}
+          {formatCurrency(totalEarnings)}
         </p>
         <p className='text-xs text-neutral-500 mt-1'>All time revenue</p>
       </div>
@@ -40,7 +62,7 @@ export const PaymentStats = ({
           </div>
         </div>
         <p className='text-3xl font-bold text-neutral-900'>
-          ${pendingPayout.toLocaleString()}
+          {formatCurrency(pendingPayout)}
         </p>
         <p className='text-xs text-neutral-500 mt-1'>
           Processing next business day
@@ -56,7 +78,7 @@ export const PaymentStats = ({
           </div>
         </div>
         <p className='text-3xl font-bold text-neutral-900'>
-          ${commissionPaid.toLocaleString()}
+          {formatCurrency(commissionPaid)}
         </p>
         <p className='text-xs text-neutral-500 mt-1'>Platform fees</p>
       </div>
@@ -69,7 +91,7 @@ export const PaymentStats = ({
           </div>
         </div>
         <p className='text-3xl font-bold text-neutral-900'>
-          ${availableBalance.toLocaleString()}
+          {formatCurrency(availableBalance)}
         </p>
         <p className='text-xs text-neutral-500 mt-1'>Ready for withdrawal</p>
       </div>

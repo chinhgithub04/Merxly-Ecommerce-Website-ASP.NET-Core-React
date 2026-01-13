@@ -26,17 +26,17 @@ export const Modal = ({
   if (!isOpen) return null;
 
   return (
-    <>
+    <div className='fixed inset-0 z-50 overflow-y-auto'>
       {/* Overlay */}
       <div
-        className='fixed inset-0 z-50 bg-black/50 transition-opacity'
+        className='fixed inset-0 bg-black/50 transition-opacity'
         onClick={onClose}
       />
 
       {/* Modal Container */}
-      <div className='fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none'>
+      <div className='relative min-h-screen flex items-center justify-center p-4'>
         <div
-          className='bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] flex flex-col pointer-events-auto'
+          className='relative bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] flex flex-col'
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
@@ -69,6 +69,6 @@ export const Modal = ({
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };

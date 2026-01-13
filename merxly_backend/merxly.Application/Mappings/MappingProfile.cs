@@ -336,8 +336,7 @@ namespace merxly.Application.Mappings
 
             // Store Transfer Mappings
             CreateMap<StoreTransfer, StoreTransferDto>()
-                .ForMember(dest => dest.SubOrderNumber, opt => opt.MapFrom(src => src.SubOrder.SubOrderNumber))
-                .ForMember(dest => dest.OrderNumber, opt => opt.MapFrom(src => src.SubOrder.Order.OrderNumber));
+                .ForMember(dest => dest.SubOrderNumber, opt => opt.MapFrom(src => src.SubOrder.SubOrderNumber));
 
             CreateMap<StoreTransfer, StoreTransferDetailDto>()
                 .ForMember(dest => dest.SubOrderNumber, opt => opt.MapFrom(src => src.SubOrder.SubOrderNumber))
