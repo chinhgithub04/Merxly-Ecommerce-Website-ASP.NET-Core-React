@@ -20,6 +20,7 @@ using merxly.Application.DTOs.Review;
 using merxly.Application.DTOs.Store;
 using merxly.Application.DTOs.StoreAddress;
 using merxly.Application.DTOs.StorePayment;
+using merxly.Application.DTOs.StoreTransfer;
 using merxly.Application.DTOs.UserProfile;
 using merxly.Application.DTOs.Wishlist;
 using merxly.Application.Mappings.ValueResolvers;
@@ -332,6 +333,17 @@ namespace merxly.Application.Mappings
             CreateMap<ApplicationUser, UserProfileDto>();
             CreateMap<UpdateUserProfileDto, ApplicationUser>()
                 .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+
+            // Store Transfer Mappings
+            CreateMap<StoreTransfer, StoreTransferDto>()
+                .ForMember(dest => dest.SubOrderNumber, opt => opt.MapFrom(src => src.SubOrder.SubOrderNumber))
+                .ForMember(dest => dest.OrderNumber, opt => opt.MapFrom(src => src.SubOrder.Order.OrderNumber));
+
+            CreateMap<StoreTransfer, StoreTransferDetailDto>()
+                .ForMember(dest => dest.SubOrderNumber, opt => opt.MapFrom(src => src.SubOrder.SubOrderNumber))
+                .ForMember(dest => dest.SubOrderTotal, opt => opt.MapFrom(src => src.SubOrder.TotalAmount))
+                .ForMember(dest => dest.PaymentIntentId, opt => opt.MapFrom(src => src.Payment.PaymentIntentId))
+                .ForMember(dest => dest.Currency, opt => opt.MapFrom(src => src.Payment.Currency));
         }
     }
 }

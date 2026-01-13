@@ -142,7 +142,7 @@ export const StripeAccountCard = ({
             <div className='flex justify-between items-center'>
               <span className='text-sm text-neutral-600'>Commission Rate</span>
               <span className='text-sm font-semibold text-neutral-900'>
-                {commissionRate}%
+                {commissionRate * 100}%
               </span>
             </div>
           </div>

@@ -161,7 +161,7 @@ export const StoreInfoCard = ({
               Commission Rate
             </label>
             <p className='text-base font-semibold text-neutral-900'>
-              {commissionRate}%
+              {commissionRate * 100}%
             </p>
           </div>
         </div>

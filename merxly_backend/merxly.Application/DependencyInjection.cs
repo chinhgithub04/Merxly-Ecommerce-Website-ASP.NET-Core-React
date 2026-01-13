@@ -31,6 +31,7 @@ namespace merxly.Application
             services.AddScoped<IPaymentWebhookHandlerService, PaymentWebhookHandlerService>();
             services.AddScoped<IStoreOrderService, StoreOrderService>();
             services.AddScoped<ICustomerOrderService, CustomerOrderService>();
+            services.AddScoped<IStoreTransactionService, StoreTransactionService>();
             services.AddScoped<IReviewService, ReviewService>();
             services.AddScoped<IUserProfileService, UserProfileService>();
 
