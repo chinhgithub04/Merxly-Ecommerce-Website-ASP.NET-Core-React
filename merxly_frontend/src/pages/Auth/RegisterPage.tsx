@@ -11,6 +11,7 @@ import {
   CardTitle,
 } from '../../components/ui/';
 import { EMAIL_REGEX } from '../../utils/regex';
+import { useRegister } from '../../hooks/useRegister';
 
 interface RegisterFormData {
   firstName: string;
@@ -27,12 +28,12 @@ export const RegisterPage = () => {
     watch,
     formState: { errors },
   } = useForm<RegisterFormData>();
+  const { mutate: registerMutation, isPending, error } = useRegister();
 
   const password = watch('password');
 
   const onSubmit = (data: RegisterFormData) => {
-    console.log('Register form submitted (UI only):', data);
-    alert('Registration feature is not yet implemented. This is UI only.');
+    registerMutation(data);
   };
 
   return (
@@ -47,6 +48,13 @@ export const RegisterPage = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
+          {error && (
+            <div className='mb-4 p-3 bg-red-50 border border-red-200 rounded-md'>
+              <p className='text-sm text-red-600'>
+                {error.message || 'Registration failed. Please try again.'}
+              </p>
+            </div>
+          )}
           <form onSubmit={handleSubmit(onSubmit)} className='space-y-4'>
             <div className='grid grid-cols-2 gap-4'>
               <div className='space-y-2'>
@@ -160,8 +168,8 @@ export const RegisterPage = () => {
               </Link>
               .
             </div>
-            <Button type='submit' className='w-full'>
-              Create Account
+            <Button type='submit' className='w-full' disabled={isPending}>
+              {isPending ? 'Creating Account...' : 'Create Account'}
             </Button>
           </form>
         </CardContent>
