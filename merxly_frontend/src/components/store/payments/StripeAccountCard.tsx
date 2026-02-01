@@ -26,7 +26,6 @@ interface StripeAccountCardProps {
 export const StripeAccountCard = ({
   isConnected,
   accountId,
-  email,
   commissionRate,
   accountStatus,
   isLoading = false,

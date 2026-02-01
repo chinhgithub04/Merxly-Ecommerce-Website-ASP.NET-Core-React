@@ -37,7 +37,7 @@ export const useUpdateSubOrderStatus = () => {
       subOrderId: string;
       dto: UpdateSubOrderStatusDto;
     }) => updateSubOrderStatus(subOrderId, dto),
-    onSuccess: (data, variables) => {
+    onSuccess: (_data, variables) => {
       // Invalidate and refetch
       queryClient.invalidateQueries({
         queryKey: ['storeOrder', variables.subOrderId],

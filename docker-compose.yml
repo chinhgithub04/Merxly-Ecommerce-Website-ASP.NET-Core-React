@@ -1,0 +1,55 @@
+services:
+  db:
+    image: mysql:8.0
+    restart: always
+    container_name: merxly_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - '3307:3306'
+    volumes:
+      - mysql_data:/var/lib/mysql
+  backend:
+    build:
+      context: ./merxly_backend
+      dockerfile: Dockerfile
+    restart: always
+    container_name: merxly_backend
+    environment:
+      - ConnectionStrings__DefaultConnection=server=db;database=${DB_NAME};user=${DB_USER};password=${DB_PASSWORD};
+      - JWT__SecretKey=${JWT_SECRET_KEY}
+      - JWT__Issuer=${JWT_ISSUER}
+      - JWT__Audience=${JWT_AUDIENCE}
+      - CloudinarySettings__CloudName=${CLOUDINARY_CLOUD_NAME}
+      - CloudinarySettings__ApiKey=${CLOUDINARY_API_KEY}
+      - CloudinarySettings__ApiSecret=${CLOUDINARY_API_SECRET}
+      - AdminSettings__Email=${ADMIN_EMAIL}
+      - AdminSettings__Password=${ADMIN_PASSWORD}
+      - StripeSettings__SecretKey=${STRIPE_SECRET_KEY}
+      - StripeSettings__PublishableKey=${STRIPE_PUBLISHABLE_KEY}
+      - StripeSettings__WebhookSecret=${STRIPE_WEBHOOK_SECRET}
+    ports:
+      - '7052:8080'
+    depends_on:
+      - db
+  frontend:
+    build:
+      context: ./merxly_frontend
+      dockerfile: Dockerfile
+      args:
+        - VITE_API_BASE_URL=${VITE_API_BASE_URL}
+        - VITE_CLOUDINARY_CLOUD_NAME=${VITE_CLOUDINARY_CLOUD_NAME}
+        - VITE_STRIPE_PUBLISHABLE_KEY=${VITE_STRIPE_PUBLISHABLE_KEY}
+
+    restart: always
+    container_name: merxly_frontend
+    ports:
+      - '80:80'
+    depends_on:
+      - backend
+
+volumes:
+  mysql_data:

@@ -3,7 +3,7 @@ import {
   CheckCircleIcon,
 } from '@heroicons/react/24/outline';
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { StoreRegistrationForm } from '../components/store/registration/StoreRegistrationForm';
 import { createStore } from '../services/storeService';
 import type { CreateStoreDto } from '../types/models/store';
@@ -28,7 +28,7 @@ export const SignUpNewStorePage = () => {
       console.error('Store registration error:', err);
       setError(
         err.response?.data?.message ||
-          'An error occurred while submitting your registration. Please try again.'
+          'An error occurred while submitting your registration. Please try again.',
       );
     }
   };

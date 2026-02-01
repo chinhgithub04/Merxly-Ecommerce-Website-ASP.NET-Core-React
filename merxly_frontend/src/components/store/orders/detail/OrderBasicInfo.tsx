@@ -1,9 +1,3 @@
-import {
-  ClipboardDocumentListIcon,
-  ShoppingCartIcon,
-  CalendarDaysIcon,
-} from '@heroicons/react/24/outline';
-
 interface OrderBasicInfoProps {
   subOrderNumber: string;
   totalItems: number;

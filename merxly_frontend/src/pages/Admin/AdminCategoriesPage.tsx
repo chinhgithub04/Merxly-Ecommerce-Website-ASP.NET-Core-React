@@ -7,7 +7,6 @@ import {
 } from '../../components/admin/categories/AddEditCategoryModal';
 import type { Category } from '../../components/admin/categories/CategoryNode';
 import {
-  useCategoryTree,
   useAdminCategoryTree,
   useCreateCategory,
   useUpdateCategory,
@@ -29,7 +28,7 @@ const transformAdminCategoryDto = (dto: AdminCategoryDto): Category => {
     parentCategoryId: dto.parentCategoryId ?? undefined,
     isActive: dto.isActive,
     subCategories: dto.children.map((child) =>
-      transformAdminCategoryDto(child)
+      transformAdminCategoryDto(child),
     ),
   };
 };
@@ -38,7 +37,7 @@ export const AdminCategoriesPage = () => {
   // Fetch data from API
   const { data: adminCategoryTreeResponse, isLoading } = useAdminCategoryTree(
     1,
-    100
+    100,
   );
 
   // Mutations
@@ -61,7 +60,7 @@ export const AdminCategoriesPage = () => {
     }
 
     return adminCategoryTreeResponse.data.items.map((dto) =>
-      transformAdminCategoryDto(dto)
+      transformAdminCategoryDto(dto),
     );
   }, [adminCategoryTreeResponse]);
 
@@ -70,7 +69,7 @@ export const AdminCategoriesPage = () => {
     const countAllCategories = (cats: Category[]): number => {
       return cats.reduce(
         (sum, cat) => sum + 1 + countAllCategories(cat.subCategories),
-        0
+        0,
       );
     };
 
@@ -80,7 +79,7 @@ export const AdminCategoriesPage = () => {
           sum +
           (cat.isActive ? 1 : 0) +
           countActiveCategories(cat.subCategories),
-        0
+        0,
       );
     };
 
@@ -100,7 +99,7 @@ export const AdminCategoriesPage = () => {
   const handleAddSubcategory = (parentId: string) => {
     const findCategory = (
       cats: Category[],
-      id: string
+      id: string,
     ): Category | undefined => {
       for (const cat of cats) {
         if (cat.id === id) return cat;
@@ -125,7 +124,7 @@ export const AdminCategoriesPage = () => {
   const handleDelete = async (categoryId: string) => {
     if (
       confirm(
-        'Are you sure you want to delete this category? This will also delete all subcategories.'
+        'Are you sure you want to delete this category? This will also delete all subcategories.',
       )
     ) {
       try {
@@ -147,7 +146,7 @@ export const AdminCategoriesPage = () => {
         const uploadResult = await uploadImage(
           data.imageFile,
           'categories',
-          0 // ImageType.Logo
+          0, // ImageType.Logo
         );
         imagePublicId = uploadResult.data?.publicId;
       }

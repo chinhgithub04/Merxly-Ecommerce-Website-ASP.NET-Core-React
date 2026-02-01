@@ -15,10 +15,10 @@ interface OrderFiltersProps {
   onStatusChange: (status: OrderStatusFilter) => void;
   searchTerm: string;
   onSearchChange: (term: string) => void;
-  fromDate: string;
-  onFromDateChange: (date: string) => void;
-  toDate: string;
-  onToDateChange: (date: string) => void;
+  fromDate?: string;
+  onFromDateChange?: (date: string) => void;
+  toDate?: string;
+  onToDateChange?: (date: string) => void;
 }
 
 const statuses: { value: OrderStatusFilter; label: string }[] = [
@@ -105,7 +105,7 @@ export const OrderFilters = ({
                 <input
                   type='date'
                   value={fromDate}
-                  onChange={(e) => onFromDateChange(e.target.value)}
+                  onChange={(e) => onFromDateChange?.(e.target.value)}
                   className='w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent'
                 />
               </div>
@@ -116,7 +116,7 @@ export const OrderFilters = ({
                 <input
                   type='date'
                   value={toDate}
-                  onChange={(e) => onToDateChange(e.target.value)}
+                  onChange={(e) => onToDateChange?.(e.target.value)}
                   className='w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent'
                 />
               </div>

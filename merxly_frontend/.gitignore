@@ -25,6 +25,7 @@ dist-ssr
 
 # Environment files
 .env
+.env.development
 
 # AI
 AI_PROJECT_CONTEXT.md

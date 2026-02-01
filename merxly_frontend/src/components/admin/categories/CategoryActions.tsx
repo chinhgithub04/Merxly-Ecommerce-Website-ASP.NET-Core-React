@@ -11,7 +11,7 @@ interface CategoryActionsProps {
 
 export const CategoryActions = ({
   category,
-  isParent,
+  // isParent,
   onAddSubcategory,
   onEdit,
   onDelete,

@@ -4,7 +4,9 @@ using merxly.Application.Settings;
 using merxly.Domain.Entities;
 using merxly.Infrastructure;
 using merxly.Infrastructure.Data;
+using merxly.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -47,7 +49,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:5173", "https://localhost:5173")
+        policy.WithOrigins("http://localhost:5173", "https://localhost:5173", "http://localhost", "http://localhost:7052")
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();
@@ -62,12 +64,18 @@ using (var scope = app.Services.CreateScope())
     var services = scope.ServiceProvider;
     try
     {
+        var context = services.GetRequiredService<ApplicationDbContext>();
+        if (context.Database.GetPendingMigrations().Any())
+        {
+            await context.Database.MigrateAsync();
+        }
+
         var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
         await DbInitializer.SeedRolesAsync(roleManager);
 
         var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
         var adminSettings = builder.Configuration.GetSection("AdminSettings").Get<AdminSettings>();
-        
+
         if (adminSettings != null)
         {
             await DbInitializer.SeedAdminAsync(userManager, adminSettings);
@@ -86,13 +94,12 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.UseHttpsRedirection();
 }
 
 app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 
 app.UseCors("AllowFrontend");
-
-app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();

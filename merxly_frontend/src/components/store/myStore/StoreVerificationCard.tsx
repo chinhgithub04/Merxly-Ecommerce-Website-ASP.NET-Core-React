@@ -2,7 +2,6 @@ import {
   ShieldCheckIcon,
   ExclamationTriangleIcon,
   CheckCircleIcon,
-  ClockIcon,
 } from '@heroicons/react/24/outline';
 import { useState } from 'react';
 import { Modal } from '../../ui/Modal';
@@ -14,7 +13,6 @@ interface StoreVerificationCardProps {
 }
 
 export const StoreVerificationCard = ({
-  isVerified,
   isActive,
   onToggleActive,
 }: StoreVerificationCardProps) => {

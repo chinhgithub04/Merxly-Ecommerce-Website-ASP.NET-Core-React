@@ -10,8 +10,6 @@ import {
   OrderProgressBar,
   OrderActionButtons,
   OrderActivityTimeline,
-  OrderCustomerInfo,
-  OrderCustomerAddress,
   OrderItemsTable,
   StoreOrderSummarySection,
   OrderNotesSection,
@@ -38,7 +36,7 @@ export const StoreOrderDetailPage = () => {
         onError: (error: Error) => {
           alert(error.message || 'Failed to update order status');
         },
-      }
+      },
     );
   };
 
@@ -102,7 +100,7 @@ export const StoreOrderDetailPage = () => {
 
   const totalItems = order.orderItems.reduce(
     (sum, item) => sum + item.quantity,
-    0
+    0,
   );
 
   return (

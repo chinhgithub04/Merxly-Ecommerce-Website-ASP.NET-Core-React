@@ -47,7 +47,7 @@ export const ProductFilters = ({
 
   const handlePriceSliderChange = (
     e: React.ChangeEvent<HTMLInputElement>,
-    type: 'min' | 'max'
+    type: 'min' | 'max',
   ) => {
     const value = Number(e.target.value);
     if (type === 'min') {
@@ -63,7 +63,7 @@ export const ProductFilters = ({
 
   const handlePriceInputChange = (
     e: React.ChangeEvent<HTMLInputElement>,
-    type: 'min' | 'max'
+    type: 'min' | 'max',
   ) => {
     const value = e.target.value;
     if (type === 'min') {
@@ -87,7 +87,7 @@ export const ProductFilters = ({
     }
   };
 
-  const handlePriceInputBlur = (type: 'min' | 'max') => {
+  const handlePriceInputBlur = () => {
     let min = minPriceInput === '' ? 0 : Number(minPriceInput);
     let max = maxPriceInput === '' ? 0 : Number(maxPriceInput);
 
@@ -148,17 +148,10 @@ export const ProductFilters = ({
             className='absolute inset-0 left-1/2 w-1/2 cursor-pointer'
             onClick={() => handleRatingClick(i)}
           />
-        </div>
+        </div>,
       );
     }
     return stars;
-  };
-
-  const formatPrice = (price: number) => {
-    if (price >= MAX_PRICE) {
-      return '10,000,000+';
-    }
-    return price.toLocaleString('vi-VN');
   };
 
   return (
@@ -245,7 +238,7 @@ export const ProductFilters = ({
               type='number'
               value={minPriceInput}
               onChange={(e) => handlePriceInputChange(e, 'min')}
-              onBlur={() => handlePriceInputBlur('min')}
+              onBlur={() => handlePriceInputBlur()}
               className='w-full px-3 py-2 border border-neutral-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-600'
               placeholder='Min'
             />
@@ -254,7 +247,7 @@ export const ProductFilters = ({
               type='number'
               value={maxPriceInput}
               onChange={(e) => handlePriceInputChange(e, 'max')}
-              onBlur={() => handlePriceInputBlur('max')}
+              onBlur={() => handlePriceInputBlur()}
               className='w-full px-3 py-2 border border-neutral-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-600'
               placeholder='Max'
             />
