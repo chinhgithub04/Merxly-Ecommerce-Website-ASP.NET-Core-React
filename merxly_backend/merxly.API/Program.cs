@@ -49,7 +49,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:5173", "https://localhost:5173", "http://localhost", "http://localhost:7052")
+        policy.WithOrigins("http://localhost:5173", "https://localhost:5173", "http://localhost", "http://localhost:7052", "https://merxly.vercel.app")
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();

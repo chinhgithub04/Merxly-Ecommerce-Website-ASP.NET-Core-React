@@ -19,7 +19,7 @@ services:
     restart: always
     container_name: merxly_backend
     environment:
-      - ConnectionStrings__DefaultConnection=server=db;database=${DB_NAME};user=${DB_USER};password=${DB_PASSWORD};
+      - ConnectionStrings__DefaultConnection=${DB_CONNECTION_STRING}
       - JWT__SecretKey=${JWT_SECRET_KEY}
       - JWT__Issuer=${JWT_ISSUER}
       - JWT__Audience=${JWT_AUDIENCE}
