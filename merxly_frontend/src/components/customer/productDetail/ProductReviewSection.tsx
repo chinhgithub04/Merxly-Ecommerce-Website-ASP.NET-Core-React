@@ -17,10 +17,10 @@ export const ProductReviewSection = ({
   reviewCount,
 }: ProductReviewSectionProps) => {
   const [ratingFilter, setRatingFilter] = useState<number | undefined>(
-    undefined
+    undefined,
   );
   const [sortOrder, setSortOrder] = useState<'Ascending' | 'Descending'>(
-    'Descending'
+    'Descending',
   );
   const [hasMedia, setHasMedia] = useState<boolean | undefined>(undefined);
   const [currentPage, setCurrentPage] = useState(1);
@@ -61,15 +61,15 @@ export const ProductReviewSection = ({
 
   return (
     <div className='pt-12 border-neutral-200'>
-      <h2 className='text-2xl font-bold text-neutral-900 mb-6'>
+      <h2 className='text-xl md:text-2xl font-bold text-neutral-900 mb-6'>
         Customer Reviews
       </h2>
 
       {/* Rating Summary */}
-      <div className='bg-neutral-50 rounded-lg p-6 mb-6'>
-        <div className='flex items-center gap-8'>
+      <div className='bg-neutral-50 rounded-lg p-4 md:p-6 mb-6'>
+        <div className='flex flex-col md:flex-row md:items-center gap-6 md:gap-8'>
           <div className='text-center'>
-            <div className='text-5xl font-bold text-primary-600 mb-2'>
+            <div className='text-4xl md:text-5xl font-bold text-primary-600 mb-2'>
               {averageRating.toFixed(1)}
             </div>
             <RatingInput

@@ -5,9 +5,11 @@ export const CustomerLayout = () => {
   return (
     <div className='min-h-screen bg-neutral-50'>
       <HomeHeader />
-      <HomeActionBar />
+      <div className='hidden lg:block'>
+        <HomeActionBar />
+      </div>
 
-      <main className='pt-[136px]'>
+      <main className='pt-16 md:pt-20 lg:pt-[136px]'>
         <Outlet />
       </main>
 

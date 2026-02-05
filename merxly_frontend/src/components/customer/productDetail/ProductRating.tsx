@@ -25,11 +25,11 @@ export const ProductRating = ({
             <div className='absolute inset-0 w-1/2 overflow-hidden'>
               <StarIcon className='h-6 w-6 text-yellow-400' />
             </div>
-          </div>
+          </div>,
         );
       } else {
         stars.push(
-          <StarOutlineIcon key={i} className='h-6 w-6 text-neutral-300' />
+          <StarOutlineIcon key={i} className='h-6 w-6 text-neutral-300' />,
         );
       }
     }
@@ -38,13 +38,13 @@ export const ProductRating = ({
   };
 
   return (
-    <div className='flex items-center gap-3'>
+    <div className='flex flex-col md:flex-row md:items-center gap-2 md:gap-3'>
       <div className='flex'>{renderStars()}</div>
       <div className='flex items-baseline gap-2'>
         <span className='text-lg font-bold text-neutral-900'>
           {averageRating.toFixed(1)} Star Rating
         </span>
-        <span className='text-sm text-neutral-500'>
+        <span className='text-xs md:text-sm text-neutral-500'>
           ({reviewCount.toLocaleString()} User feedback)
         </span>
       </div>

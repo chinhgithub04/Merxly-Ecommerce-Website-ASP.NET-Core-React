@@ -137,7 +137,7 @@ export const CartPage = () => {
 
   if (isLoading) {
     return (
-      <div className='px-20 py-12'>
+      <div className='px-4 md:px-8 lg:px-20 py-6 md:py-12'>
         <div className='flex items-center justify-center py-20'>
           <p className='text-neutral-500'>Loading cart...</p>
         </div>
@@ -146,27 +146,27 @@ export const CartPage = () => {
   }
 
   return (
-    <div className='px-20 py-12'>
-      <div className='grid grid-cols-3 gap-6'>
-        {/* Left: Cart Items (2 columns wide) */}
-        <div className='col-span-2'>
+    <div className='px-4 md:px-8 lg:px-20 py-6 md:py-12'>
+      <div className='grid grid-cols-1 lg:grid-cols-3 gap-6'>
+        {/* Left: Cart Items (2 columns wide on desktop) */}
+        <div className='lg:col-span-2'>
           {/* Header with Select All and Clear */}
-          <div className='bg-white border border-neutral-200 rounded-t-lg px-6 py-4 flex items-center justify-between'>
-            <div className='flex items-center gap-3'>
+          <div className='bg-white border border-neutral-200 rounded-t-lg px-4 md:px-6 py-3 md:py-4 flex items-center justify-between'>
+            <div className='flex items-center gap-2 md:gap-3'>
               <input
                 type='checkbox'
                 checked={isAllSelected}
                 onChange={(e) => handleSelectAll(e.target.checked)}
                 className='w-4 h-4 rounded border-neutral-300 text-primary-600 focus:ring-2 focus:ring-primary-600 cursor-pointer'
               />
-              <h1 className='text-xl font-semibold text-neutral-900'>
+              <h1 className='text-lg md:text-xl font-semibold text-neutral-900'>
                 Shopping Cart
               </h1>
             </div>
             {cart && cart.cartItems.length > 0 && (
               <button
                 onClick={handleClearAll}
-                className='cursor-pointer px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-md font-medium transition-colors'
+                className='cursor-pointer px-3 md:px-4 py-1.5 md:py-2 text-xs md:text-sm text-red-600 hover:bg-red-50 rounded-md font-medium transition-colors'
               >
                 Clear All
               </button>
@@ -174,7 +174,7 @@ export const CartPage = () => {
           </div>
 
           {/* Cart Items Grouped by Store */}
-          <div className='bg-neutral-50 border-x border-b border-neutral-200 rounded-b-lg p-4'>
+          <div className='bg-neutral-50 border-x border-b border-neutral-200 rounded-b-lg p-3 md:p-4'>
             {storeGroups.length === 0 ? (
               <div className='bg-white rounded-lg border border-neutral-200 px-4 py-12 text-center text-neutral-500'>
                 Your cart is empty
@@ -195,7 +195,7 @@ export const CartPage = () => {
         </div>
 
         {/* Right: Cart Totals */}
-        <div className='col-span-1'>
+        <div className='lg:col-span-1'>
           <CartTotals
             subtotal={selectedSubtotal}
             selectedItemsCount={selectedItems.size}

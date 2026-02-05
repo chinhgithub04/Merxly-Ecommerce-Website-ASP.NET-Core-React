@@ -34,9 +34,9 @@ export const AddToCartModal = ({
       doneLabel='Go To Cart'
       onDone={handleGoToCart}
     >
-      <div className='flex gap-4'>
+      <div className='flex flex-col md:flex-row gap-3 md:gap-4'>
         {/* Product Image */}
-        <div className='w-24 h-24 rounded-lg border border-neutral-200 overflow-hidden bg-neutral-100 shrink-0'>
+        <div className='w-20 h-20 md:w-24 md:h-24 rounded-lg border border-neutral-200 overflow-hidden bg-neutral-100 shrink-0 mx-auto md:mx-0'>
           {variantData.imagePublicId ? (
             <img
               src={getProductImageUrl(variantData.imagePublicId, 'thumbnail')}
@@ -51,8 +51,8 @@ export const AddToCartModal = ({
         </div>
 
         {/* Product Info */}
-        <div className='flex-1 space-y-2'>
-          <h3 className='text-base font-semibold text-neutral-900'>
+        <div className='flex-1 space-y-2 text-center md:text-left'>
+          <h3 className='text-sm md:text-base font-semibold text-neutral-900'>
             {variantData.name}
           </h3>
 
@@ -64,13 +64,13 @@ export const AddToCartModal = ({
                   <div key={key}>
                     <span className='font-semibold'>{key}:</span> {value}
                   </div>
-                )
+                ),
               )}
             </div>
           )}
 
           {/* Price and Quantity */}
-          <div className='flex items-center gap-4 text-sm'>
+          <div className='flex flex-col md:flex-row md:items-center gap-2 md:gap-4 text-xs md:text-sm'>
             <div>
               <span className='text-neutral-600'>Price: </span>
               <span className='font-semibold text-primary-600'>

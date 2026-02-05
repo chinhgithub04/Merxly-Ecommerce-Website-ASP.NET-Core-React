@@ -58,8 +58,8 @@ export const ProductActions = ({
             Available: {stockQuantity.toLocaleString()} units
           </p>
         )}
-        <div className='flex items-center gap-3'>
-          <div className='flex items-center border border-neutral-300 rounded-lg'>
+        <div className='flex flex-col md:flex-row items-stretch md:items-center gap-3'>
+          <div className='flex items-center border border-neutral-300 rounded-lg w-full md:w-auto'>
             <button
               onClick={handleDecrement}
               disabled={quantity <= 1}
@@ -73,7 +73,7 @@ export const ProductActions = ({
               onChange={handleQuantityChange}
               min={1}
               max={stockQuantity}
-              className='cursor-pointer w-16 text-center border-x border-neutral-300 py-2 text-neutral-900 font-medium focus:outline-none'
+              className='cursor-pointer w-16 flex-1 md:flex-none text-center border-x border-neutral-300 py-2 text-neutral-900 font-medium focus:outline-none'
             />
             <button
               onClick={handleIncrement}
@@ -88,7 +88,7 @@ export const ProductActions = ({
           <button
             onClick={() => onAddToCart(quantity)}
             disabled={isAddingToCart || stockQuantity === 0}
-            className='cursor-pointer flex items-center gap-2 px-6 py-3 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
+            className='cursor-pointer flex items-center justify-center gap-2 px-6 py-3 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed w-full md:w-auto'
           >
             <ShoppingCartIcon className='h-5 w-5' />
             <span>{isAddingToCart ? 'Adding...' : 'Add to Cart'}</span>
@@ -98,7 +98,7 @@ export const ProductActions = ({
           <button
             onClick={() => onBuyNow(quantity)}
             disabled={isAddingToCart || stockQuantity === 0}
-            className='cursor-pointer px-6 py-3 border-2 border-primary-600 text-primary-600 rounded-lg font-medium hover:bg-primary-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
+            className='cursor-pointer px-6 py-3 border-2 border-primary-600 text-primary-600 rounded-lg font-medium hover:bg-primary-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed w-full md:w-auto'
           >
             Buy now
           </button>

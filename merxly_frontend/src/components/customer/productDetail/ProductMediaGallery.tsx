@@ -39,7 +39,7 @@ export const ProductMediaGallery = ({ media }: ProductMediaGalleryProps) => {
   const renderMainMedia = () => {
     if (!selectedMedia) {
       return (
-        <div className='w-full h-[600px] bg-neutral-100 rounded-lg flex items-center justify-center'>
+        <div className='w-full h-64 md:h-96 lg:h-[600px] bg-neutral-100 rounded-lg flex items-center justify-center'>
           <span className='text-neutral-400'>No media available</span>
         </div>
       );
@@ -50,7 +50,7 @@ export const ProductMediaGallery = ({ media }: ProductMediaGalleryProps) => {
         <video
           key={selectedMedia.id}
           controls
-          className='w-full h-[600px] object-contain bg-neutral-900 rounded-lg'
+          className='w-full h-64 md:h-96 lg:h-[600px] object-contain bg-neutral-900 rounded-lg'
           src={getVideoUrl(selectedMedia.mediaPublicId)}
         >
           Your browser does not support the video tag.
@@ -62,7 +62,7 @@ export const ProductMediaGallery = ({ media }: ProductMediaGalleryProps) => {
       <img
         src={getProductImageUrl(selectedMedia.mediaPublicId, 'zoom')}
         alt='Product'
-        className='w-full h-[600px] object-contain bg-neutral-50 rounded-lg'
+        className='w-full h-64 md:h-96 lg:h-[600px] object-contain bg-neutral-50 rounded-lg'
       />
     );
   };
@@ -104,7 +104,7 @@ export const ProductMediaGallery = ({ media }: ProductMediaGalleryProps) => {
 
   if (!media || media.length === 0) {
     return (
-      <div className='w-full h-[600px] bg-neutral-100 rounded-lg flex items-center justify-center'>
+      <div className='w-full h-64 md:h-96 lg:h-[600px] bg-neutral-100 rounded-lg flex items-center justify-center'>
         <span className='text-neutral-400'>No media available</span>
       </div>
     );

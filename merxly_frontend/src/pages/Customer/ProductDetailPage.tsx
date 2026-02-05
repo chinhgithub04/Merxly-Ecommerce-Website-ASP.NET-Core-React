@@ -60,7 +60,7 @@ export const ProductDetailPage = () => {
     return wishlist.wishlistItems.some(
       (item) =>
         item.productId === product.id &&
-        item.productVariantId === selectedVariant.id
+        item.productVariantId === selectedVariant.id,
     );
   }, [wishlist, selectedVariant, product]);
 
@@ -95,23 +95,26 @@ export const ProductDetailPage = () => {
       quantity,
       stockQuantity: selectedVariant.stockQuantity,
       isAvailable: true,
-      selectedAttributes: product.productAttributes.reduce((acc, attr) => {
-        const selectedAttrValue = selectedVariant.productAttributeValues.find(
-          (pav) =>
-            attr.productAttributeValues.some(
-              (av) => av.id === pav.productAttributeValueId
-            )
-        );
-        if (selectedAttrValue) {
-          const attrValue = attr.productAttributeValues.find(
-            (av) => av.id === selectedAttrValue.productAttributeValueId
+      selectedAttributes: product.productAttributes.reduce(
+        (acc, attr) => {
+          const selectedAttrValue = selectedVariant.productAttributeValues.find(
+            (pav) =>
+              attr.productAttributeValues.some(
+                (av) => av.id === pav.productAttributeValueId,
+              ),
           );
-          if (attrValue) {
-            acc[attr.name] = attrValue.value;
+          if (selectedAttrValue) {
+            const attrValue = attr.productAttributeValues.find(
+              (av) => av.id === selectedAttrValue.productAttributeValueId,
+            );
+            if (attrValue) {
+              acc[attr.name] = attrValue.value;
+            }
           }
-        }
-        return acc;
-      }, {} as Record<string, string>),
+          return acc;
+        },
+        {} as Record<string, string>,
+      ),
       storeId: product.storeId,
       storeName: product.storeName,
       createdAt: new Date().toISOString(),
@@ -132,7 +135,7 @@ export const ProductDetailPage = () => {
         const wishlistItem = wishlist?.wishlistItems.find(
           (item) =>
             item.productId === product.id &&
-            item.productVariantId === selectedVariant.id
+            item.productVariantId === selectedVariant.id,
         );
         if (wishlistItem) {
           await removeWishlistItem(wishlistItem.id);
@@ -161,7 +164,7 @@ export const ProductDetailPage = () => {
 
   if (isLoading) {
     return (
-      <div className='px-20 py-12'>
+      <div className='px-4 md:px-8 lg:px-20 py-6 md:py-12'>
         <div className='flex items-center justify-center py-20'>
           <p className='text-neutral-500'>Loading product details...</p>
         </div>
@@ -171,7 +174,7 @@ export const ProductDetailPage = () => {
 
   if (!product) {
     return (
-      <div className='px-20 py-12'>
+      <div className='px-4 md:px-8 lg:px-20 py-6 md:py-12'>
         <div className='flex flex-col items-center justify-center py-20'>
           <p className='text-neutral-500 mb-4'>Product not found</p>
           <button
@@ -191,29 +194,24 @@ export const ProductDetailPage = () => {
 
   const variantMedia =
     selectedVariant?.productVariantMedia.sort(
-      (a, b) => a.displayOrder - b.displayOrder
+      (a, b) => a.displayOrder - b.displayOrder,
     ) || [];
 
   return (
-    <div className='px-20 py-12'>
-      <div className='grid grid-cols-2 gap-12'>
+    <div className='px-4 md:px-8 lg:px-20 py-6 md:py-12'>
+      <div className='grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-12'>
         {/* Left Column - Media Gallery */}
         <div>
           <ProductMediaGallery media={variantMedia} />
         </div>
 
         {/* Right Column - Product Info */}
-        <div className='space-y-6'>
+        <div className='space-y-2'>
           {/* Rating Section */}
           <ProductRating
             averageRating={product.averageRating}
             reviewCount={product.reviewCount}
           />
-
-          {/* Product Name */}
-          <h1 className='text-3xl font-bold text-neutral-900'>
-            {product.name}
-          </h1>
 
           {/* Category */}
           <div className='text-sm text-neutral-600'>
@@ -226,12 +224,17 @@ export const ProductDetailPage = () => {
             </button>
           </div>
 
+          {/* Product Name */}
+          <h1 className='text-xl mt-4 md:text-2xl lg:text-3xl font-bold text-neutral-900'>
+            {product.name}
+          </h1>
+
           {/* Price */}
           {selectedVariant && (
-            <div className='text-3xl font-bold text-primary-600'>
+            <div className='text-2xl mt-4 md:text-3xl font-bold text-primary-600'>
               ₫
               {(selectedVariant.price * currentQuantity).toLocaleString(
-                'vi-VN'
+                'vi-VN',
               )}
             </div>
           )}
@@ -264,13 +267,13 @@ export const ProductDetailPage = () => {
           )}
 
           {/* Wishlist, Compare, and Share Section */}
-          <div className='flex items-center justify-between pt-4 border-t border-neutral-200'>
+          <div className='flex flex-col md:flex-row md:items-center md:justify-between pt-4 border-t border-neutral-200 gap-4'>
             {/* Left Side - Wishlist & Compare */}
-            <div className='flex items-center gap-4'>
+            <div className='flex flex-col sm:flex-row items-stretch sm:items-center gap-3'>
               <button
                 onClick={handleWishlistToggle}
                 disabled={isAddingToWishlist || isRemovingWishlistItem}
-                className='cursor-pointer flex items-center gap-2 px-4 py-2 text-sm font-medium text-neutral-700 border border-neutral-300 rounded-lg hover:bg-neutral-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors'
+                className='cursor-pointer flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-neutral-700 border border-neutral-300 rounded-lg hover:bg-neutral-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors'
               >
                 {isInWishlist ? (
                   <HeartIconSolid className='h-5 w-5 text-red-500' />
@@ -281,14 +284,14 @@ export const ProductDetailPage = () => {
                   {isInWishlist ? 'Added to Wishlist' : 'Add to Wishlist'}
                 </span>
               </button>
-              <button className='cursor-pointer flex items-center gap-2 px-4 py-2 text-sm font-medium text-neutral-700 border border-neutral-300 rounded-lg hover:bg-neutral-50 transition-colors'>
+              <button className='cursor-pointer flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-neutral-700 border border-neutral-300 rounded-lg hover:bg-neutral-50 transition-colors'>
                 <ArrowsRightLeftIcon className='h-5 w-5' />
                 <span>Add to Compare</span>
               </button>
             </div>
 
             {/* Right Side - Share */}
-            <div className='flex items-center gap-3'>
+            <div className='flex items-center gap-3 justify-center md:justify-end'>
               <span className='text-sm font-medium text-neutral-700'>
                 Share:
               </span>
@@ -394,12 +397,12 @@ export const ProductDetailPage = () => {
                 const selectedAttrValue =
                   selectedVariant.productAttributeValues.find((pav) =>
                     attr.productAttributeValues.some(
-                      (av) => av.id === pav.productAttributeValueId
-                    )
+                      (av) => av.id === pav.productAttributeValueId,
+                    ),
                   );
                 if (selectedAttrValue) {
                   const attrValue = attr.productAttributeValues.find(
-                    (av) => av.id === selectedAttrValue.productAttributeValueId
+                    (av) => av.id === selectedAttrValue.productAttributeValueId,
                   );
                   if (attrValue) {
                     acc[attr.name] = attrValue.value;
@@ -407,7 +410,7 @@ export const ProductDetailPage = () => {
                 }
                 return acc;
               },
-              {} as Record<string, string>
+              {} as Record<string, string>,
             ),
           }}
         />

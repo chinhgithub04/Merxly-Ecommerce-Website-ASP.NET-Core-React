@@ -4,11 +4,13 @@ export const HomeFooter = () => {
   return (
     <footer className='bg-neutral-900 text-neutral-300'>
       {/* Main Footer Content */}
-      <div className='px-20 py-12'>
-        <div className='grid grid-cols-5 gap-8'>
+      <div className='px-4 md:px-8 lg:px-20 py-8 md:py-12'>
+        <div className='grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6 md:gap-8'>
           {/* Brand Section */}
-          <div className='col-span-2'>
-            <h2 className='text-3xl font-bold text-white mb-4'>Merxly</h2>
+          <div className='md:col-span-3 lg:col-span-2'>
+            <h2 className='text-2xl md:text-3xl font-bold text-white mb-3 md:mb-4'>
+              Merxly
+            </h2>
             <p className='text-sm mb-4 text-neutral-400'>
               Your trusted marketplace for quality products. Shop with
               confidence and discover amazing deals every day.
@@ -163,8 +165,8 @@ export const HomeFooter = () => {
       </div>
 
       {/* Bottom Bar */}
-      <div className='border-t border-neutral-800 px-20 py-6'>
-        <div className='flex items-center justify-between text-sm'>
+      <div className='border-t border-neutral-800 px-4 md:px-8 lg:px-20 py-4 md:py-6'>
+        <div className='flex flex-col md:flex-row items-center justify-between text-xs md:text-sm gap-2 md:gap-0'>
           <p className='text-neutral-500'>
             © {new Date().getFullYear()} Merxly. All rights reserved.
           </p>

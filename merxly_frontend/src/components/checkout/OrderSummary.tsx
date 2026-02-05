@@ -55,30 +55,30 @@ export const OrderSummary = ({
   }, [items]);
 
   return (
-    <div className='bg-white border border-neutral-200 rounded-lg p-6 sticky top-6'>
-      <h2 className='text-lg font-semibold text-neutral-900 mb-4'>
+    <div className='bg-white border border-neutral-200 rounded-lg p-4 md:p-6 lg:sticky lg:top-6'>
+      <h2 className='text-base md:text-lg font-semibold text-neutral-900 mb-3 md:mb-4'>
         Order Summary
       </h2>
 
-      <div className='space-y-6 mb-6 max-h-[500px] overflow-y-auto'>
+      <div className='space-y-4 md:space-y-6 mb-4 md:mb-6 max-h-[400px] md:max-h-[500px] overflow-y-auto'>
         {storeGroups.map((group) => (
-          <div key={group.storeId} className='space-y-3'>
+          <div key={group.storeId} className='space-y-2 md:space-y-3'>
             {/* Store Name */}
             <div className='flex items-center justify-between border-b border-neutral-200 pb-2'>
-              <h3 className='font-medium text-neutral-900'>
+              <h3 className='text-sm md:text-base font-medium text-neutral-900'>
                 {group.storeName}
               </h3>
-              <span className='text-sm text-neutral-600'>
+              <span className='text-xs md:text-sm text-neutral-600'>
                 ₫{group.storeSubtotal.toLocaleString('vi-VN')}
               </span>
             </div>
 
             {/* Store Items */}
-            <div className='space-y-3'>
+            <div className='space-y-2 md:space-y-3'>
               {group.items.map((item) => (
-                <div key={item.id} className='flex items-start gap-3'>
+                <div key={item.id} className='flex items-start gap-2 md:gap-3'>
                   {/* Product Image */}
-                  <div className='w-16 h-16 rounded-lg border border-neutral-200 overflow-hidden bg-neutral-100 shrink-0'>
+                  <div className='w-12 h-12 md:w-16 md:h-16 rounded-lg border border-neutral-200 overflow-hidden bg-neutral-100 shrink-0'>
                     {item.productImagePublicId ? (
                       <img
                         src={getProductImageUrl(
@@ -97,7 +97,7 @@ export const OrderSummary = ({
 
                   {/* Product Details */}
                   <div className='flex-1 min-w-0'>
-                    <p className='text-sm font-medium text-neutral-900 line-clamp-2'>
+                    <p className='text-xs md:text-sm font-medium text-neutral-900 line-clamp-2'>
                       {item.productName}
                     </p>
                     {Object.entries(item.selectedAttributes).length > 0 && (
@@ -112,7 +112,7 @@ export const OrderSummary = ({
                         {item.quantity} x ₫
                         {item.priceAtAdd.toLocaleString('vi-VN')}
                       </span>
-                      <span className='text-sm font-medium text-neutral-900'>
+                      <span className='text-xs md:text-sm font-medium text-neutral-900'>
                         ₫
                         {(item.priceAtAdd * item.quantity).toLocaleString(
                           'vi-VN',
@@ -125,7 +125,7 @@ export const OrderSummary = ({
             </div>
 
             {/* Store Note */}
-            <div>
+            <div className='mx-1'>
               <label className='block text-xs font-medium text-neutral-700 mb-1'>
                 Delivery instructions for {group.storeName}
               </label>
@@ -148,8 +148,8 @@ export const OrderSummary = ({
       </div>
 
       {/* Summary */}
-      <div className='space-y-3 mb-4 border-t border-neutral-200 pt-4'>
-        <div className='flex items-center justify-between text-sm'>
+      <div className='space-y-2 md:space-y-3 mb-3 md:mb-4 border-t border-neutral-200 pt-3 md:pt-4'>
+        <div className='flex items-center justify-between text-xs md:text-sm'>
           <span className='text-neutral-600'>
             Subtotal ({items.length} {items.length === 1 ? 'item' : 'items'})
           </span>
@@ -158,18 +158,18 @@ export const OrderSummary = ({
           </span>
         </div>
 
-        <div className='flex items-center justify-between text-sm'>
+        <div className='flex items-center justify-between text-xs md:text-sm'>
           <span className='text-neutral-600'>Shipping</span>
           <span className='text-green-600 font-medium'>Free</span>
         </div>
       </div>
 
-      <div className='border-t border-neutral-200 pt-4 mb-4'>
+      <div className='border-t border-neutral-200 pt-3 md:pt-4 mb-3 md:mb-4'>
         <div className='flex items-center justify-between'>
-          <span className='text-base font-semibold text-neutral-900'>
+          <span className='text-sm md:text-base font-semibold text-neutral-900'>
             Total
           </span>
-          <span className='text-xl font-bold text-primary-600'>
+          <span className='text-lg md:text-xl font-bold text-primary-600'>
             ₫{subtotal.toLocaleString('vi-VN')}
           </span>
         </div>
@@ -178,7 +178,7 @@ export const OrderSummary = ({
       <button
         onClick={onPlaceOrder}
         disabled={isPlacingOrder}
-        className='cursor-pointer w-full px-6 py-3 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-primary-600 flex items-center justify-center gap-2'
+        className='cursor-pointer w-full px-4 md:px-6 py-2.5 md:py-3 text-sm md:text-base bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-primary-600 flex items-center justify-center gap-2'
       >
         {isPlacingOrder && <ArrowPathIcon className='h-5 w-5 animate-spin' />}
         {isPlacingOrder ? 'Processing...' : 'Place Order'}

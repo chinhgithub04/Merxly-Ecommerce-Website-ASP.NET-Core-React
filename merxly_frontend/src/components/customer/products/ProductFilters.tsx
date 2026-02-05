@@ -14,7 +14,7 @@ interface ProductFiltersProps {
   onRatingChange: (rating: number) => void;
 }
 
-const MAX_PRICE = 10000000;
+const MAX_PRICE = 100000000;
 
 export const ProductFilters = ({
   selectedCategoryId,
@@ -155,7 +155,7 @@ export const ProductFilters = ({
   };
 
   return (
-    <div className='w-70 py-6 space-y-6'>
+    <div className='w-full lg:w-70 py-6 space-y-6'>
       {/* Category Filter */}
       <div>
         <h3 className='text-lg font-semibold text-neutral-900 mb-4'>

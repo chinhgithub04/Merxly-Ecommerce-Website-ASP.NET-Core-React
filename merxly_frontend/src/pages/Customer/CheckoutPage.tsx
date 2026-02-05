@@ -128,7 +128,7 @@ export const CheckoutPage = () => {
 
   if (isLoadingAddresses || isLoadingPaymentMethods) {
     return (
-      <div className='px-20 py-12'>
+      <div className='px-4 md:px-8 lg:px-20 py-6 md:py-12'>
         <div className='flex items-center justify-center py-20'>
           <p className='text-neutral-500'>Loading checkout...</p>
         </div>
@@ -137,14 +137,16 @@ export const CheckoutPage = () => {
   }
 
   return (
-    <div className='px-20 py-12'>
-      <h1 className='text-2xl font-bold text-neutral-900 mb-8'>Checkout</h1>
+    <div className='px-4 md:px-8 lg:px-20 py-6 md:py-12'>
+      <h1 className='text-xl md:text-2xl font-bold text-neutral-900 mb-6 md:mb-8'>
+        Checkout
+      </h1>
 
       <div
-        className={`grid grid-cols-3 gap-6 ${isProcessing ? 'blur-sm pointer-events-none' : ''}`}
+        className={`grid grid-cols-1 lg:grid-cols-3 gap-6 ${isProcessing ? 'blur-sm pointer-events-none' : ''}`}
       >
         {/* Left: Shipping & Payment */}
-        <div className='col-span-2 space-y-6'>
+        <div className='lg:col-span-2 space-y-6'>
           <ShippingSection
             selectedAddress={selectedAddress}
             onSelectAddress={setSelectedAddress}
@@ -157,7 +159,7 @@ export const CheckoutPage = () => {
         </div>
 
         {/* Right: Order Summary */}
-        <div className='col-span-1'>
+        <div className='lg:col-span-1'>
           <OrderSummary
             items={selectedItems}
             storeNotes={storeNotes}

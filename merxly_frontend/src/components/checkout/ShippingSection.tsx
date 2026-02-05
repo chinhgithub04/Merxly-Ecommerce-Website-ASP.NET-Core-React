@@ -27,15 +27,15 @@ export const ShippingSection = ({
   };
 
   return (
-    <div className='bg-white border border-neutral-200 rounded-lg p-6'>
-      <div className='flex items-center justify-between mb-4'>
-        <h2 className='text-lg font-semibold text-neutral-900'>
+    <div className='bg-white border border-neutral-200 rounded-lg p-4 md:p-6'>
+      <div className='flex items-center justify-between mb-3 md:mb-4'>
+        <h2 className='text-base md:text-lg font-semibold text-neutral-900'>
           Shipping Information
         </h2>
         {selectedAddress && !isSelectingAddress && (
           <button
             onClick={() => setIsSelectingAddress(true)}
-            className='cursor-pointer flex items-center gap-2 text-sm text-primary-600 hover:text-primary-700 font-medium'
+            className='cursor-pointer flex items-center gap-1 md:gap-2 text-xs md:text-sm text-primary-600 hover:text-primary-700 font-medium'
           >
             <PencilIcon className='h-4 w-4' />
             Change
@@ -44,19 +44,19 @@ export const ShippingSection = ({
       </div>
 
       {!selectedAddress && !isSelectingAddress ? (
-        <div className='text-center py-6'>
-          <p className='text-sm text-neutral-600 mb-4'>
+        <div className='text-center py-4 md:py-6'>
+          <p className='text-xs md:text-sm text-neutral-600 mb-3 md:mb-4'>
             No address found. Please add a shipping address.
           </p>
           <button
             onClick={() => setIsModalOpen(true)}
-            className='cursor-pointer px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors'
+            className='cursor-pointer px-4 py-2 text-sm md:text-base bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors'
           >
             Add Address
           </button>
         </div>
       ) : isSelectingAddress ? (
-        <div className='space-y-3'>
+        <div className='space-y-2 md:space-y-3'>
           {addresses.map((address) => (
             <div
               key={address.id}
@@ -64,7 +64,7 @@ export const ShippingSection = ({
                 onSelectAddress(address);
                 setIsSelectingAddress(false);
               }}
-              className={`cursor-pointer p-4 border rounded-lg transition-colors ${
+              className={`cursor-pointer p-3 md:p-4 border rounded-lg transition-colors ${
                 selectedAddress?.id === address.id
                   ? 'border-primary-600 bg-primary-50'
                   : 'border-neutral-200 hover:border-primary-300'
@@ -72,13 +72,13 @@ export const ShippingSection = ({
             >
               <div className='flex items-start justify-between'>
                 <div>
-                  <p className='font-medium text-neutral-900'>
+                  <p className='text-sm md:text-base font-medium text-neutral-900'>
                     {address.fullName}
                   </p>
-                  <p className='text-sm text-neutral-600 mt-1'>
+                  <p className='text-xs md:text-sm text-neutral-600 mt-1'>
                     {address.phoneNumber}
                   </p>
-                  <p className='text-sm text-neutral-600 mt-1'>
+                  <p className='text-xs md:text-sm text-neutral-600 mt-1'>
                     {address.fullAddress}
                   </p>
                 </div>
@@ -98,14 +98,14 @@ export const ShippingSection = ({
           </button>
         </div>
       ) : (
-        <div className='p-4 bg-neutral-50 rounded-lg'>
-          <p className='font-medium text-neutral-900'>
+        <div className='p-3 md:p-4 bg-neutral-50 rounded-lg'>
+          <p className='text-sm md:text-base font-medium text-neutral-900'>
             {selectedAddress?.fullName}
           </p>
-          <p className='text-sm text-neutral-600 mt-1'>
+          <p className='text-xs md:text-sm text-neutral-600 mt-1'>
             {selectedAddress?.phoneNumber}
           </p>
-          <p className='text-sm text-neutral-600 mt-1'>
+          <p className='text-xs md:text-sm text-neutral-600 mt-1'>
             {selectedAddress?.fullAddress}
           </p>
         </div>

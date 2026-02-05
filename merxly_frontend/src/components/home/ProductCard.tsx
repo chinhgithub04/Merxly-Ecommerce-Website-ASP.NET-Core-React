@@ -58,36 +58,42 @@ export const ProductCard = ({ product }: ProductCardProps) => {
   return (
     <div
       onClick={handleClick}
-      className='border-2 border-neutral-200 rounded-lg hover:border-primary-600 transition-colors cursor-pointer p-4'
+      className='border-2 border-neutral-200 rounded-lg hover:border-primary-600 transition-colors cursor-pointer p-3 md:p-4'
     >
       {/* Product Image */}
-      <div className='flex justify-center mb-4'>
+      <div className='flex justify-center mb-3 md:mb-4'>
         {mainMediaPublicId ? (
           <img
             src={getProductImageUrl(mainMediaPublicId, 'card')}
             alt={name}
-            className='w-full h-48 object-contain rounded-md'
+            className='w-full h-36 md:h-48 object-contain rounded-md'
           />
         ) : (
-          <div className='w-full h-48 bg-neutral-100 rounded-md flex items-center justify-center'>
-            <span className='text-neutral-400 text-sm'>No Image</span>
+          <div className='w-full h-36 md:h-48 bg-neutral-100 rounded-md flex items-center justify-center'>
+            <span className='text-neutral-400 text-xs md:text-sm'>
+              No Image
+            </span>
           </div>
         )}
       </div>
 
       {/* Rating Section */}
-      <div className='flex items-center gap-1 mb-2'>
+      <div className='flex items-center gap-1 mb-1.5 md:mb-2'>
         <div className='flex'>{renderStars()}</div>
-        <span className='text-xs text-neutral-500'>({reviewCount})</span>
+        <span className='text-[10px] md:text-xs text-neutral-500'>
+          ({reviewCount})
+        </span>
       </div>
 
       {/* Product Name */}
-      <h3 className='text-sm font-medium text-neutral-900 line-clamp-2 mb-2'>
+      <h3 className='text-xs md:text-sm font-medium text-neutral-900 line-clamp-2 mb-1.5 md:mb-2'>
         {name}
       </h3>
 
       {/* Price */}
-      <p className='text-base font-bold text-primary-600'>{formatPrice()}</p>
+      <p className='text-sm md:text-base font-bold text-primary-600'>
+        {formatPrice()}
+      </p>
     </div>
   );
 };
