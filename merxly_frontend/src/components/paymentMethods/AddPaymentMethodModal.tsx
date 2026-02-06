@@ -10,7 +10,7 @@ import { XMarkIcon } from '@heroicons/react/24/outline';
 import { createSetupIntent } from '../../services/paymentMethodService';
 
 const stripePromise = loadStripe(
-  import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || ''
+  import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || '',
 );
 
 interface AddPaymentMethodModalProps {
@@ -75,34 +75,34 @@ const PaymentMethodForm = ({
   };
 
   return (
-    <form onSubmit={handleSubmit} className='space-y-6'>
+    <form onSubmit={handleSubmit} className='space-y-4 md:space-y-6'>
       <div>
-        <label className='block text-sm font-medium text-neutral-700 mb-2'>
+        <label className='block text-xs md:text-sm font-medium text-neutral-700 mb-2'>
           Payment Information
         </label>
-        <div className='border border-neutral-300 rounded-lg p-4 bg-white'>
+        <div className='border border-neutral-300 rounded-lg p-3 md:p-4 bg-white'>
           <PaymentElement />
         </div>
       </div>
 
       {error && (
-        <div className='bg-red-50 border border-red-200 rounded-lg p-3'>
-          <p className='text-sm text-red-600'>{error}</p>
+        <div className='bg-red-50 border border-red-200 rounded-lg p-2 md:p-3'>
+          <p className='text-xs md:text-sm text-red-600'>{error}</p>
         </div>
       )}
 
-      <div className='flex items-center justify-end gap-3 pt-4 border-t border-neutral-200'>
+      <div className='flex flex-col-reverse sm:flex-row items-center justify-end gap-2 md:gap-3 pt-3 md:pt-4 border-t border-neutral-200'>
         <button
           type='button'
           onClick={onClose}
-          className='cursor-pointer px-6 py-2 border border-neutral-300 text-neutral-700 rounded-lg font-medium hover:bg-neutral-50 transition-colors'
+          className='cursor-pointer w-full sm:w-auto px-4 md:px-6 py-2 text-sm md:text-base border border-neutral-300 text-neutral-700 rounded-lg font-medium hover:bg-neutral-50 transition-colors'
         >
           Cancel
         </button>
         <button
           type='submit'
           disabled={!stripe || isProcessing}
-          className='cursor-pointer px-6 py-2 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
+          className='cursor-pointer w-full sm:w-auto px-4 md:px-6 py-2 text-sm md:text-base bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
         >
           {isProcessing ? 'Processing...' : 'Add Payment Method'}
         </button>
@@ -160,14 +160,14 @@ export const AddPaymentMethodModal = ({
       />
 
       {/* Modal Container */}
-      <div className='fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none'>
+      <div className='fixed inset-0 z-50 flex items-center justify-center p-3 md:p-4 pointer-events-none'>
         <div
           className='bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] flex flex-col pointer-events-auto'
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
-          <div className='flex items-center justify-between px-6 py-4 border-b border-neutral-200'>
-            <h2 className='text-lg font-semibold text-neutral-900'>
+          <div className='flex items-center justify-between px-4 md:px-6 py-3 md:py-4 border-b border-neutral-200'>
+            <h2 className='text-base md:text-lg font-semibold text-neutral-900'>
               Add Payment Method
             </h2>
             <button
@@ -180,15 +180,17 @@ export const AddPaymentMethodModal = ({
           </div>
 
           {/* Body */}
-          <div className='px-6 py-4 overflow-y-auto flex-1'>
+          <div className='px-4 md:px-6 py-3 md:py-4 overflow-y-auto flex-1 modal-scrollbar-hide'>
             {error && (
-              <div className='bg-red-50 border border-red-200 rounded-lg p-3 mb-4'>
-                <p className='text-sm text-red-600'>{error}</p>
+              <div className='bg-red-50 border border-red-200 rounded-lg p-2 md:p-3 mb-3 md:mb-4'>
+                <p className='text-xs md:text-sm text-red-600'>{error}</p>
               </div>
             )}
             {isLoading && (
-              <div className='flex items-center justify-center py-8'>
-                <div className='text-sm text-neutral-500'>Loading...</div>
+              <div className='flex items-center justify-center py-6 md:py-8'>
+                <div className='text-xs md:text-sm text-neutral-500'>
+                  Loading...
+                </div>
               </div>
             )}
             {clientSecret && !isLoading && (

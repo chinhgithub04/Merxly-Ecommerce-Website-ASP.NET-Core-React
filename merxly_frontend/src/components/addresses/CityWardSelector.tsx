@@ -96,7 +96,7 @@ export const CityWardSelector = ({
   };
 
   return (
-    <div className='grid grid-cols-2 gap-4'>
+    <div className='grid md:grid-cols-2 gap-4'>
       {/* City Selector */}
       <div className='relative'>
         <label className='block text-sm font-medium text-neutral-700 mb-1'>

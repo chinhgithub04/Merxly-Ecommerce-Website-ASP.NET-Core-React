@@ -6,17 +6,15 @@ import {
 
 export const DashboardPage = () => {
   return (
-    <div className='p-10'>
-      <div className='max-w-7xl mx-auto space-y-8'>
-        {/* Account Info Section */}
-        <AccountInfoSection />
+    <div className='p-4 md:p-6 lg:p-10 space-y-8'>
+      {/* Account Info Section */}
+      <AccountInfoSection />
 
-        {/* Addresses Section */}
-        <AddressesSection />
+      {/* Addresses Section */}
+      <AddressesSection />
 
-        {/* Payment Methods Section */}
-        <PaymentMethodsSection />
-      </div>
+      {/* Payment Methods Section */}
+      <PaymentMethodsSection />
     </div>
   );
 };

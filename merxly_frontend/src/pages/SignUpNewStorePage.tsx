@@ -9,7 +9,7 @@ import { createStore } from '../services/storeService';
 import type { CreateStoreDto } from '../types/models/store';
 
 export const SignUpNewStorePage = () => {
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
@@ -36,21 +36,21 @@ export const SignUpNewStorePage = () => {
   if (isSubmitted) {
     return (
       <div className='min-h-screen bg-neutral-50 flex items-center justify-center p-4'>
-        <div className='max-w-md w-full bg-white rounded-lg shadow-lg p-8 text-center'>
-          <div className='mx-auto w-16 h-16 bg-success-100 rounded-full flex items-center justify-center mb-4'>
-            <CheckCircleIcon className='h-10 w-10 text-success-600' />
+        <div className='max-w-md w-full bg-white rounded-lg shadow-lg p-6 md:p-8 text-center'>
+          <div className='mx-auto w-12 md:w-16 h-12 md:h-16 bg-success-100 rounded-full flex items-center justify-center mb-3 md:mb-4'>
+            <CheckCircleIcon className='h-8 md:h-10 w-8 md:w-10 text-success-600' />
           </div>
-          <h2 className='text-2xl font-bold text-neutral-900 mb-2'>
+          <h2 className='text-lg md:text-2xl font-bold text-neutral-900 mb-2'>
             Registration Submitted!
           </h2>
-          <p className='text-neutral-600 mb-6'>
+          <p className='text-xs md:text-sm text-neutral-600 mb-4 md:mb-6'>
             Thank you for registering your store. Our team will review your
             application and contact you within 2-3 business days.
           </p>
           <div className='space-y-3'>
             <button
               onClick={() => navigate('/')}
-              className='cursor-pointer w-full px-4 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors font-medium'
+              className='cursor-pointer w-full py-1.5 md:py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors font-medium'
             >
               Go to Home
             </button>
@@ -63,27 +63,27 @@ export const SignUpNewStorePage = () => {
   return (
     <div className='min-h-screen bg-neutral-50'>
       {/* Main Content */}
-      <main className='max-w-4xl mx-auto px-4 py-12'>
+      <main className='max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-12'>
         {/* Hero Section */}
-        <div className='text-center mb-12'>
-          <div className='inline-flex items-center justify-center w-16 h-16 bg-primary-100 rounded-full mb-4'>
-            <BuildingStorefrontIcon className='h-8 w-8 text-primary-600' />
+        <div className='text-center mb-8 md:mb-12'>
+          <div className='inline-flex items-center justify-center w-12 md:w-16 h-12 md:h-16 bg-primary-100 rounded-full mb-3 md:mb-4'>
+            <BuildingStorefrontIcon className='h-6 md:h-8 w-6 md:w-8 text-primary-600' />
           </div>
-          <h1 className='text-4xl font-bold text-neutral-900 mb-3'>
+          <h1 className='text-2xl md:text-3xl lg:text-4xl font-bold text-neutral-900 mb-2 md:mb-3'>
             Start Selling on Merxly
           </h1>
-          <p className='text-lg text-neutral-600 max-w-2xl mx-auto'>
+          <p className='text-sm md:text-base lg:text-lg text-neutral-600 max-w-2xl mx-auto'>
             Join thousands of sellers and reach millions of customers. Create
             your store in minutes and start growing your business today.
           </p>
         </div>
 
         {/* Benefits */}
-        <div className='grid grid-cols-1 md:grid-cols-3 gap-6 mb-12'>
-          <div className='bg-white rounded-lg border border-neutral-200 p-6'>
-            <div className='w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center mb-4'>
+        <div className='grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-8 md:mb-12'>
+          <div className='bg-white rounded-lg border border-neutral-200 p-4 md:p-6'>
+            <div className='w-10 md:w-12 h-10 md:h-12 bg-primary-100 rounded-lg flex items-center justify-center mb-3 md:mb-4'>
               <svg
-                className='h-6 w-6 text-primary-600'
+                className='h-5 md:h-6 w-5 md:w-6 text-primary-600'
                 fill='none'
                 viewBox='0 0 24 24'
                 stroke='currentColor'
@@ -96,19 +96,19 @@ export const SignUpNewStorePage = () => {
                 />
               </svg>
             </div>
-            <h3 className='text-lg font-semibold text-neutral-900 mb-2'>
+            <h3 className='text-base md:text-lg font-semibold text-neutral-900 mb-2'>
               Quick Setup
             </h3>
-            <p className='text-sm text-neutral-600'>
+            <p className='text-xs md:text-sm text-neutral-600'>
               Get your store up and running in just a few minutes with our
               simple setup process.
             </p>
           </div>
 
-          <div className='bg-white rounded-lg border border-neutral-200 p-6'>
-            <div className='w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center mb-4'>
+          <div className='bg-white rounded-lg border border-neutral-200 p-4 md:p-6'>
+            <div className='w-10 md:w-12 h-10 md:h-12 bg-primary-100 rounded-lg flex items-center justify-center mb-3 md:mb-4'>
               <svg
-                className='h-6 w-6 text-primary-600'
+                className='h-5 md:h-6 w-5 md:w-6 text-primary-600'
                 fill='none'
                 viewBox='0 0 24 24'
                 stroke='currentColor'
@@ -121,19 +121,19 @@ export const SignUpNewStorePage = () => {
                 />
               </svg>
             </div>
-            <h3 className='text-lg font-semibold text-neutral-900 mb-2'>
+            <h3 className='text-base md:text-lg font-semibold text-neutral-900 mb-2'>
               Secure Payments
             </h3>
-            <p className='text-sm text-neutral-600'>
+            <p className='text-xs md:text-sm text-neutral-600'>
               Receive payments securely through Stripe with automatic payouts to
               your bank account.
             </p>
           </div>
 
-          <div className='bg-white rounded-lg border border-neutral-200 p-6'>
-            <div className='w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center mb-4'>
+          <div className='bg-white rounded-lg border border-neutral-200 p-4 md:p-6'>
+            <div className='w-10 md:w-12 h-10 md:h-12 bg-primary-100 rounded-lg flex items-center justify-center mb-3 md:mb-4'>
               <svg
-                className='h-6 w-6 text-primary-600'
+                className='h-5 md:h-6 w-5 md:w-6 text-primary-600'
                 fill='none'
                 viewBox='0 0 24 24'
                 stroke='currentColor'
@@ -146,10 +146,10 @@ export const SignUpNewStorePage = () => {
                 />
               </svg>
             </div>
-            <h3 className='text-lg font-semibold text-neutral-900 mb-2'>
+            <h3 className='text-base md:text-lg font-semibold text-neutral-900 mb-2'>
               Grow Your Business
             </h3>
-            <p className='text-sm text-neutral-600'>
+            <p className='text-xs md:text-sm text-neutral-600'>
               Access powerful analytics and tools to help you understand and
               grow your customer base.
             </p>
@@ -157,18 +157,18 @@ export const SignUpNewStorePage = () => {
         </div>
 
         {/* Registration Form */}
-        <div className='bg-white rounded-lg shadow-lg border border-neutral-200 p-8'>
+        <div className='bg-white rounded-lg shadow-lg border border-neutral-200 p-4 md:p-8'>
           {error && (
-            <div className='mb-6 p-4 bg-red-50 border border-red-200 rounded-lg'>
-              <p className='text-sm text-red-800'>{error}</p>
+            <div className='mb-4 md:mb-6 p-3 md:p-4 bg-red-50 border border-red-200 rounded-lg'>
+              <p className='text-xs md:text-sm text-red-800'>{error}</p>
             </div>
           )}
           <StoreRegistrationForm onSubmit={handleSubmit} />
         </div>
 
         {/* Footer Info */}
-        <div className='mt-8 text-center'>
-          <p className='text-sm text-neutral-600'>
+        <div className='mt-6 md:mt-8 text-center'>
+          <p className='text-xs md:text-sm text-neutral-600'>
             By registering, you agree to our{' '}
             <a href='#' className='text-primary-600 hover:text-primary-700'>
               Terms of Service

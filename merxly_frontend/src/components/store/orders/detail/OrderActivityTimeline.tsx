@@ -113,8 +113,10 @@ export const OrderActivityTimeline = ({
   };
 
   return (
-    <div className='space-y-4'>
-      <h3 className='text-lg font-semibold text-neutral-900'>Order Activity</h3>
+    <div className='space-y-3 md:space-y-4'>
+      <h3 className='text-base md:text-lg font-semibold text-neutral-900'>
+        Order Activity
+      </h3>
       <div className='relative'>
         {sortedHistory.map((entry, index) => {
           const Icon = getStatusIcon(entry.status);
@@ -122,37 +124,40 @@ export const OrderActivityTimeline = ({
           const isLast = index === sortedHistory.length - 1;
 
           return (
-            <div key={entry.id} className='relative flex gap-4 pb-6'>
+            <div
+              key={entry.id}
+              className='relative flex gap-3 md:gap-4 pb-5 md:pb-6'
+            >
               {/* Timeline Line */}
               {!isLast && (
-                <div className='absolute left-5 top-10 bottom-0 w-0.5 bg-neutral-200' />
+                <div className='absolute left-4 md:left-5 top-9 md:top-10 bottom-0 w-0.5 bg-neutral-200' />
               )}
 
               {/* Icon */}
               <div
-                className={`relative z-10 shrink-0 w-10 h-10 rounded-lg flex items-center justify-center ${getStatusColor(
+                className={`relative z-10 shrink-0 w-8 h-8 md:w-10 md:h-10 rounded-lg flex items-center justify-center ${getStatusColor(
                   entry.status,
                 )}`}
               >
-                <Icon className='h-5 w-5' />
+                <Icon className='h-4 w-4 md:h-5 md:w-5' />
               </div>
 
               {/* Content */}
               <div className='flex-1 min-w-0'>
-                <div className='flex items-center justify-between gap-4'>
+                <div className='flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-4'>
                   <div>
-                    <p className='font-medium text-neutral-900'>
+                    <p className='text-sm md:text-base font-medium text-neutral-900'>
                       {getStatusLabel(entry.status)}
                     </p>
                     {entry.status === OrderStatus.Cancelled && entry.notes && (
-                      <p className='mt-1 text-sm text-neutral-600'>
+                      <p className='mt-1 text-xs md:text-sm text-neutral-600'>
                         {entry.notes}
                       </p>
                     )}
                     {entry.status === OrderStatus.Cancelled &&
                       entry.changedBy && (
-                        <div className='mt-1 flex items-center gap-1 text-xs text-neutral-500'>
-                          <UserCircleIcon className='h-4 w-4' />
+                        <div className='mt-1 flex items-center gap-1 text-[11px] md:text-xs text-neutral-500'>
+                          <UserCircleIcon className='h-3.5 w-3.5 md:h-4 md:w-4' />
                           <span>
                             Cancelled by:{' '}
                             {entry.changedBy === OrderChangedBy.CUSTOMER
@@ -164,7 +169,7 @@ export const OrderActivityTimeline = ({
                         </div>
                       )}
                   </div>
-                  <div className='text-right text-sm text-neutral-500 whitespace-nowrap'>
+                  <div className='text-left sm:text-right text-xs md:text-sm text-neutral-500 whitespace-nowrap'>
                     <div>{date}</div>
                     <div>{time}</div>
                   </div>

@@ -53,17 +53,19 @@ export const CustomerOrderDetailPage = () => {
   // Loading state
   if (isLoading) {
     return (
-      <div className='space-y-6'>
+      <div className='p-4 md:p-6 lg:p-10 space-y-4 md:space-y-6'>
         <CustomerOrderDetailHeader
           subOrderId={subOrderId}
           canLeaveReview={false}
           isWithinReviewWindow={false}
         />
-        <div className='bg-white rounded-xl shadow-sm border border-neutral-200 p-6'>
-          <div className='flex items-center justify-center py-12'>
+        <div className='bg-white rounded-xl shadow-sm border border-neutral-200 p-4 md:p-6'>
+          <div className='flex items-center justify-center py-10 md:py-12'>
             <div className='text-center'>
-              <div className='inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600'></div>
-              <p className='mt-4 text-neutral-600'>Loading order details...</p>
+              <div className='inline-block animate-spin rounded-full h-6 w-6 md:h-8 md:w-8 border-b-2 border-primary-600'></div>
+              <p className='mt-3 md:mt-4 text-sm md:text-base text-neutral-600'>
+                Loading order details...
+              </p>
             </div>
           </div>
         </div>
@@ -74,17 +76,17 @@ export const CustomerOrderDetailPage = () => {
   // Error state
   if (error || !order) {
     return (
-      <div className='space-y-6'>
+      <div className='p-4 md:p-6 lg:p-10 space-y-4 md:space-y-6'>
         <CustomerOrderDetailHeader
           subOrderId={subOrderId}
           canLeaveReview={false}
           isWithinReviewWindow={false}
         />
-        <div className='bg-white rounded-xl shadow-sm border border-neutral-200 p-6'>
-          <div className='text-center py-12'>
-            <div className='mx-auto h-12 w-12 text-red-400'>
+        <div className='bg-white rounded-xl shadow-sm border border-neutral-200 p-4 md:p-6'>
+          <div className='text-center py-10 md:py-12'>
+            <div className='mx-auto h-10 w-10 md:h-12 md:w-12 text-red-400'>
               <svg
-                className='h-12 w-12'
+                className='h-10 w-10 md:h-12 md:w-12'
                 fill='none'
                 viewBox='0 0 24 24'
                 stroke='currentColor'
@@ -97,16 +99,16 @@ export const CustomerOrderDetailPage = () => {
                 />
               </svg>
             </div>
-            <h3 className='mt-4 text-lg font-medium text-neutral-900'>
+            <h3 className='mt-3 md:mt-4 text-base md:text-lg font-medium text-neutral-900'>
               Order not found
             </h3>
-            <p className='mt-2 text-neutral-600'>
+            <p className='mt-2 text-sm md:text-base text-neutral-600'>
               {error?.message ||
                 'The order you are looking for does not exist.'}
             </p>
             <button
               onClick={() => window.history.back()}
-              className='mt-6 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700'
+              className='mt-4 md:mt-6 px-4 py-2 text-sm md:text-base bg-primary-600 text-white rounded-lg hover:bg-primary-700'
             >
               Go Back
             </button>
@@ -122,7 +124,7 @@ export const CustomerOrderDetailPage = () => {
   );
 
   return (
-    <div className='p-10'>
+    <div className='p-4 md:p-6 lg:p-10'>
       {/* Header */}
       <CustomerOrderDetailHeader
         subOrderId={subOrderId}
@@ -133,7 +135,7 @@ export const CustomerOrderDetailPage = () => {
 
       {/* Main Content Wrapper */}
       <div className='bg-white border-x border-b border-neutral-200'>
-        <div className='p-6 space-y-8'>
+        <div className='p-4 md:p-6 space-y-6 md:space-y-8'>
           {/* Basic Info */}
           <OrderBasicInfo
             subOrderNumber={order.subOrderNumber}
@@ -143,7 +145,7 @@ export const CustomerOrderDetailPage = () => {
           />
 
           {/* Progress Bar (5 steps) */}
-          <div className='pt-6'>
+          <div className='pt-4 md:pt-6'>
             <CustomerOrderProgressBar status={order.status} />
           </div>
 
@@ -157,12 +159,12 @@ export const CustomerOrderDetailPage = () => {
           </div>
 
           {/* Activity Timeline */}
-          <div className='border-t border-neutral-200 pt-6'>
+          <div className='border-t border-neutral-200 pt-4 md:pt-6'>
             <OrderActivityTimeline statusHistory={order.statusHistory} />
           </div>
 
           {/* Shipping Address & Store Information */}
-          <div className='border-t border-neutral-200 pt-6 grid grid-cols-1 md:grid-cols-2 gap-6'>
+          <div className='border-t border-neutral-200 pt-4 md:pt-6 grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6'>
             <CustomerOrderShippingInfo
               fullName={order.customerFullName}
               fullAddress={order.shippingFullAddress}
@@ -182,12 +184,12 @@ export const CustomerOrderDetailPage = () => {
           </div>
 
           {/* Order Items (without SKU) */}
-          <div className='border-t border-neutral-200 pt-6'>
+          <div className='border-t border-neutral-200 pt-4 md:pt-6'>
             <CustomerOrderItemsTable items={order.orderItems} />
           </div>
 
           {/* Order Summary */}
-          <div className='border-t border-neutral-200 pt-6'>
+          <div className='border-t border-neutral-200 pt-4 md:pt-6'>
             <OrderSummarySection
               subTotal={order.subTotal}
               shippingCost={order.shippingCost}
@@ -197,33 +199,35 @@ export const CustomerOrderDetailPage = () => {
 
           {/* Order Notes */}
           {order.notes && (
-            <div className='border-t border-neutral-200 pt-6'>
+            <div className='border-t border-neutral-200 pt-4 md:pt-6'>
               <OrderNotesSection notes={order.notes} />
             </div>
           )}
 
           {/* Tracking Information */}
           {(order.carrier || order.trackingNumber) && (
-            <div className='border-t border-neutral-200 pt-6'>
-              <div className='space-y-4'>
-                <h3 className='text-lg font-semibold text-neutral-900'>
+            <div className='border-t border-neutral-200 pt-4 md:pt-6'>
+              <div className='space-y-3 md:space-y-4'>
+                <h3 className='text-base md:text-lg font-semibold text-neutral-900'>
                   Tracking Information
                 </h3>
-                <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                <div className='grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4'>
                   {order.carrier && (
                     <div>
-                      <p className='text-sm text-neutral-500'>Carrier</p>
-                      <p className='font-medium text-neutral-900'>
+                      <p className='text-xs md:text-sm text-neutral-500'>
+                        Carrier
+                      </p>
+                      <p className='text-sm md:text-base font-medium text-neutral-900'>
                         {order.carrier}
                       </p>
                     </div>
                   )}
                   {order.trackingNumber && (
                     <div>
-                      <p className='text-sm text-neutral-500'>
+                      <p className='text-xs md:text-sm text-neutral-500'>
                         Tracking Number
                       </p>
-                      <p className='font-medium text-neutral-900 font-mono'>
+                      <p className='text-sm md:text-base font-medium text-neutral-900 font-mono'>
                         {order.trackingNumber}
                       </p>
                     </div>

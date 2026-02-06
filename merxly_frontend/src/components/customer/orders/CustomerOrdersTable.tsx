@@ -16,7 +16,7 @@ interface CustomerOrdersTableProps {
 }
 
 const getStatusDisplay = (
-  status: OrderStatus
+  status: OrderStatus,
 ): { label: string; color: string } => {
   const statusMap: Record<number, { label: string; color: string }> = {
     [OrderStatus.Confirmed]: {
@@ -68,8 +68,9 @@ export const CustomerOrdersTable = ({ orders }: CustomerOrdersTableProps) => {
   };
 
   return (
-    <div className='bg-white border border-neutral-200 overflow-hidden'>
-      <div className='overflow-x-auto'>
+    <div className='md:bg-white md:border md:border-neutral-200 overflow-hidden mt-4 md:mt-0'>
+      {/* Desktop Table View */}
+      <div className='hidden md:block overflow-x-auto'>
         <table className='w-full'>
           <thead className='bg-neutral-50 border-b border-neutral-200'>
             <tr>
@@ -143,6 +144,58 @@ export const CustomerOrdersTable = ({ orders }: CustomerOrdersTableProps) => {
             ))}
           </tbody>
         </table>
+      </div>
+
+      {/* Mobile Card View */}
+      <div className='md:hidden divide-y divide-neutral-200'>
+        {orders.map((order) => (
+          <div
+            key={order.id}
+            className='p-4 hover:bg-neutral-50 transition-colors border border-neutral-200 rounded-lg bg-white mb-4'
+          >
+            <div className='flex items-start justify-between mb-3'>
+              <div className='flex-1'>
+                <span className='text-sm font-semibold text-neutral-900 block mb-1'>
+                  {order.subOrderNumber}
+                </span>
+                <span
+                  className={`px-2.5 py-1 rounded-full text-xs font-medium inline-block ${
+                    getStatusDisplay(order.status).color
+                  }`}
+                >
+                  {getStatusDisplay(order.status).label}
+                </span>
+              </div>
+              <button
+                onClick={() => handleViewOrder(order.id)}
+                className='cursor-pointer p-2 text-neutral-600 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors'
+                title='View Details'
+              >
+                <EyeIcon className='h-5 w-5' />
+              </button>
+            </div>
+            <div className='space-y-2'>
+              <div className='flex justify-between items-center'>
+                <span className='text-xs text-neutral-600'>Items:</span>
+                <span className='text-sm text-neutral-900'>
+                  {order.itemCount} items
+                </span>
+              </div>
+              <div className='flex justify-between items-center'>
+                <span className='text-xs text-neutral-600'>Total:</span>
+                <span className='text-sm font-semibold text-neutral-900'>
+                  ₫{order.totalAmount.toLocaleString()}
+                </span>
+              </div>
+              <div className='flex justify-between items-center'>
+                <span className='text-xs text-neutral-600'>Date:</span>
+                <span className='text-sm text-neutral-700'>
+                  {new Date(order.createdAt).toLocaleDateString()}
+                </span>
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
 
       {orders.length === 0 && (

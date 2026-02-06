@@ -30,23 +30,28 @@ export const ReviewItemReadOnly = ({ orderItem }: ReviewItemReadOnlyProps) => {
   };
 
   return (
-    <div className='border border-neutral-200 rounded-lg p-4 space-y-4 bg-neutral-50'>
+    <div className='border border-neutral-200 rounded-lg p-3 md:p-4 space-y-3 md:space-y-4 bg-neutral-50'>
       {/* Product Info */}
-      <div className='flex items-start gap-4'>
+      <div className='flex items-start gap-3 md:gap-4'>
         {orderItem.mainMediaPublicId && (
           <img
             src={getProductImageUrl(orderItem.mainMediaPublicId, 'card')}
             alt={orderItem.productVariantName}
-            className='w-16 h-16 rounded-lg object-contain'
+            className='w-14 h-14 md:w-16 md:h-16 rounded-lg object-contain shrink-0'
           />
         )}
-        <div className='flex-1'>
-          <h3 className='font-medium text-neutral-900'>
+        <div className='flex-1 min-w-0'>
+          <h3 className='font-medium text-neutral-900 text-sm md:text-base wrap-break-word'>
             {orderItem.productVariantName}
           </h3>
-          <div className='mt-1 flex items-center gap-2'>
-            <RatingInput value={review.rating} onChange={() => {}} readOnly />
-            <span className='text-sm text-neutral-500'>
+          <div className='mt-1 flex flex-col md:flex-row md:items-center gap-1 md:gap-2'>
+            <RatingInput
+              value={review.rating}
+              onChange={() => {}}
+              readOnly
+              size='sm'
+            />
+            <span className='text-xs md:text-sm text-neutral-500 md:whitespace-nowrap'>
               {formatDate(review.createdAt)}
             </span>
           </div>
@@ -56,13 +61,15 @@ export const ReviewItemReadOnly = ({ orderItem }: ReviewItemReadOnlyProps) => {
       {/* Comment */}
       {review.comment && (
         <div className='space-y-1'>
-          <p className='text-sm text-neutral-700'>{review.comment}</p>
+          <p className='text-xs md:text-sm text-neutral-700 wrap-break-word'>
+            {review.comment}
+          </p>
         </div>
       )}
 
       {/* Media */}
       {review.medias && review.medias.length > 0 && (
-        <div className='grid grid-cols-4 gap-2'>
+        <div className='grid grid-cols-3 sm:grid-cols-4 gap-2'>
           {review.medias.map((media) => (
             <div
               key={media.id}
@@ -80,11 +87,13 @@ export const ReviewItemReadOnly = ({ orderItem }: ReviewItemReadOnlyProps) => {
 
       {/* Seller Reply */}
       {review.sellerReply && (
-        <div className='bg-white border border-neutral-200 rounded-lg p-3 space-y-1'>
+        <div className='bg-white border border-neutral-200 rounded-lg p-3 md:p-4 space-y-1'>
           <div className='text-xs font-medium text-neutral-500'>
             Store Response
           </div>
-          <p className='text-sm text-neutral-700'>{review.sellerReply}</p>
+          <p className='text-xs md:text-sm text-neutral-700'>
+            {review.sellerReply}
+          </p>
         </div>
       )}
     </div>

@@ -70,7 +70,7 @@ export const ReviewModal = ({
 
       {/* Modal Container */}
       <div
-        className='relative min-h-full flex items-center justify-center p-4'
+        className='relative min-h-full flex items-center justify-center p-3 sm:p-4'
         onClick={onClose}
       >
         <div
@@ -78,9 +78,9 @@ export const ReviewModal = ({
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
-          <div className='flex items-center justify-between px-6 py-4 border-b border-neutral-200'>
+          <div className='flex items-center justify-between px-4 md:px-6 py-3 md:py-4 border-b border-neutral-200'>
             <div>
-              <h2 className='text-lg font-semibold text-neutral-900'>
+              <h2 className='text-base sm:text-lg font-semibold text-neutral-900'>
                 {reviewStatus.canLeaveReview
                   ? 'Leave a Rating'
                   : 'Your Reviews'}
@@ -89,18 +89,18 @@ export const ReviewModal = ({
             <button
               type='button'
               onClick={onClose}
-              className='cursor-pointer p-1.5 text-neutral-400 hover:text-neutral-600 hover:bg-neutral-100 rounded-md transition-colors'
+              className='cursor-pointer p-1.5 text-neutral-400 hover:text-neutral-600 hover:bg-neutral-100 rounded-md transition-colors shrink-0'
             >
-              <XMarkIcon className='w-5 h-5' />
+              <XMarkIcon className='w-4 sm:w-5 h-4 sm:h-5' />
             </button>
           </div>
 
           {/* Body */}
-          <div className='flex-1 overflow-y-auto px-6 py-4 space-y-6'>
+          <div className='flex-1 overflow-y-auto px-4 md:px-6 py-3 md:py-4 space-y-4 md:space-y-6'>
             {/* Unreviewed Items */}
             {unreviewedItems.length > 0 && (
-              <div className='space-y-4'>
-                <h3 className='font-medium text-neutral-900'>
+              <div className='space-y-3 md:space-y-4'>
+                <h3 className='text-sm md:text-base font-medium text-neutral-900'>
                   Rate Your Items ({unreviewedItems.length})
                 </h3>
                 {unreviewedItems.map((item) => (
@@ -118,8 +118,8 @@ export const ReviewModal = ({
 
             {/* Reviewed Items */}
             {reviewedItems.length > 0 && (
-              <div className='space-y-4'>
-                <h3 className='font-medium text-neutral-900'>
+              <div className='space-y-3 md:space-y-4'>
+                <h3 className='text-sm md:text-base font-medium text-neutral-900'>
                   {unreviewedItems.length > 0
                     ? 'Already Reviewed'
                     : `Your Reviews (${reviewedItems.length})`}
@@ -133,11 +133,11 @@ export const ReviewModal = ({
 
           {/* Footer */}
           {allItemsReviewed && (
-            <div className='flex items-center justify-end gap-3 px-6 py-4 border-t border-neutral-200'>
+            <div className='flex items-center justify-end gap-3 px-4 md:px-6 py-3 md:py-4 border-t border-neutral-200'>
               <button
                 type='button'
                 onClick={onClose}
-                className='cursor-pointer px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors font-medium'
+                className='cursor-pointer px-3 md:px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors font-medium text-sm md:text-base'
               >
                 Close
               </button>

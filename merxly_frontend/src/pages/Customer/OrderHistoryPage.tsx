@@ -24,7 +24,7 @@ export const OrderHistoryPage = () => {
   const [fromDate, setFromDate] = useState('');
   const [toDate, setToDate] = useState('');
   const [pageNumber, setPageNumber] = useState(1);
-  const pageSize = 20;
+  const pageSize = 10;
 
   // Build filter for API
   const filter = useMemo<CustomerSubOrderFilterDto>(() => {
@@ -80,10 +80,10 @@ export const OrderHistoryPage = () => {
   }, [data]);
 
   return (
-    <div className='p-10'>
+    <div className='p-4 md:p-6 lg:p-10'>
       {/* Page Header */}
-      <div className='bg-white border-t border-x border-neutral-200 rounded-t-lg px-6 py-4'>
-        <h2 className='text-xl font-semibold text-neutral-900'>
+      <div className='bg-white border-t border-x border-neutral-200 rounded-t-lg px-4 md:px-6 py-3 md:py-4'>
+        <h2 className='text-lg md:text-xl font-semibold text-neutral-900'>
           Order History
         </h2>
       </div>
@@ -122,12 +122,12 @@ export const OrderHistoryPage = () => {
           <CustomerOrdersTable orders={orders} />
 
           {/* Pagination Info */}
-          {data && (
-            <div className='flex mt-2 items-center justify-between text-sm text-neutral-600'>
+          {data && data.totalCount > 0 && (
+            <div className='flex flex-col sm:flex-row mt-2 items-start sm:items-center justify-between gap-2 text-xs md:text-sm text-neutral-600 px-2'>
               <span>
                 Showing {orders.length} of {data.totalCount} orders
               </span>
-              <div className='flex items-center gap-2'>
+              <div className='flex flex-col sm:flex-row items-start sm:items-center gap-2'>
                 <span>
                   Page {data.pageNumber} of {data.totalPages}
                 </span>
@@ -135,14 +135,14 @@ export const OrderHistoryPage = () => {
                   <button
                     onClick={() => setPageNumber((p) => Math.max(1, p - 1))}
                     disabled={data.pageNumber === 1}
-                    className='px-3 py-1 border border-neutral-300 rounded-lg cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed hover:bg-neutral-50'
+                    className='px-3 py-1 text-xs md:text-sm border border-neutral-300 rounded-lg cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed hover:bg-neutral-50'
                   >
                     Previous
                   </button>
                   <button
                     onClick={() => setPageNumber((p) => p + 1)}
                     disabled={data.pageNumber >= data.totalPages}
-                    className='px-3 py-1 border border-neutral-300 rounded-lg cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed hover:bg-neutral-50'
+                    className='px-3 py-1 text-xs md:text-sm border border-neutral-300 rounded-lg cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed hover:bg-neutral-50'
                   >
                     Next
                   </button>

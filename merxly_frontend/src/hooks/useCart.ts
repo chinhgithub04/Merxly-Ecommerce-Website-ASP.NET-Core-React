@@ -44,7 +44,6 @@ export const useCart = () => {
   const removeCartItemMutation = useMutation({
     mutationFn: removeCartItem,
     onSuccess: () => {
-      toast.success('Item removed');
       queryClient.invalidateQueries({ queryKey: ['cart'] });
     },
   });

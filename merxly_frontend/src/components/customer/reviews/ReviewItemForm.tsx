@@ -35,18 +35,18 @@ export const ReviewItemForm = ({
   };
 
   return (
-    <div className='border border-neutral-200 rounded-lg p-4 space-y-4'>
+    <div className='border border-neutral-200 rounded-lg p-3 md:p-4 space-y-3 md:space-y-4'>
       {/* Product Info */}
-      <div className='flex items-start gap-4'>
+      <div className='flex items-start gap-3 md:gap-4'>
         {orderItem.mainMediaPublicId && (
           <img
             src={getProductImageUrl(orderItem.mainMediaPublicId, 'thumbnail')}
             alt={orderItem.productVariantName}
-            className='w-16 h-16 rounded-lg object-cover'
+            className='w-14 h-14 md:w-16 md:h-16 rounded-lg object-cover shrink-0'
           />
         )}
-        <div className='flex-1'>
-          <h3 className='font-medium text-neutral-900'>
+        <div className='flex-1 min-w-0'>
+          <h3 className='font-medium text-neutral-900 text-sm md:text-base break-words'>
             {orderItem.productVariantName}
           </h3>
         </div>
@@ -54,7 +54,7 @@ export const ReviewItemForm = ({
 
       {/* Rating */}
       <div className='space-y-2'>
-        <label className='block text-sm font-medium text-neutral-700'>
+        <label className='block text-xs md:text-sm font-medium text-neutral-700'>
           Rating <span className='text-red-500'>*</span>
         </label>
         <RatingInput value={rating} onChange={setRating} size='lg' />
@@ -62,7 +62,7 @@ export const ReviewItemForm = ({
 
       {/* Comment */}
       <div className='space-y-2'>
-        <label className='block text-sm font-medium text-neutral-700'>
+        <label className='block text-xs md:text-sm font-medium text-neutral-700'>
           Your Review (Optional)
         </label>
         <textarea
@@ -71,7 +71,7 @@ export const ReviewItemForm = ({
           placeholder='Share your experience with this product...'
           maxLength={1000}
           rows={4}
-          className='w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none'
+          className='w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none text-xs md:text-sm'
         />
         <div className='text-xs text-neutral-500 text-right'>
           {comment.length} / 1000
@@ -80,7 +80,7 @@ export const ReviewItemForm = ({
 
       {/* Media Upload */}
       <div className='space-y-2'>
-        <label className='block text-sm font-medium text-neutral-700'>
+        <label className='block text-xs md:text-sm font-medium text-neutral-700'>
           Photos/Videos (Optional)
         </label>
         <MediaUpload medias={medias} onMediasChange={setMedias} />
@@ -91,7 +91,7 @@ export const ReviewItemForm = ({
         type='button'
         onClick={handleSubmit}
         disabled={isSubmitting || rating === 0}
-        className='cursor-pointer w-full py-2 px-4 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium'
+        className='cursor-pointer w-full py-2 px-4 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium text-sm md:text-base'
       >
         {isSubmitting ? 'Submitting...' : 'Submit Review'}
       </button>

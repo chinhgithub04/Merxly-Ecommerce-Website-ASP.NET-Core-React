@@ -158,7 +158,7 @@ export const UserProfilePage = () => {
 
   if (isLoading) {
     return (
-      <div className='px-20 py-12'>
+      <div className='px-4 md:px-8 lg:px-20 py-6 md:py-12'>
         <div className='max-w-5xl mx-auto'>
           <div className='flex items-center justify-center py-20'>
             <p className='text-neutral-500'>Loading...</p>
@@ -170,7 +170,7 @@ export const UserProfilePage = () => {
 
   if (!profile) {
     return (
-      <div className='px-20 py-12'>
+      <div className='px-4 md:px-8 lg:px-20 py-6 md:py-12'>
         <div className='max-w-5xl mx-auto'>
           <div className='flex items-center justify-center py-20'>
             <p className='text-red-500'>Failed to load profile</p>
@@ -192,28 +192,28 @@ export const UserProfilePage = () => {
     }
 
     return (
-      <div className='w-full h-full flex items-center justify-center bg-primary-100 text-primary-600 text-6xl font-semibold'>
+      <div className='w-full h-full flex items-center justify-center bg-primary-100 text-primary-600 text-4xl md:text-5xl lg:text-6xl font-semibold'>
         {profile.firstName?.charAt(0)?.toUpperCase() || 'U'}
       </div>
     );
   };
 
   return (
-    <div className='p-10'>
-      <div className='max-w-7xl mx-auto space-y-8'>
+    <div className='p-4 md:p-6 lg:p-10'>
+      <div className='max-w-7xl mx-auto space-y-6 md:space-y-8'>
         {/* Account Info Section */}
         <div>
-          <div className='bg-white border-t border-x border-neutral-200 rounded-t-lg px-6 py-4'>
-            <h2 className='text-xl font-semibold text-neutral-900'>
+          <div className='bg-white border-t border-x border-neutral-200 rounded-t-lg px-4 md:px-6 py-3 md:py-4'>
+            <h2 className='text-lg md:text-xl font-semibold text-neutral-900'>
               Account Information
             </h2>
           </div>
-          <div className='bg-white border border-neutral-200 rounded-b-lg p-6'>
+          <div className='bg-white border border-neutral-200 rounded-b-lg p-4 md:p-6'>
             <form onSubmit={handleSubmitProfile(onSubmitProfile)}>
-              <div className='flex gap-8'>
+              <div className='flex flex-col md:flex-row gap-6 md:gap-8'>
                 {/* Left side - Avatar */}
-                <div className='shrink-0'>
-                  <div className='w-40 h-40 rounded-full overflow-hidden border-4 border-neutral-200 shadow-lg'>
+                <div className='shrink-0 flex flex-col items-center md:items-start'>
+                  <div className='w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden border-4 border-neutral-200 shadow-lg'>
                     {getAvatarContent()}
                   </div>
                   <input
@@ -227,15 +227,15 @@ export const UserProfilePage = () => {
                     type='button'
                     onClick={() => fileInputRef.current?.click()}
                     disabled={isUploadingAvatar}
-                    className='cursor-pointer w-40 mt-4 px-4 py-2 bg-neutral-100 text-neutral-700 rounded-lg font-medium hover:bg-neutral-200 transition-colors disabled:bg-neutral-50 disabled:text-neutral-400 disabled:cursor-not-allowed text-sm'
+                    className='cursor-pointer w-32 md:w-40 mt-4 px-4 py-2 bg-neutral-100 text-neutral-700 rounded-lg text-xs md:text-sm font-medium hover:bg-neutral-200 transition-colors disabled:bg-neutral-50 disabled:text-neutral-400 disabled:cursor-not-allowed'
                   >
                     {isUploadingAvatar ? 'Uploading...' : 'Change Photo'}
                   </button>
                 </div>
 
                 {/* Right side - Form Fields */}
-                <div className='flex-1 space-y-6'>
-                  <div className='grid grid-cols-2 gap-6'>
+                <div className='flex-1 space-y-4 md:space-y-6'>
+                  <div className='grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6'>
                     <Input
                       label='First Name'
                       type='text'
@@ -261,13 +261,13 @@ export const UserProfilePage = () => {
                   />
 
                   {/* Save Button */}
-                  <div className='flex justify-end pt-4'>
+                  <div className='flex justify-end pt-3 md:pt-4'>
                     <button
                       type='submit'
                       disabled={
                         !isProfileDirty || updateProfileMutation.isPending
                       }
-                      className='px-6 py-3 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 transition-colors disabled:bg-neutral-300 disabled:cursor-not-allowed'
+                      className='w-full sm:w-auto px-4 md:px-6 py-2 md:py-3 text-sm md:text-base bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 transition-colors disabled:bg-neutral-300 disabled:cursor-not-allowed'
                     >
                       {updateProfileMutation.isPending
                         ? 'Saving...'
@@ -282,14 +282,14 @@ export const UserProfilePage = () => {
 
         {/* Change Password Section */}
         <div>
-          <div className='bg-white border-t border-x border-neutral-200 rounded-t-lg px-6 py-4'>
-            <h2 className='text-xl font-semibold text-neutral-900'>
+          <div className='bg-white border-t border-x border-neutral-200 rounded-t-lg px-4 md:px-6 py-3 md:py-4'>
+            <h2 className='text-lg md:text-xl font-semibold text-neutral-900'>
               Change Password
             </h2>
           </div>
-          <div className='bg-white border border-neutral-200 rounded-b-lg p-6'>
+          <div className='bg-white border border-neutral-200 rounded-b-lg p-4 md:p-6'>
             <form onSubmit={handleSubmitPassword(onSubmitPassword)}>
-              <div className='space-y-6'>
+              <div className='space-y-4 md:space-y-6'>
                 <Input
                   label='Current Password'
                   type='password'
@@ -333,13 +333,13 @@ export const UserProfilePage = () => {
                 />
 
                 {/* Save Button */}
-                <div className='flex justify-end pt-4'>
+                <div className='flex justify-end pt-3 md:pt-4'>
                   <button
                     type='submit'
                     disabled={
                       !isPasswordDirty || changePasswordMutation.isPending
                     }
-                    className='px-6 py-3 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 transition-colors disabled:bg-neutral-300 disabled:cursor-not-allowed'
+                    className='w-full sm:w-auto px-4 md:px-6 py-2 md:py-3 text-sm md:text-base bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 transition-colors disabled:bg-neutral-300 disabled:cursor-not-allowed'
                   >
                     {changePasswordMutation.isPending
                       ? 'Changing...'

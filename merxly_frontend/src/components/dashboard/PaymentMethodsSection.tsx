@@ -41,12 +41,12 @@ export const PaymentMethodsSection = () => {
   if (isLoading) {
     return (
       <div>
-        <div className='bg-white border-t border-x border-neutral-200 rounded-t-lg px-6 py-4'>
-          <h2 className='text-xl font-semibold text-neutral-900'>
+        <div className='bg-white border-t border-x border-neutral-200 rounded-t-lg px-4 md:px-6 py-3 md:py-4'>
+          <h2 className='text-lg md:text-xl font-semibold text-neutral-900'>
             Payment methods
           </h2>
         </div>
-        <div className='bg-white border border-neutral-200 rounded-b-lg p-6'>
+        <div className='bg-white border border-neutral-200 rounded-b-lg p-4 md:p-6'>
           <div className='flex items-center justify-center py-20'>
             <p className='text-neutral-500'>Loading payment methods...</p>
           </div>
@@ -61,7 +61,7 @@ export const PaymentMethodsSection = () => {
     <div>
       {/* Header */}
       <div className='bg-white border-t border-x border-neutral-200 rounded-t-lg px-6 py-4 flex items-center justify-between'>
-        <h2 className='text-xl font-semibold text-neutral-900'>
+        <h2 className='md:text-xl font-semibold text-neutral-900'>
           Payment methods
         </h2>
         {hasPaymentMethods && (
@@ -70,18 +70,18 @@ export const PaymentMethodsSection = () => {
             className='cursor-pointer flex items-center gap-2 text-primary-600 font-medium hover:text-primary-700 transition-colors'
           >
             <PlusIcon className='h-5 w-5' />
-            <span>Add Payment Method</span>
+            <span className='hidden md:block'>Add Payment Method</span>
           </button>
         )}
       </div>
 
       {/* Body */}
-      <div className='bg-white border border-neutral-200 rounded-b-lg p-6'>
+      <div className='bg-white border border-neutral-200 rounded-b-lg p-4 md:p-6'>
         {!hasPaymentMethods ? (
-          <div className='text-center py-12'>
+          <div className='text-center py-8 md:py-12'>
             <div className='text-neutral-400 mb-4'>
               <svg
-                className='mx-auto h-12 w-12'
+                className='mx-auto h-10 w-10 md:h-12 md:w-12'
                 fill='none'
                 viewBox='0 0 24 24'
                 stroke='currentColor'
@@ -95,22 +95,26 @@ export const PaymentMethodsSection = () => {
                 />
               </svg>
             </div>
-            <h3 className='text-lg font-medium text-neutral-900 mb-2'>
+            <h3 className='text-base md:text-lg font-medium text-neutral-900 mb-2'>
               No payment methods yet
             </h3>
-            <p className='text-neutral-500 mb-6'>
+            <p className='text-sm md:text-base text-neutral-500 mb-4 md:mb-6'>
               Add a payment method to make checkout faster and easier
             </p>
             <button
               onClick={() => setIsModalOpen(true)}
-              className='cursor-pointer inline-flex items-center gap-2 px-6 py-3 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 transition-colors'
+              className='cursor-pointer inline-flex items-center gap-2 px-4 md:px-6 py-2 md:py-3 text-sm md:text-base bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 transition-colors'
             >
               <PlusIcon className='h-5 w-5' />
-              <span>Add Your First Payment Method</span>
+              <span
+                className="relative 
+                before:content-['Add_Payment_Method'] 
+                md:before:content-['Add_Your_First_Payment_Method']"
+              />
             </button>
           </div>
         ) : (
-          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
+          <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6'>
             {paymentMethods.map((pm) => (
               <PaymentCard
                 key={pm.id}

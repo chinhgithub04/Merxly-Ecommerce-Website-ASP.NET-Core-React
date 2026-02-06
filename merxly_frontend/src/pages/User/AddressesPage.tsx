@@ -2,10 +2,8 @@ import { AddressesSection } from '../../components/dashboard';
 
 export const AddressesPage = () => {
   return (
-    <div className='p-10'>
-      <div className='max-w-7xl mx-auto space-y-8'>
-        <AddressesSection />
-      </div>
+    <div className='p-4 md:p-6 lg:p-10'>
+      <AddressesSection />
     </div>
   );
 };

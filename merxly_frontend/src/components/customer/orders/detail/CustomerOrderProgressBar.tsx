@@ -57,8 +57,8 @@ export const CustomerOrderProgressBar = ({
             status === OrderStatus.Cancelled
               ? 'Cancelled'
               : status === OrderStatus.Refunded
-              ? 'Refunded'
-              : 'Failed',
+                ? 'Refunded'
+                : 'Failed',
           icon: XCircleIcon,
           status: 'cancelled',
         },
@@ -79,8 +79,8 @@ export const CustomerOrderProgressBar = ({
           currentIndex > 1
             ? 'completed'
             : currentIndex === 1
-            ? 'current'
-            : 'upcoming',
+              ? 'current'
+              : 'upcoming',
       },
       {
         label: 'Delivering',
@@ -89,8 +89,8 @@ export const CustomerOrderProgressBar = ({
           currentIndex > 2
             ? 'completed'
             : currentIndex === 2
-            ? 'current'
-            : 'upcoming',
+              ? 'current'
+              : 'upcoming',
       },
       {
         label: 'Shipped',
@@ -99,8 +99,8 @@ export const CustomerOrderProgressBar = ({
           currentIndex > 3
             ? 'completed'
             : currentIndex === 3
-            ? 'current'
-            : 'upcoming',
+              ? 'current'
+              : 'upcoming',
       },
       {
         label: 'Completed',
@@ -152,8 +152,8 @@ export const CustomerOrderProgressBar = ({
   };
 
   return (
-    <div className='py-2 px-12'>
-      <div className='relative'>
+    <div className='py-2 px-4 md:px-12 overflow-x-auto'>
+      <div className='relative min-w-[520px]'>
         {/* Background Line */}
         <div className='absolute top-2 left-9 right-9 h-2 bg-orange-200 rounded-full' />
 
@@ -177,14 +177,16 @@ export const CustomerOrderProgressBar = ({
               <div key={index} className='flex flex-col items-center relative'>
                 {/* Circle */}
                 <div
-                  className={`w-6 h-6 rounded-full flex items-center justify-center transition-all duration-300 ${styles.circle}`}
+                  className={`w-5 h-5 md:w-6 md:h-6 rounded-full flex items-center justify-center transition-all duration-300 ${styles.circle}`}
                 >
                   <Check strokeWidth={2.75} className={`${styles.checked}`} />
                 </div>
-                <Icon className={`mt-5 h-7 w-7 ${styles.icon}`} />
+                <Icon
+                  className={`mt-4 md:mt-5 h-6 w-6 md:h-7 md:w-7 ${styles.icon}`}
+                />
                 {/* Label */}
                 <span
-                  className={`mt-3 text-xs font-semibold text-center transition-colors duration-300 ${styles.label}`}
+                  className={`mt-2 md:mt-3 text-[10px] md:text-xs font-semibold text-center transition-colors duration-300 ${styles.label}`}
                 >
                   {step.label}
                 </span>

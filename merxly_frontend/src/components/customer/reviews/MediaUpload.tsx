@@ -24,7 +24,7 @@ export const MediaUpload = ({
   const [uploadError, setUploadError] = useState<string | null>(null);
 
   const handleFileSelect = async (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const files = event.target.files;
     if (!files || files.length === 0) return;
@@ -84,9 +84,9 @@ export const MediaUpload = ({
   return (
     <div className='space-y-3'>
       {/* Upload Button */}
-      <div className='flex items-center gap-2'>
-        <label className='cursor-pointer inline-flex items-center gap-2 px-4 py-2 border border-neutral-300 rounded-lg hover:bg-neutral-50 transition-colors text-sm font-medium text-neutral-700'>
-          <PhotoIcon className='h-5 w-5' />
+      <div className='flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3'>
+        <label className='cursor-pointer inline-flex items-center gap-2 px-3 md:px-4 py-2 border border-neutral-300 rounded-lg hover:bg-neutral-50 transition-colors text-xs md:text-sm font-medium text-neutral-700'>
+          <PhotoIcon className='h-4 md:h-5 w-4 md:w-5 shrink-0' />
           <span>Add Photos/Videos</span>
           <input
             type='file'
@@ -97,27 +97,29 @@ export const MediaUpload = ({
             className='hidden'
           />
         </label>
-        <span className='text-sm text-neutral-500'>
+        <span className='text-xs md:text-sm text-neutral-500'>
           {medias.length} / {maxFiles} files
         </span>
       </div>
 
       {uploading && (
-        <div className='text-sm text-neutral-600'>Uploading...</div>
+        <div className='text-xs md:text-sm text-neutral-600'>Uploading...</div>
       )}
 
-      {uploadError && <div className='text-sm text-red-600'>{uploadError}</div>}
+      {uploadError && (
+        <div className='text-xs md:text-sm text-red-600'>{uploadError}</div>
+      )}
 
       {/* Media Preview */}
       {medias.length > 0 && (
-        <div className='grid grid-cols-4 gap-2'>
+        <div className='grid grid-cols-3 sm:grid-cols-4 gap-2'>
           {medias.map((media, index) => (
             <div key={index} className='relative group'>
               <div className='aspect-square rounded-lg overflow-hidden bg-neutral-100 border border-neutral-200'>
                 <img
                   src={getMediaThumbnailUrl(
                     media.mediaPublicId,
-                    media.mediaType
+                    media.mediaType,
                   )}
                   alt={`Upload ${index + 1}`}
                   className='w-full h-full object-cover'
@@ -131,9 +133,9 @@ export const MediaUpload = ({
               <button
                 type='button'
                 onClick={() => handleRemoveMedia(index)}
-                className='cursor-pointer absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity'
+                className='cursor-pointer absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 md:opacity-0 md:group-hover:opacity-100 transition-opacity shrink-0'
               >
-                <XMarkIcon className='h-4 w-4' />
+                <XMarkIcon className='h-3 md:h-4 w-3 md:w-4' />
               </button>
             </div>
           ))}

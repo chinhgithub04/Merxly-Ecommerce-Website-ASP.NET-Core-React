@@ -56,7 +56,7 @@ export const CustomerOrderActionButtons = ({
             disabled={isUpdating}
             className='cursor-pointer inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed bg-white hover:bg-red-50 text-red-600 border border-red-300'
           >
-            <XMarkIcon className='h-5 w-5' />
+            <XMarkIcon className='h-4 w-4 md:h-5 md:w-5' />
             {isUpdating ? 'Updating...' : 'Cancel Order'}
           </button>
         </div>
@@ -78,7 +78,7 @@ export const CustomerOrderActionButtons = ({
             <div>
               <label
                 htmlFor='cancelNotes'
-                className='block text-sm font-medium text-neutral-700 mb-2'
+                className='block text-xs md:text-sm font-medium text-neutral-700 mb-2'
               >
                 Reason for cancellation (optional)
               </label>
@@ -87,7 +87,7 @@ export const CustomerOrderActionButtons = ({
                 value={cancelNotes}
                 onChange={(e) => setCancelNotes(e.target.value)}
                 rows={4}
-                className='w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none'
+                className='w-full px-3 py-2 text-sm md:text-base border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none'
                 placeholder='Please provide a reason for cancelling this order...'
               />
             </div>
@@ -105,9 +105,9 @@ export const CustomerOrderActionButtons = ({
           <button
             onClick={handleReceivedClick}
             disabled={isUpdating}
-            className='cursor-pointer inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed bg-primary-600 hover:bg-primary-700 text-white'
+            className='cursor-pointer inline-flex items-center gap-2 px-4 py-2 text-sm md:text-base rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed bg-primary-600 hover:bg-primary-700 text-white w-full sm:w-auto'
           >
-            <CheckCircleIcon className='h-5 w-5' />
+            <CheckCircleIcon className='h-4 w-4 md:h-5 md:w-5' />
             {isUpdating ? 'Updating...' : 'I have received the order'}
           </button>
         </div>
@@ -118,7 +118,7 @@ export const CustomerOrderActionButtons = ({
           onClose={handleReceivedModalClose}
           onDone={handleReceivedConfirm}
           title='Confirm Delivery'
-          doneLabel='Confirm Received'
+          doneLabel='Confirm'
           cancelLabel='Go Back'
         >
           <div className='space-y-4'>

@@ -7,14 +7,22 @@ import {
   Cog6ToothIcon,
   QuestionMarkCircleIcon,
   ChevronDownIcon,
+  ChevronUpIcon,
+  ChevronRightIcon,
   ArrowRightStartOnRectangleIcon,
   BuildingStorefrontIcon,
+  TruckIcon,
+  ScaleIcon,
+  ChatBubbleLeftRightIcon,
 } from '@heroicons/react/24/outline';
+import { useQuery } from '@tanstack/react-query';
 import { Link, useNavigate } from 'react-router-dom';
 import { useState, useRef, useEffect } from 'react';
 import { useCart } from '../../../hooks/useCart';
 import { useAuth } from '../../../contexts/AuthContext';
 import { UserRole } from '../../../types/enums';
+import { getCategoryTree } from '../../../services/categoryService';
+import type { CategoryDto } from '../../../types/models/category';
 import { getProductImageUrlCustom } from '../../../utils/cloudinaryHelpers';
 
 export const HomeHeader = () => {
@@ -23,6 +31,10 @@ export const HomeHeader = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
+  const [hoveredCategoryId, setHoveredCategoryId] = useState<string | null>(
+    null,
+  );
   const [showMobileSearch, setShowMobileSearch] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLInputElement>(null);
@@ -43,6 +55,11 @@ export const HomeHeader = () => {
     logout();
     setIsDropdownOpen(false);
     navigate('/');
+  };
+
+  const handleCategoryClick = (categoryId: string) => {
+    setIsCategoryDropdownOpen(false);
+    navigate(`/search?categoryId=${categoryId}`);
   };
 
   // Close dropdown when clicking outside
@@ -72,12 +89,54 @@ export const HomeHeader = () => {
     }
   }, [showMobileSearch]);
 
+  const { data: categoriesData } = useQuery({
+    queryKey: ['categories-tree'],
+    queryFn: () => getCategoryTree(),
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+
+  const categories = categoriesData?.data?.items || [];
+  const rootCategories = categories.filter((cat) => !cat.parentCategoryId);
+
+  const renderCategoryItem = (category: CategoryDto, level: number = 0) => {
+    const hasChildren = category.children && category.children.length > 0;
+    const isHovered = hoveredCategoryId === category.id;
+
+    return (
+      <div
+        key={category.id}
+        className='relative'
+        onMouseEnter={() => setHoveredCategoryId(category.id)}
+        onMouseLeave={() => setHoveredCategoryId(null)}
+      >
+        <button
+          onClick={() => handleCategoryClick(category.id)}
+          className='w-full flex items-center justify-between px-4 py-2.5 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors cursor-pointer text-left'
+        >
+          <span>{category.name}</span>
+          {hasChildren && (
+            <ChevronRightIcon className='h-4 w-4 text-neutral-400' />
+          )}
+        </button>
+
+        {/* Submenu */}
+        {hasChildren && isHovered && (
+          <div className='absolute left-full top-0 ml-1 min-w-[200px] bg-white border border-neutral-200 rounded-lg shadow-lg py-2 z-50'>
+            {category.children.map((child) =>
+              renderCategoryItem(child, level + 1),
+            )}
+          </div>
+        )}
+      </div>
+    );
+  };
+
   const isCustomer = user?.roles.includes(UserRole.Customer);
 
   return (
     <>
-      <header className='fixed top-0 left-0 right-0 h-16 md:h-20 bg-white border-b border-neutral-200 z-30'>
-        <div className='flex items-center justify-between h-full px-4 md:px-8 lg:px-20'>
+      <header className='fixed top-0 left-0 right-0 bg-white border-b border-neutral-200 z-30'>
+        <div className='flex items-center justify-between h-16 md:h-20 px-4 md:px-8 lg:px-20'>
           {/* Logo */}
           <div className='flex items-center'>
             <Link
@@ -279,6 +338,66 @@ export const HomeHeader = () => {
                 )}
               </div>
             ) : null}
+          </div>
+        </div>
+
+        <div className='border-t border-neutral-200 bg-white hidden md:block'>
+          <div className='flex items-center gap-6 px-4 md:px-8 lg:px-20 py-3'>
+            {/* Category Dropdown */}
+            <div className='relative'>
+              <button
+                onClick={() =>
+                  setIsCategoryDropdownOpen(!isCategoryDropdownOpen)
+                }
+                className='flex items-center gap-2 px-4 py-2 text-sm font-medium text-neutral-700 bg-white border border-neutral-300 rounded-lg hover:bg-neutral-50 transition-colors cursor-pointer'
+              >
+                <span>All category</span>
+                {isCategoryDropdownOpen ? (
+                  <ChevronUpIcon className='h-4 w-4' />
+                ) : (
+                  <ChevronDownIcon className='h-4 w-4' />
+                )}
+              </button>
+
+              {/* Dropdown Menu */}
+              {isCategoryDropdownOpen && (
+                <>
+                  {/* Backdrop to close dropdown */}
+                  <div
+                    className='fixed inset-0 z-10'
+                    onClick={() => setIsCategoryDropdownOpen(false)}
+                  />
+
+                  {/* Dropdown content */}
+                  <div className='absolute top-full left-0 mt-1 min-w-[250px] bg-white border border-neutral-200 rounded-lg shadow-lg z-20'>
+                    {rootCategories.map((category) =>
+                      renderCategoryItem(category),
+                    )}
+                  </div>
+                </>
+              )}
+            </div>
+
+            {/* Action Buttons */}
+            <button className='flex items-center gap-2 px-4 py-2 text-sm text-neutral-700 hover:text-primary-600 transition-colors cursor-pointer'>
+              <TruckIcon className='h-5 w-5' />
+              <span>Track Order</span>
+            </button>
+
+            <button className='flex items-center gap-2 px-4 py-2 text-sm text-neutral-700 hover:text-primary-600 transition-colors cursor-pointer'>
+              <ScaleIcon className='h-5 w-5' />
+              <span>Compare</span>
+            </button>
+
+            <button className='flex items-center gap-2 px-4 py-2 text-sm text-neutral-700 hover:text-primary-600 transition-colors cursor-pointer'>
+              <ChatBubbleLeftRightIcon className='h-5 w-5' />
+              <span>Customer Support</span>
+            </button>
+
+            <button className='flex items-center gap-2 px-4 py-2 text-sm text-neutral-700 hover:text-primary-600 transition-colors cursor-pointer'>
+              <QuestionMarkCircleIcon className='h-5 w-5' />
+              <span>Need help</span>
+            </button>
           </div>
         </div>
       </header>
