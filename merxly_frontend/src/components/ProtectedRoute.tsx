@@ -1,4 +1,4 @@
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import type { ReactNode } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { UserRole } from '../types/enums';
@@ -13,15 +13,16 @@ export const ProtectedRoute = ({
   requiredRoles,
 }: ProtectedRouteProps) => {
   const { isAuthenticated, user } = useAuth();
+  const location = useLocation();
 
   if (!isAuthenticated) {
-    return <Navigate to='/login' replace />;
+    return <Navigate to='/login' replace state={{ from: location }} />;
   }
 
   if (requiredRoles && requiredRoles.length > 0) {
     const userRoles = user?.roles || [];
     const hasRequiredRole = requiredRoles.some((role) =>
-      userRoles.includes(role)
+      userRoles.includes(role),
     );
 
     if (!hasRequiredRole) {

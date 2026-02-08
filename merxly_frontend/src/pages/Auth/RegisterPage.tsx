@@ -183,15 +183,6 @@ export const RegisterPage = () => {
               Sign in
             </Link>
           </div>
-          <div className='text-sm text-center text-neutral-500'>
-            Want to sell on our platform?{' '}
-            <Link
-              to='/sign-up-new-store'
-              className='text-primary-600 hover:text-primary-700 font-medium transition-colors'
-            >
-              Register your store
-            </Link>
-          </div>
         </CardFooter>
       </Card>
     </div>

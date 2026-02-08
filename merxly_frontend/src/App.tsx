@@ -22,6 +22,7 @@ import {
   AddressesPage,
 } from './pages/User';
 import { ProtectedRoute } from './components/ProtectedRoute';
+import { PublicRoute } from './components/PublicRoute';
 import { StoreOwnerLayout } from './components/layout';
 import { AdminLayout } from './components/layout/admin';
 import {
@@ -50,17 +51,13 @@ import { StoreMyStorePage } from './pages/Store/StoreMyStorePage';
 import { SignUpNewStorePage } from './pages/SignUpNewStorePage';
 
 const stripePromise = loadStripe(
-  import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || ''
+  import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || '',
 );
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path='/login' element={<LoginPage />} />
-        <Route path='/register' element={<RegisterPage />} />
-        <Route path='/forgot-password' element={<ForgotPasswordPage />} />
-
         {/* Admin Routes with Layout */}
         <Route
           path='/admin'
@@ -122,11 +119,56 @@ function App() {
         {/* Customer Routes with Layout */}
         <Route path='/' element={<CustomerLayout />}>
           <Route index element={<HomePage />} />
+          <Route
+            path='/login'
+            element={
+              <PublicRoute>
+                <LoginPage />
+              </PublicRoute>
+            }
+          />
+          <Route
+            path='/register'
+            element={
+              <PublicRoute>
+                <RegisterPage />
+              </PublicRoute>
+            }
+          />
+          <Route
+            path='/forgot-password'
+            element={
+              <PublicRoute>
+                <ForgotPasswordPage />
+              </PublicRoute>
+            }
+          />
           <Route path='search' element={<SearchProductPage />} />
           <Route path='products/:id' element={<ProductDetailPage />} />
-          <Route path='sign-up-new-store' element={<SignUpNewStorePage />} />
-          <Route path='cart' element={<CartPage />} />
-          <Route path='wishlist' element={<WishlistPage />} />
+          <Route
+            path='sign-up-new-store'
+            element={
+              <ProtectedRoute>
+                <SignUpNewStorePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path='cart'
+            element={
+              <ProtectedRoute>
+                <CartPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path='wishlist'
+            element={
+              <ProtectedRoute>
+                <WishlistPage />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path='checkout'
             element={

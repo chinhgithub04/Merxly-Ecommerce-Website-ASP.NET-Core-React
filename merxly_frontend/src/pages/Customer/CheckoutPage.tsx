@@ -115,6 +115,7 @@ export const CheckoutPage = () => {
       // Navigate to order confirmation
       navigate('/order-confirmation', {
         state: { order: response.data.order },
+        replace: true,
       });
     } catch (error) {
       console.error('Checkout error:', error);

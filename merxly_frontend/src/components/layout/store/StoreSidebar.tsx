@@ -24,7 +24,7 @@ const navigationItems: NavItem[] = [
   { name: 'Locations', path: '/store/locations', icon: MapPinIcon },
   { name: 'Payments', path: '/store/payments', icon: BanknotesIcon },
   { name: 'My Store', path: '/store/my-store', icon: BuildingStorefrontIcon },
-  { name: 'Settings', path: '/store/settings', icon: Cog6ToothIcon },
+  // { name: 'Settings', path: '/store/settings', icon: Cog6ToothIcon },
 ];
 
 export const StoreSidebar = () => {

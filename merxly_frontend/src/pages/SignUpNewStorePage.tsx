@@ -9,7 +9,7 @@ import { createStore } from '../services/storeService';
 import type { CreateStoreDto } from '../types/models/store';
 
 export const SignUpNewStorePage = () => {
-  const [isSubmitted, setIsSubmitted] = useState(true);
+  const [isSubmitted, setIsSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 

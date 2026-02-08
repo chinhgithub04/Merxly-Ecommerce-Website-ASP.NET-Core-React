@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, type Location } from 'react-router-dom';
 import { loginUser } from '../services/authService';
 import { useAuth } from '../contexts/AuthContext';
 import { UserRole } from '../types/enums';
@@ -8,6 +8,7 @@ import type { Response } from '../types/api/common';
 
 export const useLogin = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { login } = useAuth();
 
   return useMutation<Response<LoginResponse>, Error, LoginRequest>({
@@ -15,6 +16,15 @@ export const useLogin = () => {
     onSuccess: (response) => {
       if (response.isSuccess && response.data) {
         login(response.data);
+
+        const fromLocation = (location.state as { from?: Location })?.from;
+        if (fromLocation) {
+          navigate(fromLocation.pathname + fromLocation.search, {
+            state: fromLocation.state,
+            replace: true,
+          });
+          return;
+        }
 
         // Role-based navigation
         const roles = response.data.roles;

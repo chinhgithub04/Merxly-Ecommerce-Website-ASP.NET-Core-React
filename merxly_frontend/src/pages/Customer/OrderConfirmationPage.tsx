@@ -11,7 +11,7 @@ export const OrderConfirmationPage = () => {
   // Redirect if no order data
   useEffect(() => {
     if (!order) {
-      navigate('/');
+      navigate('/', { replace: true });
     }
   }, [order, navigate]);
 
