@@ -6,7 +6,7 @@ import {
   MapPinIcon,
   BanknotesIcon,
   BuildingStorefrontIcon,
-  Cog6ToothIcon,
+  // Cog6ToothIcon,
   ArrowRightStartOnRectangleIcon,
 } from '@heroicons/react/24/outline';
 import { useAuth } from '../../../contexts/AuthContext';
